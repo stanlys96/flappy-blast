@@ -1604,7 +1604,7 @@
     motion "10.16.2"
     qrcode "1.5.3"
 
-"@web3modal/ui@4.2.3":
+"@web3modal/ui@4.2.3", "@web3modal/ui@^4.2.3":
   version "4.2.3"
   resolved "https://registry.yarnpkg.com/@web3modal/ui/-/ui-4.2.3.tgz#e1878b9ba013212b91058e812bd2b0de94d90ba9"
   integrity sha512-QPPgE0hii1gpAldTdnrP63D/ryI78Ohz99zRBp8vi81lawot7rbdUbryMoX13hMPCW9vW7JYyvX+jJN7uO3QwA==
