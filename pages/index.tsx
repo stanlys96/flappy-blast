@@ -109,35 +109,31 @@ export default function HomePage() {
             </p>
           </div>
         </div>
-        <div className="grid grid-cols-2 py-[150px] px-[150px] h-[100vh] bg-black">
-          <div className="flex flex-col gap-y-[20px]">
-            <p className="flappy-birdy text-[#FCFC03] text-[100px] leading-[75px]">
-              homage to the legendary game
-            </p>
-            <p className="inter text-white py-[10px] px-[21px] border border-[6px] text-[28px] w-fit">
-              how it&apos;s unruggable, are you sure?
-            </p>
-            <p className="inter text-[18px] font-normal">
-              The protocol keeps all its tokens on the blockchain to always
-              protect their value. This creates a baseline value that never goes
-              down. Over time, protocol fees are used to boost this baseline
-              value, making it{" "}
-              <span className="font-semibold text-[#FCFC03]">
-                impossible to &quot;rug&quot; and ensuring it keeps growing
-                forever
-              </span>
-              . It&apos;s like having a magic money tree that only grows bigger!
-            </p>
-          </div>
-          <div className="flex w-full justify-center items-center">
-            <img
-              src="/flappy-gif.gif"
-              className="w-[300px]"
-              alt="Example GIF"
-            />
-          </div>
-        </div>
       </HeroLayout>
+      <div className="grid grid-cols-2 py-[150px] px-[150px] h-[100vh] bg-black">
+        <div className="flex flex-col gap-y-[20px]">
+          <p className="flappy-birdy text-[#FCFC03] text-[100px] leading-[75px]">
+            homage to the legendary game
+          </p>
+          <p className="inter text-white py-[10px] px-[21px] border border-[6px] text-[28px] w-fit">
+            how it&apos;s unruggable, are you sure?
+          </p>
+          <p className="inter text-[18px] font-normal text-white">
+            The protocol keeps all its tokens on the blockchain to always
+            protect their value. This creates a baseline value that never goes
+            down. Over time, protocol fees are used to boost this baseline
+            value, making it{" "}
+            <span className="font-semibold text-[#FCFC03]">
+              impossible to &quot;rug&quot; and ensuring it keeps growing
+              forever
+            </span>
+            . It&apos;s like having a magic money tree that only grows bigger!
+          </p>
+        </div>
+        <div className="flex w-full justify-center items-center">
+          <img src="/flappy-gif.gif" className="w-[300px]" alt="Example GIF" />
+        </div>
+      </div>
       <div className="h-[100vh] bg-[#262626] relative">
         <div className="grid grid-cols-4 gap-x-[50px] justify-center items-center h-full px-[100px]">
           <div className="flex flex-col gap-y-[25px] items-center">
