@@ -3,8 +3,8 @@
 <path d="M346.464 60.3022C352.462 66.3955 358.066 72.8634 363.244 79.667L202.5 202L346.464 60.3022Z" fill="#FF00C7"/>
 <path d="M363.244 79.667C368.422 86.4705 373.162 93.5959 377.437 101L202.5 202L363.244 79.667Z" fill="#22A2FF"/>
 <rect x="57.5" y="55" width="296" height="296" rx="148" fill="#9BA885"/>
-<rect x="57.5" y="55" width="296" height="296" rx="148" stroke="#58604B" stroke-width="18"/>
-<g clip-path="url(#clip0_19_600)">
+<rect x="57.5" y="55" width="296" height="296" rx="148" stroke="#58604B" strokeWidth="18"/>
+<g clipPath="url(#clip0_19_600)">
 <path d="M174.902 189.281H112.707V202.146H174.902V189.281Z" fill="white"/>
 <path d="M162.696 177H112.707V189.281H162.696V177Z" fill="white"/>
 <path d="M162.696 202.146H125.495V214.427H162.696V202.146Z" fill="white"/>

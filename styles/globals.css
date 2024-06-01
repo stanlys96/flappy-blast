@@ -11,12 +11,12 @@
 
 @font-face {
   font-family: "PixelCaps";
-  src: url("../public/PixelCaps.ttf");
+  src: url("../public/fonts/PixelCaps.ttf");
 }
 
 @font-face {
   font-family: "FlappyBirdy";
-  src: url("../public/FlappyBirdy.ttf");
+  src: url("../public/fonts/FlappyBirdy.ttf");
 }
 
 :root {
@@ -57,7 +57,7 @@ body {
   background-size: cover;
   background-position: center;
   background-clip: border-box;
-  background-image: url("../public/background.png");
+  background-image: url("../public/images/background.png");
 }
 
 .pixel-caps {

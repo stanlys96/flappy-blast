@@ -46,21 +46,21 @@ export const AbsoluteImagesComponent = () => {
       </div>
       <Image
         style={{ position: "absolute", top: "13%", left: "5%" }}
-        src="/cloud.png"
+        src="/images/cloud.png"
         width={150}
         height={150}
         alt="cloud"
       />
       <Image
         style={{ position: "absolute", top: "15%", right: "8%" }}
-        src="/cloud.png"
+        src="/images/cloud.png"
         width={150}
         height={150}
         alt="cloud"
       />
       <Image
         style={{ position: "absolute", top: "1%", left: "45%" }}
-        src="/cloud.png"
+        src="/images/cloud.png"
         width={150}
         height={150}
         alt="cloud"
@@ -69,7 +69,7 @@ export const AbsoluteImagesComponent = () => {
         <Image
           style={{ zIndex: 100 }}
           className="z-100"
-          src="/ground.png"
+          src="/images/ground.png"
           width={2232}
           height={100}
           alt="ground"
@@ -77,28 +77,28 @@ export const AbsoluteImagesComponent = () => {
       </div>
       <Image
         className="absolute top-0"
-        src="/top-bottom.png"
+        src="/images/top-bottom.png"
         width={110}
         height={110}
         alt="greenbin"
       />
       <Image
         className="absolute top-1/2 z-50"
-        src="/top-top.png"
+        src="/images/top-top.png"
         width={110}
         height={110}
         alt="greenbin"
       />
       <Image
         className="absolute top-0 right-0"
-        src="/top-bottom-side.png"
+        src="/images/top-bottom-side.png"
         width={110}
         height={110}
         alt="greenbin"
       />
       <Image
         className="absolute top-1/2 z-50 right-0"
-        src="/top-top-side.png"
+        src="/images/top-top-side.png"
         width={110}
         height={110}
         alt="greenbin"

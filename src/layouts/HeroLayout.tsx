@@ -7,7 +7,7 @@ interface Props {
 
 export const HeroLayout = ({ children }: Props) => {
   return (
-    <div className="h-[100vh] hero-section">
+    <div className="min-h-[100vh] hero-section overflow-scroll">
       <AbsoluteImagesComponent />
       {children}
     </div>

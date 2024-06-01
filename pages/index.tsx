@@ -1,4 +1,3 @@
-import { AbsoluteImagesComponent } from "@/src/components/AbsoluteImagesComponent";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { FlappyCoinSvg } from "@/src/components/FlappyCoinSvg";
@@ -95,11 +94,16 @@ export default function HomePage() {
               width={600}
               height={180}
               alt="flappy-blast"
-              src="/flappy-blast.png"
+              src="/images/flappy-blast.png"
             />
           </div>
           <div className="relative mt-[25px] cursor-pointer">
-            <Image width={300} height={100} alt="button" src="/button.png" />
+            <Image
+              width={300}
+              height={100}
+              alt="button"
+              src="/images/button.png"
+            />
           </div>
           <div className="bg-[#FFFFFF] flex justify-center items-center mt-[30px] px-[20px] py-[12px]">
             <p className="text-black">
@@ -131,7 +135,11 @@ export default function HomePage() {
           </p>
         </div>
         <div className="flex w-full justify-center items-center">
-          <img src="/flappy-gif.gif" className="w-[300px]" alt="Example GIF" />
+          <img
+            src="/images/flappy-gif.gif"
+            className="w-[300px]"
+            alt="Example GIF"
+          />
         </div>
       </div>
       <div className="h-[100vh] bg-[#262626] relative">
@@ -149,7 +157,7 @@ export default function HomePage() {
               <p className="text-center">{text}</p>
             </div>
             <Image
-              src="/standing-capa.png"
+              src="/images/standing-capa.png"
               width={200}
               height={200}
               alt="capa"
@@ -168,7 +176,7 @@ export default function HomePage() {
               <p className="text-center">{text2}</p>
             </div>
             <Image
-              src="/standing-capa.png"
+              src="/images/standing-capa.png"
               width={200}
               height={200}
               alt="capa"
@@ -187,7 +195,7 @@ export default function HomePage() {
               <p className="text-center">{text3}</p>
             </div>
             <Image
-              src="/standing-capa.png"
+              src="/images/standing-capa.png"
               width={200}
               height={200}
               alt="capa"
@@ -206,7 +214,7 @@ export default function HomePage() {
               <p className="text-center">{text4}</p>
             </div>
             <Image
-              src="/standing-capa.png"
+              src="/images/standing-capa.png"
               width={200}
               height={200}
               alt="capa"
@@ -217,7 +225,7 @@ export default function HomePage() {
           <Image
             style={{ zIndex: 100 }}
             className="z-100"
-            src="/ground.png"
+            src="/images/ground.png"
             width={2232}
             height={100}
             alt="ground"

@@ -43,9 +43,9 @@ export const FlappyCoinSvg = ({ className, onClick }: Props) => {
           height="296"
           rx="148"
           stroke="#58604B"
-          stroke-width="18"
+          strokeWidth="18"
         />
-        <g clip-path="url(#clip0_19_600)">
+        <g clipPath="url(#clip0_19_600)">
           <path
             d="M174.902 189.281H112.707V202.146H174.902V189.281Z"
             fill="white"
