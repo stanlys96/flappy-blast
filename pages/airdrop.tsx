@@ -2,6 +2,7 @@ import { HeroLayout } from "@/src/layouts/HeroLayout";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useAccount, useDisconnect, useEnsAvatar, useEnsName } from "wagmi";
+import { useWeb3Modal } from "@web3modal/wagmi/react";
 
 export default function AirdropPage() {
   const { address } = useAccount();
@@ -16,6 +17,7 @@ export default function AirdropPage() {
   const ensAvatar = useEnsAvatar({
     name: ensName ?? "",
   });
+  const { open } = useWeb3Modal();
   useEffect(() => {
     setDomLoaded(true);
   }, []);
@@ -81,7 +83,12 @@ export default function AirdropPage() {
             <div className="flex flex-col gap-y-[20px]">
               <div className="flex justify-start">
                 {!address ? (
-                  <w3m-button />
+                  <div
+                    onClick={() => open()}
+                    className="border border-[#BDBDBD] py-[11px] px-[19px] rounded-[10px] flex gap-x-[10px] cursor-pointer items-center"
+                  >
+                    <p className="font-bold">Connect Wallet</p>
+                  </div>
                 ) : (
                   <div
                     onClick={() => disconnect()}
@@ -93,12 +100,12 @@ export default function AirdropPage() {
                         src={ensAvatar?.data ?? ""}
                       />
                     )}
-                    <p>
+                    <p className="font-bold">
                       {address.slice(0, 5) +
                         "..." +
                         address.slice(address.length - 4)}
                     </p>
-                    {ensName && <p>{ensName}</p>}
+                    {ensName && <p className="font-bold">{ensName}</p>}
                   </div>
                 )}
               </div>

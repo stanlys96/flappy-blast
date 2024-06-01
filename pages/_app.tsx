@@ -3,7 +3,7 @@ import { AppProps } from "next/app";
 import { WagmiProvider } from "wagmi";
 import { mainnet, arbitrum, optimism, polygon } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { createWeb3Modal } from "@web3modal/wagmi";
+import { createWeb3Modal } from "@web3modal/wagmi/react";
 import { defaultWagmiConfig } from "@web3modal/wagmi";
 const queryClient = new QueryClient();
 const PROJECT_ID = process.env.NEXT_PUBLIC_PROJECT_ID;

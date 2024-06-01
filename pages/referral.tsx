@@ -14,6 +14,7 @@ export default function ReferralPage() {
   const ensAvatar = useEnsAvatar({
     name: ensName ?? "",
   });
+  const { open } = useWeb3Modal();
   useEffect(() => {
     setDomLoaded(true);
   }, []);
@@ -28,7 +29,12 @@ export default function ReferralPage() {
         <div className="bg-white px-[60px] py-[30px] rounded-[22px] mt-[30px] w-full flex flex-col gap-y-[15px]">
           <div className="flex justify-start">
             {!address ? (
-              <w3m-button />
+              <div
+                onClick={() => open()}
+                className="border border-[#BDBDBD] py-[11px] px-[19px] rounded-[10px] flex gap-x-[10px] cursor-pointer items-center"
+              >
+                <p className="font-bold">Connect Wallet</p>
+              </div>
             ) : (
               <div
                 onClick={() => disconnect()}
@@ -40,12 +46,12 @@ export default function ReferralPage() {
                     src={ensAvatar?.data ?? ""}
                   />
                 )}
-                <p>
+                <p className="font-bold">
                   {address.slice(0, 5) +
                     "..." +
                     address.slice(address.length - 4)}
                 </p>
-                {ensName && <p>{ensName}</p>}
+                {ensName && <p className="font-bold">{ensName}</p>}
               </div>
             )}
           </div>
