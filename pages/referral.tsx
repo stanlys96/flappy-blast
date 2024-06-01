@@ -2,6 +2,7 @@ import { MarioHole } from "@/src/components/MarioHoleSvg";
 import { HeroLayout } from "@/src/layouts/HeroLayout";
 import { useState, useEffect } from "react";
 import { useAccount, useDisconnect, useEnsAvatar, useEnsName } from "wagmi";
+import { useWeb3Modal } from "@web3modal/wagmi/react";
 
 export default function ReferralPage() {
   const { address } = useAccount();
