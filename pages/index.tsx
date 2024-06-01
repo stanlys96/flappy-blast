@@ -115,7 +115,7 @@ export default function HomePage() {
               homage to the legendary game
             </p>
             <p className="inter text-white py-[10px] px-[21px] border border-[6px] text-[28px] w-fit">
-              how it's unruggable, are you sure?
+              how it&apos;s unruggable, are you sure?
             </p>
             <p className="inter text-[18px] font-normal">
               The protocol keeps all its tokens on the blockchain to always
@@ -123,9 +123,10 @@ export default function HomePage() {
               down. Over time, protocol fees are used to boost this baseline
               value, making it{" "}
               <span className="font-semibold text-[#FCFC03]">
-                impossible to "rug" and ensuring it keeps growing forever
+                impossible to &quot;rug&quot; and ensuring it keeps growing
+                forever
               </span>
-              . It's like having a magic money tree that only grows bigger!
+              . It&apos;s like having a magic money tree that only grows bigger!
             </p>
           </div>
           <div className="flex w-full justify-center items-center">
