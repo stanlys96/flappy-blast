@@ -40,7 +40,7 @@ html {
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
+  color: #000000;
   /* background: linear-gradient(
       to bottom,
       transparent,
@@ -48,12 +48,16 @@ body {
     )
     rgb(var(--background-start-rgb)); */
   /* background-color: #181d23; */
+
+  min-height: 100vh;
+}
+
+.hero-section {
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
   background-clip: border-box;
   background-image: url("../public/background.png");
-  min-height: 100vh;
 }
 
 .pixel-caps {

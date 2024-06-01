@@ -1,15 +1,13 @@
 import { AbsoluteImagesComponent } from "@/src/components/AbsoluteImagesComponent";
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { TwitterSvg } from "@/src/components/TwitterSvg";
-import { DiscordSvg } from "@/src/components/DiscordSvg";
-import { TelegramSvg } from "@/src/components/TelegramSvg";
 import { FlappyCoinSvg } from "@/src/components/FlappyCoinSvg";
 import { BladeSvg } from "@/src/components/BladeSvg";
+import { HeroLayout } from "@/src/layouts/HeroLayout";
 
 export default function HomePage() {
   const [time, setTime] = useState({ hours: 0, minutes: 0, seconds: 0 });
-  const [selectedIndex, setSelectedIndex] = useState(0);
+
   const [text, setText] = useState("Guaranteed Floor Price");
   const [text2, setText2] = useState("Fairlaunch");
   const [text3, setText3] = useState("Infinity and beyond");
@@ -87,43 +85,9 @@ export default function HomePage() {
   }, []);
   return (
     <div>
-      <div className="h-[100vh]">
-        <div
-          style={{ zIndex: 100 }}
-          className="flex justify-center items-center z-100 w-full"
-        >
-          <div
-            style={{ zIndex: 100 }}
-            className="bg-[#404833] px-[44px] py-[22px] mt-[30px] rounded-[71px] flex items-center gap-x-[20px]"
-          >
-            <a
-              onClick={() => setSelectedIndex(0)}
-              className={`pixel-caps cursor-pointer ${
-                selectedIndex === 0 ? "text-[#FCFC03]" : "text-white"
-              }`}
-            >
-              HOME
-            </a>
-            <a
-              onClick={() => setSelectedIndex(1)}
-              className={`pixel-caps cursor-pointer ${
-                selectedIndex === 1 ? "text-[#FCFC03]" : "text-white"
-              }`}
-            >
-              AIRDROP
-            </a>
-            <a
-              onClick={() => setSelectedIndex(2)}
-              className={`pixel-caps cursor-pointer ${
-                selectedIndex === 2 ? "text-[#FCFC03]" : "text-white"
-              }`}
-            >
-              REFERRAL
-            </a>
-          </div>
-        </div>
+      <HeroLayout>
         <div className="flex flex-col justify-center items-center">
-          <p className="text-[30px] mt-[30px] mb-[20px]">
+          <p className="text-[30px] mt-[30px] mb-[20px] text-white">
             unruggable meme & infinite
           </p>
           <div className="flex items-center">
@@ -145,39 +109,34 @@ export default function HomePage() {
             </p>
           </div>
         </div>
-        <AbsoluteImagesComponent />
-        <div
-          style={{ zIndex: 1000 }}
-          className="rounded-[14px] flex flex-col gap-y-[30px] justify-center items-center py-[24px] px-[18px] bg-black z-100 absolute top-1/2 left-[4%] transform -translate-x-1/2 -translate-y-1/2"
-        >
-          <TwitterSvg className="cursor-pointer" />
-          <DiscordSvg className="cursor-pointer" />
-          <TelegramSvg className="cursor-pointer" />
+        <div className="grid grid-cols-2 py-[150px] px-[150px] h-[100vh] bg-black">
+          <div className="flex flex-col gap-y-[20px]">
+            <p className="flappy-birdy text-[#FCFC03] text-[100px] leading-[75px]">
+              homage to the legendary game
+            </p>
+            <p className="inter text-white py-[10px] px-[21px] border border-[6px] text-[28px] w-fit">
+              how it's unruggable, are you sure?
+            </p>
+            <p className="inter text-[18px] font-normal">
+              The protocol keeps all its tokens on the blockchain to always
+              protect their value. This creates a baseline value that never goes
+              down. Over time, protocol fees are used to boost this baseline
+              value, making it{" "}
+              <span className="font-semibold text-[#FCFC03]">
+                impossible to "rug" and ensuring it keeps growing forever
+              </span>
+              . It's like having a magic money tree that only grows bigger!
+            </p>
+          </div>
+          <div className="flex w-full justify-center items-center">
+            <img
+              src="/flappy-gif.gif"
+              className="w-[300px]"
+              alt="Example GIF"
+            />
+          </div>
         </div>
-      </div>
-      <div className="grid grid-cols-2 py-[150px] px-[150px] h-[100vh]">
-        <div className="flex flex-col gap-y-[20px]">
-          <p className="flappy-birdy text-[#FCFC03] text-[100px] leading-[75px]">
-            homage to the legendary game
-          </p>
-          <p className="inter text-white py-[10px] px-[21px] border border-[6px] text-[28px] w-fit">
-            how it's unruggable, are you sure?
-          </p>
-          <p className="inter text-[18px] font-normal">
-            The protocol keeps all its tokens on the blockchain to always
-            protect their value. This creates a baseline value that never goes
-            down. Over time, protocol fees are used to boost this baseline
-            value, making it{" "}
-            <span className="font-semibold text-[#FCFC03]">
-              impossible to "rug" and ensuring it keeps growing forever
-            </span>
-            . It's like having a magic money tree that only grows bigger!
-          </p>
-        </div>
-        <div className="flex w-full justify-center items-center">
-          <img src="/flappy-gif.gif" className="w-[300px]" alt="Example GIF" />
-        </div>
-      </div>
+      </HeroLayout>
       <div className="h-[100vh] bg-[#262626] relative">
         <div className="grid grid-cols-4 gap-x-[50px] justify-center items-center h-full px-[100px]">
           <div className="flex flex-col gap-y-[25px] items-center">
@@ -268,7 +227,7 @@ export default function HomePage() {
           />
         </div>
       </div>
-      <div className="h-[100vh] flex flex-col justify-center items-center px-[150px] py-[150px]">
+      <div className="h-[100vh] flex flex-col justify-center items-center px-[150px] py-[150px] bg-black">
         <div>
           <p className="pixel-caps text-[#FCFC03] text-[48px] text-center">
             $FLAP TOKENOMICS
@@ -276,11 +235,11 @@ export default function HomePage() {
           <div className="flex justify-center items-center gap-x-[40px] my-[50px]">
             <div className="flex flex-col items-end gap-y-[40px]">
               <div className="flex items-center gap-x-[30px]">
-                <p className="pixel-caps text-[#FCFC03]">95% Liquidity</p>
+                <p className="pixel-caps text-[#FCFC03]">95 % Liquidity</p>
                 <div className="w-[50px] h-[50px] bg-[#FCFC03] rounded-full" />
               </div>
               <div className="flex items-center gap-x-[30px]">
-                <p className="pixel-caps text-[#838383]">0% Team</p>
+                <p className="pixel-caps text-[#838383]">0 % Team</p>
                 <div className="w-[50px] h-[50px] bg-[#838383] rounded-full" />
               </div>
             </div>
@@ -288,16 +247,16 @@ export default function HomePage() {
             <div className="flex flex-col gap-y-[40px]">
               <div className="flex items-center gap-x-[30px]">
                 <div className="w-[50px] h-[50px] bg-[#FF00C7] rounded-full" />
-                <p className="pixel-caps text-[#FF00C7]">2.5% REFERRAL</p>
+                <p className="pixel-caps text-[#FF00C7]">2.5 % REFERRAL</p>
               </div>
               <div className="flex items-center gap-x-[30px]">
                 <div className="w-[50px] h-[50px] bg-[#22A2FF] rounded-full" />
-                <p className="pixel-caps text-[#22A2FF]">2.5% AIRDROP</p>
+                <p className="pixel-caps text-[#22A2FF]">2.5 % AIRDROP</p>
               </div>
             </div>
           </div>
           <div className="flex flex-col gap-y-[20px] border border-[12px] border-[#404833] w-fit mx-auto border-dashed justify-center items-center py-[36px]">
-            <p>in collaboration with</p>
+            <p className="text-white">in collaboration with</p>
             <BladeSvg className="w-[500px] h-[50px]" />
           </div>
         </div>
