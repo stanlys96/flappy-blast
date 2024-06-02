@@ -72,7 +72,7 @@ export default function AirdropPage() {
               <div className="flex md:flex-row flex-col gap-x-[40px] justify-center items-center">
                 <div
                   onClick={() => setCurrentState("flap")}
-                  className="relative mt-[25px] cursor-pointer"
+                  className="md:block hidden relative mt-[25px] cursor-pointer"
                 >
                   <Image
                     width={300}
@@ -82,11 +82,33 @@ export default function AirdropPage() {
                   />
                 </div>
                 <div
+                  onClick={() => setCurrentState("flap")}
+                  className="block md:hidden relative mt-[25px] cursor-pointer"
+                >
+                  <Image
+                    width={150}
+                    height={100}
+                    alt="button"
+                    src="/images/flap_button.png"
+                  />
+                </div>
+                <div
                   // onClick={() => setCurrentState("leaderboard")}
-                  className="relative mt-[25px] cursor-pointer"
+                  className="md:block hidden relative mt-[25px] cursor-pointer"
                 >
                   <Image
                     width={300}
+                    height={100}
+                    alt="button"
+                    src="/images/leaderbord_button.png"
+                  />
+                </div>
+                <div
+                  // onClick={() => setCurrentState("leaderboard")}
+                  className="block md:hidden relative mt-[25px] cursor-pointer"
+                >
+                  <Image
+                    width={150}
                     height={100}
                     alt="button"
                     src="/images/leaderbord_button.png"

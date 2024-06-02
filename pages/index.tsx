@@ -3,7 +3,7 @@ import Image from "next/image";
 import { FlappyCoinSvg } from "@/src/components/FlappyCoinSvg";
 import { BladeSvg } from "@/src/components/BladeSvg";
 import { HeroLayout } from "@/src/layouts/HeroLayout";
-import { Carousel } from "antd";
+// import { Carousel } from "antd";
 
 export default function HomePage() {
   const [time, setTime] = useState({ hours: 0, minutes: 0, seconds: 0 });
@@ -159,7 +159,7 @@ export default function HomePage() {
           />
         </div>
       </div>
-      <div className="md:hidden block h-[100vh] bg-[#262626] relative w-full">
+      {/* <div className="md:hidden block h-[100vh] bg-[#262626] relative w-full">
         <Carousel
           className="h-[100vh] w-full flex justify-center items-center mx-auto"
           arrows
@@ -251,7 +251,7 @@ export default function HomePage() {
             alt="ground"
           />
         </div>
-      </div>
+      </div> */}
       <div className="md:block hidden h-[100vh] bg-[#262626] relative">
         <div className="grid grid-cols-4 gap-x-[50px] justify-center items-center h-full px-[100px]">
           <div className="flex flex-col gap-y-[25px] items-center">
