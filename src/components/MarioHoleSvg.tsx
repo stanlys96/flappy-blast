@@ -9,6 +9,7 @@ export const MarioHole = ({ className, onClick }: Props) => {
   return (
     <div className={className} onClick={onClick}>
       <svg
+        className={className}
         width="151"
         height="164"
         viewBox="0 0 151 164"

@@ -1,13 +1,14 @@
-import React from "react";
+import React, { CSSProperties } from "react";
 
 interface Props {
   className: string;
   onClick: () => void;
+  style: CSSProperties;
 }
 
-export const BlastSVG = ({ className, onClick }: Props) => {
+export const BlastSVG = ({ className, onClick, style }: Props) => {
   return (
-    <div className={className} onClick={onClick}>
+    <div style={style} className={className} onClick={onClick}>
       <svg
         width="250"
         height="74"
