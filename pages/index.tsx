@@ -90,7 +90,7 @@ export default function HomePage() {
           <p className="text-[16px] md:text-left text-center md:text-[30px] mb-[20px] mt-[150px] md:mt-[30px] text-white">
             unruggable meme & infinite
           </p>
-          <div className="flex items-center">
+          <div className="md:block hidden flex items-center">
             <Image
               width={600}
               height={180}
@@ -98,9 +98,25 @@ export default function HomePage() {
               src="/images/flappy-blast.png"
             />
           </div>
-          <div className="relative mt-[25px] cursor-pointer">
+          <div className="block md:hidden flex items-center">
+            <Image
+              width={250}
+              height={180}
+              alt="flappy-blast"
+              src="/images/flappy-blast.png"
+            />
+          </div>
+          <div className="md:block hidden relative mt-[25px] cursor-pointer">
             <Image
               width={300}
+              height={100}
+              alt="button"
+              src="/images/button.png"
+            />
+          </div>
+          <div className="block md:hidden relative mt-[25px] cursor-pointer">
+            <Image
+              width={150}
               height={100}
               alt="button"
               src="/images/button.png"
@@ -326,7 +342,7 @@ export default function HomePage() {
           />
         </div>
       </div>
-      <div className="h-[100vh] flex flex-col justify-center items-center px-[150px] py-[150px] bg-black">
+      <div className="h-[120vh] md:h-[100vh] flex flex-col justify-center items-center px-[150px] py-[150px] bg-black">
         <div>
           <p className="pixel-caps text-[#FCFC03] text-[24px] md:text-[48px] text-center">
             $FLAP TOKENOMICS

@@ -10,6 +10,7 @@ export const BlastSVG = ({ className, onClick, style }: Props) => {
   return (
     <div style={style} className={className} onClick={onClick}>
       <svg
+        className={className}
         width="250"
         height="74"
         viewBox="0 0 250 74"

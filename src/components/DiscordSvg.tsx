@@ -9,6 +9,7 @@ export const DiscordSvg = ({ className, onClick }: Props) => {
   return (
     <div className={className} onClick={onClick}>
       <svg
+        className={className}
         width="36"
         height="36"
         viewBox="0 0 36 36"

@@ -121,7 +121,7 @@ export const AbsoluteImagesComponent = () => {
       <BlastSVG
         style={{ zIndex: 1000 }}
         onClick={() => {}}
-        className="absolute bottom-0 z-1000 md:top-[5%] z-50 right-0 md:right-[2%] cursor-pointer"
+        className="md:w-[250px] md:h-[74px] w-[150px] h-[50px] absolute bottom-[3%] z-1000 md:top-[5%] z-50 right-0 md:right-[2%] cursor-pointer"
       />
       <div
         style={{ zIndex: 1000 }}
@@ -133,11 +133,11 @@ export const AbsoluteImagesComponent = () => {
       </div>
       <div
         style={{ zIndex: 1000 }}
-        className="md:hidden flex rounded-[14px] flex-col gap-y-[30px] justify-center items-center py-[24px] px-[18px] bg-black z-100 absolute bottom-[-12%] left-[12%] transform -translate-x-1/2 -translate-y-1/2"
+        className="md:hidden flex rounded-[14px] flex-col gap-y-[30px] justify-center items-center px-[10px] py-[16px] bg-black z-100 absolute bottom-[-6%] left-[8%] transform -translate-x-1/2 -translate-y-1/2"
       >
-        <TwitterSvg className="cursor-pointer" />
-        <DiscordSvg className="cursor-pointer" />
-        <TelegramSvg className="cursor-pointer" />
+        <TwitterSvg className="cursor-pointer h-[20px] w-[20px]" />
+        <DiscordSvg className="cursor-pointer h-[20px] w-[20px]" />
+        <TelegramSvg className="cursor-pointer h-[20px] w-[20px]" />
       </div>
     </div>
   );
