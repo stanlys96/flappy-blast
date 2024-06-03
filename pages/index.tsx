@@ -4,6 +4,7 @@ import { FlappyCoinSvg } from "@/src/components/FlappyCoinSvg";
 import { BladeSvg } from "@/src/components/BladeSvg";
 import { HeroLayout } from "@/src/layouts/HeroLayout";
 import { Carousel } from "antd";
+import { CarouselData } from "@/src/helper/helper";
 
 export default function HomePage() {
   const [time, setTime] = useState({ hours: 0, minutes: 0, seconds: 0 });
@@ -16,6 +17,7 @@ export default function HomePage() {
   const [isHovered2, setIsHovered2] = useState(false);
   const [isHovered3, setIsHovered3] = useState(false);
   const [isHovered4, setIsHovered4] = useState(false);
+  const [totalCarouselData, setTotalCarouselData] = useState(CarouselData);
 
   const handleMouseEnter = () => {
     setText("The price can only go up, starting at the initial sale price.");
@@ -159,87 +161,59 @@ export default function HomePage() {
           />
         </div>
       </div>
-      <div className="md:hidden block h-[100vh] bg-[#262626] relative w-full">
+      <div className="md:hidden block h-full bg-[#262626] relative w-full">
         <Carousel
-          className="h-[100vh] w-full flex justify-center items-center mx-auto"
+          className="h-full w-full flex justify-center items-center mx-auto"
           arrows
         >
-          <div className="flex h-full w-full flex-col gap-y-[25px] items-center justify-center">
-            <div
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={handleMouseLeave}
-              className={`w-[150px] ${
-                isHovered
-                  ? "text-[14px] text-black bg-white border-white"
-                  : "text-[28px] text-[#FCFC03] border-[#FCFC03]"
-              } cursor-pointer h-[150px] p-[14px] border border-[9px] flex items-center justify-center`}
-            >
-              <p className="text-center">{text}</p>
+          {totalCarouselData.map((data, idx) => (
+            <div className="flex h-full w-full flex-col items-center justify-end relative">
+              <div className="p-[30px] h-[30vh] w-[80vw] mx-auto">
+                <div className="flex justify-center items-center w-full h-full">
+                  <div
+                    className={`${
+                      data.isHovered
+                        ? "text-[14px] text-black bg-white border-white"
+                        : "text-[28px] text-[#FCFC03] border-[#FCFC03]"
+                    } cursor-pointer h-full m-auto p-[14px] border border-[9px] flex items-center justify-center`}
+                  >
+                    <p className="text-center">
+                      {data.isHovered ? data.textHovered : data.currentText}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div
+                onClick={() => {
+                  let currentCarouselData = totalCarouselData.find(
+                    (theData) => theData.id === data.id
+                  );
+                  let currentCarouselDataIndex = totalCarouselData.findIndex(
+                    (theData) => theData.id === data.id
+                  );
+                  if (currentCarouselData) {
+                    currentCarouselData.isHovered =
+                      !currentCarouselData?.isHovered;
+                    let tempData = totalCarouselData;
+                    tempData[currentCarouselDataIndex] = currentCarouselData;
+                    setTotalCarouselData(tempData);
+                  }
+                }}
+                className="md:hidden block absolute top-2/3 cursor-pointer left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-[#FFFFFF60] p-[20px]"
+              >
+                <p>click to view details</p>
+              </div>
+              <div className="flex justify-center h-full w-full items-end">
+                <Image
+                  src="/images/standing-capa.png"
+                  className="w-[80%] h-[80%]"
+                  width={150}
+                  height={150}
+                  alt="capa"
+                />
+              </div>
             </div>
-            <Image
-              src="/images/standing-capa.png"
-              width={150}
-              height={150}
-              alt="capa"
-            />
-          </div>
-          <div className="flex flex-col gap-y-[25px] items-center">
-            <div
-              onMouseEnter={handleMouseEnter2}
-              onMouseLeave={handleMouseLeave2}
-              className={`w-[150px] ${
-                isHovered2
-                  ? "text-[14px] text-black bg-white border-white"
-                  : "text-[28px] text-[#FCFC03] border-[#FCFC03]"
-              } cursor-pointer h-[150px] p-[14px] border border-[9px] flex items-center justify-center`}
-            >
-              <p className="text-center">{text2}</p>
-            </div>
-            <Image
-              src="/images/standing-capa.png"
-              width={150}
-              height={150}
-              alt="capa"
-            />
-          </div>
-          <div className="flex flex-col gap-y-[25px] items-center">
-            <div
-              onMouseEnter={handleMouseEnter3}
-              onMouseLeave={handleMouseLeave3}
-              className={`w-[150px] ${
-                isHovered3
-                  ? "text-[14px] text-black bg-white border-white"
-                  : "text-[28px] text-[#FCFC03] border-[#FCFC03]"
-              } cursor-pointer h-[150px] p-[14px] border border-[9px] flex items-center justify-center`}
-            >
-              <p className="text-center">{text3}</p>
-            </div>
-            <Image
-              src="/images/standing-capa.png"
-              width={150}
-              height={150}
-              alt="capa"
-            />
-          </div>
-          <div className="flex flex-col gap-y-[25px] items-center">
-            <div
-              onMouseEnter={handleMouseEnter4}
-              onMouseLeave={handleMouseLeave4}
-              className={`w-[150px] ${
-                isHovered4
-                  ? "text-[14px] text-black bg-white border-white"
-                  : "text-[28px] text-[#FCFC03] border-[#FCFC03]"
-              } cursor-pointer h-[150px] p-[14px] border border-[9px] flex items-center justify-center`}
-            >
-              <p className="text-center">{text4}</p>
-            </div>
-            <Image
-              src="/images/standing-capa.png"
-              width={150}
-              height={150}
-              alt="capa"
-            />
-          </div>
+          ))}
         </Carousel>
         <div style={{ zIndex: 100 }} className="w-full absolute bottom-0 z-100">
           <Image
