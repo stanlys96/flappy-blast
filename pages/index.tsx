@@ -166,8 +166,11 @@ export default function HomePage() {
           className="h-full w-full flex justify-center items-center mx-auto"
           arrows
         >
-          {totalCarouselData.map((data, idx) => (
-            <div className="flex h-full w-full flex-col items-center justify-end relative">
+          {totalCarouselData.map((data) => (
+            <div
+              key={data.id}
+              className="flex h-full w-full flex-col items-center justify-end relative"
+            >
               <div className="p-[30px] h-[30vh] w-[80vw] mx-auto">
                 <div className="flex justify-center items-center w-full h-full">
                   <div
