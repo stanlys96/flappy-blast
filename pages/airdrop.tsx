@@ -35,8 +35,8 @@ export default function AirdropPage() {
   return (
     <HeroLayout>
       <div
-        style={{ zIndex: 150 }}
-        className="flex justify-center items-center w-[80%] md:w-[60%] z-150 mx-auto relative pb-[100px]"
+        style={{ zIndex: 119 }}
+        className="flex justify-center items-center w-[80%] md:w-[60%] z-150 mx-auto relative h-[100vh]"
       >
         <div className="bg-white px-[30px] md:px-[60px] py-[30px] rounded-[22px] mt-[30px] w-full flex flex-col gap-y-[15px] md:pb-[100px]">
           {currentState === "index" && (

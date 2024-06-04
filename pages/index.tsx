@@ -86,15 +86,16 @@ export default function HomePage() {
     return () => clearInterval(interval);
   }, []);
   return (
-    <div>
+    <div className="w-[100vw] overflow-hidden">
       <HeroLayout>
-        <div className="flex flex-col h-full justify-center items-center">
-          <p className="text-[16px] md:text-left text-center md:text-[30px] mb-[20px] mt-[150px] md:mt-[30px] text-white">
+        <div className="flex flex-col h-[80vh] justify-center items-center">
+          <p className="text-[16px] md:text-left text-center md:text-[2rem] 2xl:text-[5rem] mb-[20px]  text-white">
             unruggable meme & infinite
           </p>
-          <div className="md:block hidden flex items-center">
+          <div className="md:block hidden flex items-center justify-center">
             <Image
-              width={600}
+              className="2xl:w-[954px] md:w-[600px]"
+              width={954}
               height={180}
               alt="flappy-blast"
               src="/images/flappy-blast.png"
@@ -108,7 +109,7 @@ export default function HomePage() {
               src="/images/flappy-blast.png"
             />
           </div>
-          <div className="md:block hidden relative mt-[25px] cursor-pointer">
+          {/* <div className="md:block hidden relative mt-[25px] cursor-pointer">
             <Image
               width={300}
               height={100}
@@ -123,14 +124,14 @@ export default function HomePage() {
               alt="button"
               src="/images/button.png"
             />
-          </div>
-          <div className="bg-[#FFFFFF] flex justify-center items-center mt-[30px] px-[20px] py-[12px]">
+          </div> */}
+          {/* <div className="bg-[#FFFFFF] flex justify-center items-center mt-[30px] px-[20px] py-[12px]">
             <p className="text-black md:text-[16px] text-[12px]">
               airdrop campaign ends in: {time.hours.toString().padStart(2, "0")}
               :{time.minutes.toString().padStart(2, "0")}:
               {time.seconds.toString().padStart(2, "0")}
             </p>
-          </div>
+          </div> */}
         </div>
       </HeroLayout>
       <div className="flex md:flex-row flex-col justify-center items-center h-[100vh] bg-black">
@@ -154,9 +155,11 @@ export default function HomePage() {
           </p>
         </div>
         <div className="flex flex-1 w-full justify-center items-center">
-          <img
+          <Image
+            className="w-1/2"
+            width={510}
+            height={686}
             src="/images/flappy-gif.gif"
-            className="w-[200px] md:w-[300px]"
             alt="Example GIF"
           />
         </div>
@@ -221,10 +224,10 @@ export default function HomePage() {
         <div style={{ zIndex: 100 }} className="w-full absolute bottom-0 z-100">
           <Image
             style={{ zIndex: 100 }}
-            className="z-100"
+            className="z-100 w-[100vw]"
             src="/images/ground.png"
             width={2232}
-            height={100}
+            height={223}
             alt="ground"
           />
         </div>
@@ -311,7 +314,7 @@ export default function HomePage() {
         <div style={{ zIndex: 100 }} className="w-full absolute bottom-0 z-100">
           <Image
             style={{ zIndex: 100 }}
-            className="z-100"
+            className="z-100 w-[100vw]"
             src="/images/ground.png"
             width={2232}
             height={100}

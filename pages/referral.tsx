@@ -23,8 +23,8 @@ export default function ReferralPage() {
   return (
     <HeroLayout>
       <div
-        style={{ zIndex: 150 }}
-        className="flex justify-center items-center w-[80%] md:w-[60%] z-150 mx-auto relative"
+        style={{ zIndex: 119 }}
+        className="flex justify-center items-center w-[80%] md:w-[60%] z-150 mx-auto relative h-[100vh]"
       >
         <div className="bg-white px-[15px] md:px-[60px] py-[15px] rounded-[22px] mt-[30px] w-full flex flex-col gap-y-[15px]">
           <div className="flex justify-start">

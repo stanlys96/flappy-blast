@@ -24,14 +24,14 @@ export const AbsoluteImagesComponent = () => {
   };
   const maxWidth = useScreenWidth();
   return (
-    <div>
+    <div className="overflow-hidden">
       <div
         style={{ zIndex: 100 }}
-        className="flex justify-center items-center z-100 w-full"
+        className="flex justify-center items-center z-100 w-full overflow-hidden"
       >
         <div
-          style={{ zIndex: 100 }}
-          className="bg-[#404833] md:p-0 p-[15px] md:px-[44px] md:py-[22px] mt-[30px] rounded-[71px] flex items-center gap-x-[20px]"
+          style={{ zIndex: 120 }}
+          className="bg-[#404833] fixed top-[2%] md:p-0 p-[15px] md:px-[44px] md:py-[22px] mt-[30px] rounded-[71px] flex items-center justify-center gap-x-[20px]"
         >
           <a
             onClick={() => router.push("/")}
@@ -62,70 +62,73 @@ export const AbsoluteImagesComponent = () => {
       <Image
         className="absolute top-[13%] left-[5%]"
         src="/images/cloud.png"
-        width={150}
-        height={150}
+        width={239}
+        height={122}
         alt="cloud"
       />
       <Image
         className="absolute top-[15%] right-[8%]"
         src="/images/cloud.png"
-        width={150}
-        height={150}
+        width={239}
+        height={122}
         alt="cloud"
       />
       <Image
         className="absolute top-[1%] left-[45%]"
         src="/images/cloud.png"
-        width={150}
-        height={150}
+        width={239}
+        height={122}
         alt="cloud"
       />
       <div style={{ zIndex: 100 }} className="w-full absolute bottom-0 z-100">
         <Image
           style={{ zIndex: 100 }}
-          className="z-100"
+          className="z-100 w-[100vw]"
           src="/images/ground.png"
-          width={maxWidth}
-          height={100}
+          width={1730}
+          height={223}
           alt="ground"
         />
       </div>
       <Image
-        className="absolute top-0"
+        className="absolute top-[-5%] w-[30%] md:w-[10%] left-[-15%] md:left-[-2%]"
         src="/images/top-bottom.png"
-        width={110}
-        height={110}
+        width={391}
+        height={248}
         alt="greenbin"
       />
       <Image
-        className="absolute bottom-0 md:top-1/2 z-50"
+        className="absolute bottom-0 w-[30%] md:top-1/2 z-50 md:w-[10%] left-[-15%] md:left-[-2%]"
         src="/images/top-top.png"
-        width={110}
-        height={110}
+        width={391}
+        height={248}
         alt="greenbin"
       />
       <Image
-        className="absolute top-0 right-0"
+        className="absolute top-[-5%] w-[30%] right-[-15%] md:right-[-2%] md:w-[10%]"
         src="/images/top-bottom-side.png"
-        width={110}
-        height={110}
+        width={391}
+        height={248}
         alt="greenbin"
       />
       <Image
-        className="absolute bottom-0 md:top-1/2 z-50 right-0"
+        className="absolute bottom-0 w-[30%] md:top-1/2 md:w-[10%] z-50 right-[-15%] md:right-[-2%]"
         src="/images/top-top-side.png"
-        width={110}
-        height={110}
+        width={391}
+        height={248}
         alt="greenbin"
       />
-      <BlastSVG
+      <Image
         style={{ zIndex: 100 }}
-        onClick={() => {}}
-        className="md:w-[250px] md:h-[74px] w-[150px] h-[50px] absolute bottom-[3%] z-100 md:top-[5%] z-50 right-0 md:right-[2%] cursor-pointer"
+        className="md:w-[250px] w-[150px] fixed bottom-[3%] z-100 md:top-[5%] z-50  right-[2%] cursor-pointer"
+        src="/images/blast.png"
+        width={300}
+        height={74}
+        alt="greenbin"
       />
       <div
         style={{ zIndex: 200 }}
-        className="md:flex hidden rounded-[14px] flex-col gap-y-[30px] justify-center items-center py-[24px] px-[18px] bg-black z-100 absolute top-1/2 left-[4%] transform -translate-x-1/2 -translate-y-1/2"
+        className="fixed md:flex hidden rounded-[14px] flex-col gap-y-[30px] justify-center items-center py-[24px] px-[18px] bg-black z-100 top-1/2 left-[4%] transform -translate-x-1/2 -translate-y-1/2"
       >
         <TwitterSvg className="cursor-pointer" />
         <DiscordSvg className="cursor-pointer" />
@@ -133,7 +136,7 @@ export const AbsoluteImagesComponent = () => {
       </div>
       <div
         style={{ zIndex: 200 }}
-        className="md:hidden flex rounded-[14px] flex-col gap-y-[30px] justify-center items-center px-[10px] py-[16px] bg-black z-100 absolute bottom-[-6%] left-[8%] transform -translate-x-1/2 -translate-y-1/2"
+        className="fixed md:hidden flex rounded-[14px] flex-col gap-y-[30px] justify-center items-center px-[10px] py-[16px] bg-black z-100 bottom-[-6%] left-[8%] transform -translate-x-1/2 -translate-y-1/2"
       >
         <TwitterSvg className="cursor-pointer h-[20px] w-[20px]" />
         <DiscordSvg className="cursor-pointer h-[20px] w-[20px]" />
