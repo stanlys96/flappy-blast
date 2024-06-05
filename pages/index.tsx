@@ -151,7 +151,7 @@ export default function HomePage() {
           </div> */}
         </div>
       </HeroLayout>
-      <div className="flex md:flex-row flex-col justify-center items-center h-[120vh] bg-black pt-[50px] md:pt-0">
+      <div className="flex md:flex-row flex-col justify-center items-center h-[120vh] 2xl:h-[100vh] bg-black pt-[50px] md:pt-0">
         <div className="flex flex-1 md:pl-[150px] justify-center items-center md:items-start flex-col gap-y-[20px]">
           <p className="flappy-birdy text-[#FCFC03] md:text-left text-center md:px-0 px-[20px] text-[80px] 2xl:text-[140px] md:text-[100px] leading-[75px]">
             homage to the legendary game
@@ -340,7 +340,7 @@ export default function HomePage() {
           />
         </div>
       </div>
-      <div className="h-[150vh] md:h-[100vh] flex flex-col justify-center items-center px-[150px] py-[150px] bg-black">
+      <div className="h-[150vh] md:h-[100vh] 2xl:h-[80vh] flex flex-col justify-center items-center px-[150px] py-[150px] bg-black">
         <div>
           <p className="pixel-caps text-[#FCFC03] text-[24px] md:text-[48px] 2xl:text-[5rem] text-center mb-[50px]">
             $FLAP TOKENOMICS
