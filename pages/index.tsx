@@ -159,6 +159,7 @@ export default function HomePage() {
             className="w-1/2"
             width={510}
             height={686}
+            unoptimized
             src="/images/flappy-gif.gif"
             alt="Example GIF"
           />
