@@ -88,8 +88,8 @@ export default function HomePage() {
   return (
     <div className="w-[100vw] overflow-hidden">
       <HeroLayout>
-        <div className="flex flex-col h-[80vh] justify-center items-center">
-          <p className="text-[16px] md:text-left text-center md:text-[2rem] 2xl:text-[5rem] mb-[20px]  text-white">
+        <div className="flex flex-col h-[100vh] md:h-[80vh] justify-center items-center">
+          <p className="text-[20px] md:text-left text-center md:text-[2rem] 2xl:text-[5rem] mb-[20px]  text-white">
             unruggable meme & infinite
           </p>
           <div className="md:block hidden flex items-center justify-center">
@@ -103,8 +103,8 @@ export default function HomePage() {
           </div>
           <div className="block md:hidden flex items-center">
             <Image
-              width={250}
-              height={180}
+              width={300}
+              height={70}
               alt="flappy-blast"
               src="/images/flappy-blast.png"
             />
@@ -134,15 +134,15 @@ export default function HomePage() {
           </div> */}
         </div>
       </HeroLayout>
-      <div className="flex md:flex-row flex-col justify-center items-center h-[100vh] bg-black">
+      <div className="flex md:flex-row flex-col justify-center items-center h-[120vh] bg-black pt-[50px] md:pt-0">
         <div className="flex flex-1 md:pl-[150px] justify-center items-center md:items-start flex-col gap-y-[20px]">
-          <p className="flappy-birdy text-[#FCFC03] md:text-left text-center md:px-0 px-[20px] text-[60px] md:text-[100px] leading-[75px]">
+          <p className="flappy-birdy text-[#FCFC03] md:text-left text-center md:px-0 px-[20px] text-[80px] md:text-[100px] leading-[75px]">
             homage to the legendary game
           </p>
-          <p className="inter md:text-left text-center text-white py-[10px] px-[21px] border border-[6px] text-[14px] md:text-[28px] w-fit">
+          <p className="inter md:text-left text-center text-white py-[10px] font-bold px-[21px] border border-[6px] text-[1rem] md:text-[28px] w-fit">
             how it&apos;s unruggable, are you sure?
           </p>
-          <p className="inter md:text-left text-center md:px-0 px-[20px] text-[14px] md:text-[18px] font-normal text-white">
+          <p className="inter md:text-left text-center md:px-0 px-[20px] text-[16px] md:text-[18px] font-normal text-white">
             The protocol keeps all its tokens on the blockchain to always
             protect their value. This creates a baseline value that never goes
             down. Over time, protocol fees are used to boost this baseline
@@ -156,7 +156,7 @@ export default function HomePage() {
         </div>
         <div className="flex flex-1 w-full justify-center items-center">
           <Image
-            className="w-1/2"
+            className="w-2/3 md:w-1/2 rounded-[12px]"
             width={510}
             height={686}
             unoptimized
@@ -206,16 +206,16 @@ export default function HomePage() {
                     setTotalCarouselData(tempData);
                   }
                 }}
-                className="md:hidden block absolute top-2/3 cursor-pointer left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-[#FFFFFF60] p-[20px]"
+                className="md:hidden block absolute top-2/3 cursor-pointer left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-[#FFFFFF60] p-[20px] gap-[10px]"
               >
-                <p>click to view details</p>
+                <p className="text-[14px]">click to view details</p>
               </div>
               <div className="flex justify-center h-full w-full items-end">
                 <Image
                   src="/images/standing-capa.png"
-                  className="w-[80%] h-[80%]"
-                  width={150}
-                  height={150}
+                  className="w-[55%] h-[55%]"
+                  width={222}
+                  height={349}
                   alt="capa"
                 />
               </div>
@@ -323,13 +323,13 @@ export default function HomePage() {
           />
         </div>
       </div>
-      <div className="h-[120vh] md:h-[100vh] flex flex-col justify-center items-center px-[150px] py-[150px] bg-black">
+      <div className="h-[150vh] md:h-[100vh] flex flex-col justify-center items-center px-[150px] py-[150px] bg-black">
         <div>
-          <p className="pixel-caps text-[#FCFC03] text-[24px] md:text-[48px] text-center">
+          <p className="pixel-caps text-[#FCFC03] text-[24px] md:text-[48px] text-center mb-[50px]">
             $FLAP TOKENOMICS
           </p>
-          <div className="w-full flex justify-center items-center md:hidden block mt-[25px]">
-            <FlappyCoinSvg className="h-[150px] w-[150px]" />
+          <div className="w-full flex justify-center items-center md:hidden block ">
+            <FlappyCoinSvg className="h-[300px] w-[300px]" />
           </div>
           <div className="flex md:flex-row flex-col justify-center items-center gap-x-[40px] mt-[25px] md:mt-0 md:my-[50px]">
             <div className="md:flex hidden flex-col items-end gap-y-[40px]">
@@ -368,7 +368,7 @@ export default function HomePage() {
               </div>
             </div>
           </div>
-          <div className="md:mt-0 mt-[25px] flex flex-col gap-y-[20px] border border-[12px] border-[#404833] w-fit mx-auto border-dashed justify-center items-center py-[36px]">
+          <div className="md:mt-0 mt-[50px] flex flex-col gap-y-[20px] border border-[12px] border-[#404833] w-fit mx-auto border-dashed-custom justify-center items-center py-[36px]">
             <p className="text-white">in collaboration with</p>
             <BladeSvg className="w-[300px]  md:w-[500px] h-[25px] md:h-[50px]" />
           </div>

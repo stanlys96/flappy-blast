@@ -519,3 +519,8 @@ label {
   position: absolute;
   z-index: -1;
 }
+
+.border-dashed-custom {
+  border-style: dashed;
+  border-width: 7px;
+}

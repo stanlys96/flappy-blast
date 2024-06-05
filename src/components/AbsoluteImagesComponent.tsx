@@ -23,6 +23,7 @@ export const AbsoluteImagesComponent = () => {
     return width;
   };
   const maxWidth = useScreenWidth();
+  console.log(maxWidth);
   return (
     <div className="overflow-hidden">
       <div
@@ -62,21 +63,21 @@ export const AbsoluteImagesComponent = () => {
       <Image
         className="absolute top-[13%] left-[5%]"
         src="/images/cloud.png"
-        width={239}
+        width={maxWidth < 500 ? 100 : 150}
         height={122}
         alt="cloud"
       />
       <Image
         className="absolute top-[15%] right-[8%]"
         src="/images/cloud.png"
-        width={239}
+        width={maxWidth < 500 ? 100 : 150}
         height={122}
         alt="cloud"
       />
       <Image
         className="absolute top-[1%] left-[45%]"
         src="/images/cloud.png"
-        width={239}
+        width={maxWidth < 500 ? 100 : 150}
         height={122}
         alt="cloud"
       />
