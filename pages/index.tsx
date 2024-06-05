@@ -85,6 +85,23 @@ export default function HomePage() {
 
     return () => clearInterval(interval);
   }, []);
+
+  const useScreenWidth = () => {
+    const [width, setWidth] = useState(0);
+
+    useEffect(() => {
+      const handleResize = () => setWidth(window.innerWidth);
+
+      handleResize(); // Set initial width
+      window.addEventListener("resize", handleResize);
+
+      return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
+    return width;
+  };
+  const maxWidth = useScreenWidth();
+
   return (
     <div className="w-[100vw] overflow-hidden">
       <HeroLayout>
@@ -136,13 +153,13 @@ export default function HomePage() {
       </HeroLayout>
       <div className="flex md:flex-row flex-col justify-center items-center h-[120vh] bg-black pt-[50px] md:pt-0">
         <div className="flex flex-1 md:pl-[150px] justify-center items-center md:items-start flex-col gap-y-[20px]">
-          <p className="flappy-birdy text-[#FCFC03] md:text-left text-center md:px-0 px-[20px] text-[80px] md:text-[100px] leading-[75px]">
+          <p className="flappy-birdy text-[#FCFC03] md:text-left text-center md:px-0 px-[20px] text-[80px] 2xl:text-[140px] md:text-[100px] leading-[75px]">
             homage to the legendary game
           </p>
-          <p className="inter md:text-left text-center text-white py-[10px] font-bold px-[21px] border border-[6px] text-[1rem] md:text-[28px] w-fit">
+          <p className="inter md:text-left text-center text-white py-[10px] font-bold px-[21px] border border-[6px] 2xl:my-[30px] 2xl:text-[4rem] text-[1rem] md:text-[28px] w-fit">
             how it&apos;s unruggable, are you sure?
           </p>
-          <p className="inter md:text-left text-center md:px-0 px-[20px] text-[16px] md:text-[18px] font-normal text-white">
+          <p className="inter md:text-left text-center md:px-0 px-[20px] text-[16px] md:text-[18px] 2xl:text-[2rem] font-normal text-white">
             The protocol keeps all its tokens on the blockchain to always
             protect their value. This creates a baseline value that never goes
             down. Over time, protocol fees are used to boost this baseline
@@ -243,13 +260,13 @@ export default function HomePage() {
                 isHovered
                   ? "text-[14px] text-black bg-white border-white"
                   : "text-[28px] text-[#FCFC03] border-[#FCFC03]"
-              } cursor-pointer h-[150px] p-[14px] border border-[9px] flex items-center justify-center`}
+              } cursor-pointer 2xl:w-[12vw] 2xl:h-[15vh] h-[150px] p-[14px] border border-[9px] flex items-center justify-center`}
             >
               <p className="text-center">{text}</p>
             </div>
             <Image
               src="/images/standing-capa.png"
-              width={200}
+              width={maxWidth > 1500 ? 350 : 200}
               height={200}
               alt="capa"
             />
@@ -262,13 +279,13 @@ export default function HomePage() {
                 isHovered2
                   ? "text-[14px] text-black bg-white border-white"
                   : "text-[28px] text-[#FCFC03] border-[#FCFC03]"
-              } cursor-pointer h-[150px] p-[14px] border border-[9px] flex items-center justify-center`}
+              } cursor-pointer 2xl:w-[12vw] 2xl:h-[15vh] h-[150px] p-[14px] border border-[9px] flex items-center justify-center`}
             >
               <p className="text-center">{text2}</p>
             </div>
             <Image
               src="/images/standing-capa.png"
-              width={200}
+              width={maxWidth > 1500 ? 350 : 200}
               height={200}
               alt="capa"
             />
@@ -281,13 +298,13 @@ export default function HomePage() {
                 isHovered3
                   ? "text-[14px] text-black bg-white border-white"
                   : "text-[28px] text-[#FCFC03] border-[#FCFC03]"
-              } cursor-pointer h-[150px] p-[14px] border border-[9px] flex items-center justify-center`}
+              } cursor-pointer 2xl:w-[12vw] 2xl:h-[15vh] h-[150px] p-[14px] border border-[9px] flex items-center justify-center`}
             >
               <p className="text-center">{text3}</p>
             </div>
             <Image
               src="/images/standing-capa.png"
-              width={200}
+              width={maxWidth > 1500 ? 350 : 200}
               height={200}
               alt="capa"
             />
@@ -300,13 +317,13 @@ export default function HomePage() {
                 isHovered4
                   ? "text-[14px] text-black bg-white border-white"
                   : "text-[28px] text-[#FCFC03] border-[#FCFC03]"
-              } cursor-pointer h-[150px] p-[14px] border border-[9px] flex items-center justify-center`}
+              } cursor-pointer 2xl:w-[12vw] 2xl:h-[15vh] h-[150px] p-[14px] border border-[9px] flex items-center justify-center`}
             >
               <p className="text-center">{text4}</p>
             </div>
             <Image
               src="/images/standing-capa.png"
-              width={200}
+              width={maxWidth > 1500 ? 350 : 200}
               height={200}
               alt="capa"
             />
@@ -325,20 +342,24 @@ export default function HomePage() {
       </div>
       <div className="h-[150vh] md:h-[100vh] flex flex-col justify-center items-center px-[150px] py-[150px] bg-black">
         <div>
-          <p className="pixel-caps text-[#FCFC03] text-[24px] md:text-[48px] text-center mb-[50px]">
+          <p className="pixel-caps text-[#FCFC03] text-[24px] md:text-[48px] 2xl:text-[5rem] text-center mb-[50px]">
             $FLAP TOKENOMICS
           </p>
           <div className="w-full flex justify-center items-center md:hidden block ">
-            <FlappyCoinSvg className="h-[300px] w-[300px]" />
+            <FlappyCoinSvg className="h-[300px] w-[300px] 2xl:h-[600px] 2xl:w-[600px]" />
           </div>
           <div className="flex md:flex-row flex-col justify-center items-center gap-x-[40px] mt-[25px] md:mt-0 md:my-[50px]">
             <div className="md:flex hidden flex-col items-end gap-y-[40px]">
               <div className="flex items-center gap-x-[30px]">
-                <p className="pixel-caps text-[#FCFC03]">95 % Liquidity</p>
+                <p className="pixel-caps text-[#FCFC03] 2xl:text-[2rem]">
+                  95 % Liquidity
+                </p>
                 <div className="w-[50px] h-[50px] bg-[#FCFC03] rounded-full" />
               </div>
               <div className="flex items-center gap-x-[30px]">
-                <p className="pixel-caps text-[#838383]">0 % Team</p>
+                <p className="pixel-caps text-[#838383] 2xl:text-[2rem]">
+                  0 % Team
+                </p>
                 <div className="w-[50px] h-[50px] bg-[#838383] rounded-full" />
               </div>
             </div>
@@ -346,31 +367,41 @@ export default function HomePage() {
             <div className="flex md:hidden block flex-col gap-y-[40px]">
               <div className="flex items-center gap-x-[30px]">
                 <div className="w-[50px] h-[50px] bg-[#FCFC03] rounded-full" />
-                <p className="pixel-caps text-[#FCFC03]">95 % Liquidity</p>
+                <p className="pixel-caps text-[#FCFC03] 2xl:text-[2rem]">
+                  95 % Liquidity
+                </p>
               </div>
               <div className="flex items-center gap-x-[30px]">
                 <div className="w-[50px] h-[50px] bg-[#FF00C7] rounded-full" />
-                <p className="pixel-caps text-[#FF00C7]">2.5 % REFERRAL</p>
+                <p className="pixel-caps text-[#FF00C7] 2xl:text-[2rem]">
+                  2.5 % REFERRAL
+                </p>
               </div>
             </div>
             <div className="flex mt-[40px] md:mt-0 md:flex-col-reverse flex-col gap-y-[40px]">
               <div className="flex items-center gap-x-[30px]">
                 <div className="w-[50px] h-[50px] bg-[#22A2FF] rounded-full" />
-                <p className="pixel-caps text-[#22A2FF]">2.5 % AIRDROP</p>
+                <p className="pixel-caps text-[#22A2FF] 2xl:text-[2rem]">
+                  2.5 % AIRDROP
+                </p>
               </div>
               <div className="md:hidden flex items-center gap-x-[30px]">
                 <div className="w-[50px] h-[50px] bg-[#838383] rounded-full" />
-                <p className="pixel-caps text-[#838383]">0 % Team</p>
+                <p className="pixel-caps text-[#838383] 2xl:text-[2rem]">
+                  0 % Team
+                </p>
               </div>
               <div className="hidden md:flex items-center gap-x-[30px]">
                 <div className="w-[50px] h-[50px] bg-[#FF00C7] rounded-full" />
-                <p className="pixel-caps text-[#FF00C7]">2.5 % REFERRAL</p>
+                <p className="pixel-caps text-[#FF00C7] 2xl:text-[2rem]">
+                  2.5 % REFERRAL
+                </p>
               </div>
             </div>
           </div>
           <div className="md:mt-0 mt-[50px] flex flex-col gap-y-[20px] border border-[12px] border-[#404833] w-fit mx-auto border-dashed-custom justify-center items-center py-[36px]">
-            <p className="text-white">in collaboration with</p>
-            <BladeSvg className="w-[300px]  md:w-[500px] h-[25px] md:h-[50px]" />
+            <p className="text-white 2xl:text-[2rem]">in collaboration with</p>
+            <BladeSvg className="w-[300px] md:w-[500px] h-[25px] md:h-[50px]" />
           </div>
         </div>
       </div>

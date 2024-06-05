@@ -63,21 +63,21 @@ export const AbsoluteImagesComponent = () => {
       <Image
         className="absolute top-[13%] left-[5%]"
         src="/images/cloud.png"
-        width={maxWidth < 500 ? 100 : 150}
+        width={maxWidth < 500 ? 100 : maxWidth > 1500 ? 300 : 150}
         height={122}
         alt="cloud"
       />
       <Image
         className="absolute top-[15%] right-[8%]"
         src="/images/cloud.png"
-        width={maxWidth < 500 ? 100 : 150}
+        width={maxWidth < 500 ? 100 : maxWidth > 1500 ? 300 : 150}
         height={122}
         alt="cloud"
       />
       <Image
         className="absolute top-[1%] left-[45%]"
         src="/images/cloud.png"
-        width={maxWidth < 500 ? 100 : 150}
+        width={maxWidth < 500 ? 100 : maxWidth > 1500 ? 300 : 150}
         height={122}
         alt="cloud"
       />
