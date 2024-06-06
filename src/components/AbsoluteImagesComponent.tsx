@@ -131,7 +131,7 @@ export const AbsoluteImagesComponent = () => {
         alt="greenbin"
       />
       <Image
-        className="absolute bottom-[15%] md:bottom-[12%] w-[30%] z-50 md:w-[10%] left-[-15%] md:left-[-2%]"
+        className="absolute bottom-[20%] md:bottom-[12%] w-[30%] z-50 md:w-[10%] left-[-15%] md:left-[-2%]"
         src="/images/top-top.png"
         width={391}
         height={248}
@@ -145,7 +145,7 @@ export const AbsoluteImagesComponent = () => {
         alt="greenbin"
       />
       <Image
-        className="absolute bottom-[15%] w-[30%] md:bottom-[12%] md:w-[10%] z-50 right-[-15%] md:right-[-2%]"
+        className="absolute bottom-[20%] w-[30%] md:bottom-[12%] md:w-[10%] z-50 right-[-15%] md:right-[-2%]"
         src="/images/top-top-side.png"
         width={391}
         height={248}
