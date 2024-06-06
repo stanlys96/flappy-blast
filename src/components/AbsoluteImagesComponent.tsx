@@ -23,7 +23,7 @@ export const AbsoluteImagesComponent = () => {
     return width;
   };
   const maxWidth = useScreenWidth();
-  console.log(maxWidth);
+
   return (
     <div className="overflow-hidden">
       <div
@@ -36,24 +36,30 @@ export const AbsoluteImagesComponent = () => {
         >
           <a
             onClick={() => router.push("/")}
-            className={`pixel-caps text-[12px] md:text-[16px] 2xl:text-[2rem] cursor-pointer ${
-              router.pathname === "/" ? "text-[#FCFC03]" : "text-white"
+            className={`pixel-caps text-[12px] hover:text-[#B0CD80] md:text-[16px] 2xl:text-[2rem] cursor-pointer ${
+              router.pathname === "/"
+                ? "text-[#FCFC03] hover:text-[#FCFC03]"
+                : "text-white"
             }`}
           >
             HOME
           </a>
           <a
             onClick={() => router.push("/airdrop")}
-            className={`pixel-caps text-[12px] md:text-[16px] 2xl:text-[2rem] cursor-pointer ${
-              router.pathname === "/airdrop" ? "text-[#FCFC03]" : "text-white"
+            className={`pixel-caps text-[12px] hover:text-[#B0CD80] md:text-[16px] 2xl:text-[2rem] cursor-pointer ${
+              router.pathname === "/airdrop"
+                ? "text-[#FCFC03] hover:text-[#FCFC03]"
+                : "text-white"
             }`}
           >
             AIRDROP
           </a>
           <a
             onClick={() => router.push("/referral")}
-            className={`pixel-caps text-[12px] md:text-[16px] 2xl:text-[2rem] cursor-pointer ${
-              router.pathname === "/referral" ? "text-[#FCFC03]" : "text-white"
+            className={`pixel-caps text-[12px] hover:text-[#B0CD80] md:text-[16px] 2xl:text-[2rem] cursor-pointer ${
+              router.pathname === "/referral"
+                ? "text-[#FCFC03] hover:text-[#FCFC03]"
+                : "text-white"
             }`}
           >
             REFERRAL
@@ -121,7 +127,7 @@ export const AbsoluteImagesComponent = () => {
       />
       <Image
         style={{ zIndex: 119 }}
-        className="md:w-[250px] w-[150px] 2xl:w-[500px] fixed bottom-[3%] z-100 md:top-[5%] z-50  right-[2%] cursor-pointer"
+        className="md:w-[250px] w-[150px] 2xl:w-[400px] fixed bottom-[3%] z-100 md:top-[5%] z-50  right-[2%] cursor-pointer"
         src="/images/blast.png"
         width={300}
         height={74}
@@ -131,7 +137,7 @@ export const AbsoluteImagesComponent = () => {
         style={{ zIndex: 200 }}
         className="fixed md:flex hidden rounded-[14px] 2xl:rounded-[40px] flex-col gap-y-[30px] justify-center items-center py-[24px] px-[18px] 2xl:px-[36px] 2xl:py-[48px] bg-black z-100 top-1/2 left-[4%] transform -translate-x-1/2 -translate-y-1/2"
       >
-        <TwitterSvg className="cursor-pointer 2xl:h-[80px] 2xl:w-[80px]" />
+        <TwitterSvg className="cursor-pointer 2xl:h-[80px] 2xl:w-[80px] hover:text-[#FCFC03]" />
         <DiscordSvg className="cursor-pointer 2xl:h-[80px] 2xl:w-[80px]" />
         <TelegramSvg className="cursor-pointer 2xl:h-[80px] 2xl:w-[80px]" />
       </div>

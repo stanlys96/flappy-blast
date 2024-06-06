@@ -7,7 +7,7 @@ interface Props {
 
 export const DiscordSvg = ({ className, onClick }: Props) => {
   return (
-    <div className={className} onClick={onClick}>
+    <div className={`svg-container ${className}`} onClick={onClick}>
       <svg
         className={className}
         width="36"

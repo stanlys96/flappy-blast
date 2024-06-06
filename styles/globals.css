@@ -524,3 +524,7 @@ label {
   border-style: dashed;
   border-width: 7px;
 }
+
+.svg-container:hover svg path {
+  fill: #fcfc03; /* Replace with your desired hover color */
+}

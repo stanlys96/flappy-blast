@@ -7,13 +7,13 @@ interface Props {
 
 export const TwitterSvg = ({ className, onClick }: Props) => {
   return (
-    <div className={className} onClick={onClick}>
+    <div className={`svg-container ${className}`} onClick={onClick}>
       <svg
         className={className}
         width="36"
         height="36"
         viewBox="0 0 36 36"
-        fill="none"
+        fill="#FCFC03"
         xmlns="http://www.w3.org/2000/svg"
       >
         <path
