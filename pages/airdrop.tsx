@@ -38,8 +38,8 @@ export default function AirdropPage() {
         style={{ zIndex: 119 }}
         className="flex justify-center items-center w-[80%] md:w-[60%] z-150 mx-auto relative h-[100vh]"
       >
-        <div className="bg-white px-[30px] md:px-[60px] py-[30px] rounded-[22px] mt-[30px] w-full flex flex-col gap-y-[15px] md:pb-[100px]">
-          {currentState === "index" && (
+        <div className="bg-white px-[30px] justify-center items-center md:px-[60px] py-[100px] rounded-[22px] mt-[30px] w-full flex flex-col gap-y-[15px]">
+          {/* {currentState === "index" && (
             <div>
               <div className="flex flex-col gap-y-[20px]">
                 <div className="flex gap-x-[10px] items-center">
@@ -169,7 +169,8 @@ export default function AirdropPage() {
                 )}
               </div>
             </div>
-          )}
+          )} */}
+          <p>Coming soon :)</p>
         </div>
       </div>
     </HeroLayout>

@@ -26,8 +26,9 @@ export default function ReferralPage() {
         style={{ zIndex: 119 }}
         className="flex justify-center items-center w-[80%] md:w-[60%] z-150 mx-auto relative h-[100vh]"
       >
-        <div className="bg-white px-[15px] md:px-[60px] py-[15px] rounded-[22px] mt-[30px] w-full flex flex-col gap-y-[15px]">
-          <div className="flex justify-start">
+        <div className="bg-white px-[15px] justify-center items-center md:px-[60px] py-[100px] rounded-[22px] mt-[30px] w-full flex flex-col gap-y-[15px]">
+          <p>Coming soon :)</p>
+          {/* <div className="flex justify-start">
             {!address ? (
               <div
                 onClick={() => open()}
@@ -90,7 +91,7 @@ export default function ReferralPage() {
             <p className="md:text-left text-center font-bold md:text-[16px] text-[12px]">
               3. referral campaign will end after sale ends
             </p>
-          </div>
+          </div> */}
         </div>
       </div>
     </HeroLayout>
