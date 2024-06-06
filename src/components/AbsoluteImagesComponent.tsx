@@ -32,11 +32,11 @@ export const AbsoluteImagesComponent = () => {
       >
         <div
           style={{ zIndex: 120 }}
-          className="bg-[#404833] fixed top-[2%] md:p-0 p-[15px] 2xl:p-[40px] md:px-[44px] md:py-[22px] mt-[30px] rounded-[71px] flex items-center justify-center gap-x-[20px] 2xl:gap-x-[40px]"
+          className="bg-[#404833] fixed top-[2%] md:p-0 p-[15px] desktop:p-[30px] large-desktop:p-[40px] md:px-[44px] md:py-[22px] mt-[30px] rounded-[71px] flex items-center justify-center gap-x-[20px] large-desktop:gap-x-[40px]"
         >
           <a
             onClick={() => router.push("/")}
-            className={`pixel-caps text-[12px] hover:text-[#B0CD80] md:text-[16px] 2xl:text-[28px] cursor-pointer ${
+            className={`pixel-caps text-[12px] hover:text-[#B0CD80] md:text-[16px] desktop:text-[20px] large-desktop:text-[28px] cursor-pointer ${
               router.pathname === "/"
                 ? "text-[#FCFC03] hover:text-[#FCFC03]"
                 : "text-white"
@@ -46,7 +46,7 @@ export const AbsoluteImagesComponent = () => {
           </a>
           <a
             onClick={() => router.push("/airdrop")}
-            className={`pixel-caps text-[12px] hover:text-[#B0CD80] md:text-[16px] 2xl:text-[28px] cursor-pointer ${
+            className={`pixel-caps text-[12px] hover:text-[#B0CD80] md:text-[16px] desktop:text-[20px] large-desktop:text-[28px] cursor-pointer ${
               router.pathname === "/airdrop"
                 ? "text-[#FCFC03] hover:text-[#FCFC03]"
                 : "text-white"
@@ -56,7 +56,7 @@ export const AbsoluteImagesComponent = () => {
           </a>
           <a
             onClick={() => router.push("/referral")}
-            className={`pixel-caps text-[12px] hover:text-[#B0CD80] md:text-[16px] 2xl:text-[28px] cursor-pointer ${
+            className={`pixel-caps text-[12px] hover:text-[#B0CD80] md:text-[16px] desktop:text-[20px] large-desktop:text-[28px] cursor-pointer ${
               router.pathname === "/referral"
                 ? "text-[#FCFC03] hover:text-[#FCFC03]"
                 : "text-white"
@@ -98,28 +98,28 @@ export const AbsoluteImagesComponent = () => {
         />
       </div>
       <Image
-        className="absolute top-[-5%] w-[30%] md:w-[10%] left-[-15%] md:left-[-2%]"
+        className="absolute top-[-5%] desktop:top-0 large-desktop:top-[-5%] w-[30%] md:w-[10%] left-[-15%] md:left-[-2%]"
         src="/images/top-bottom.png"
         width={391}
         height={248}
         alt="greenbin"
       />
       <Image
-        className="absolute bottom-0 w-[30%] md:top-1/2 z-50 md:w-[10%] left-[-15%] md:left-[-2%]"
+        className="absolute bottom-0 md:bottom-[12%] w-[30%] z-50 md:w-[10%] left-[-15%] md:left-[-2%]"
         src="/images/top-top.png"
         width={391}
         height={248}
         alt="greenbin"
       />
       <Image
-        className="absolute top-[-5%] w-[30%] right-[-15%] md:right-[-2%] md:w-[10%]"
+        className="absolute top-[-5%] desktop:top-0 large-desktop:top-[-5%] w-[30%] right-[-15%] md:right-[-2%] md:w-[10%]"
         src="/images/top-bottom-side.png"
         width={391}
         height={248}
         alt="greenbin"
       />
       <Image
-        className="absolute bottom-0 w-[30%] md:top-1/2 md:w-[10%] z-50 right-[-15%] md:right-[-2%]"
+        className="absolute bottom-0 w-[30%] md:bottom-[12%] md:w-[10%] z-50 right-[-15%] md:right-[-2%]"
         src="/images/top-top-side.png"
         width={391}
         height={248}
@@ -127,7 +127,7 @@ export const AbsoluteImagesComponent = () => {
       />
       <Image
         style={{ zIndex: 119 }}
-        className="md:w-[250px] w-[150px] 2xl:w-[300px] fixed bottom-[3%] z-100 md:top-[5%] z-50  right-[2%] cursor-pointer"
+        className="md:w-[250px] w-[150px] large-desktop:w-[300px] fixed bottom-[3%] z-100 md:top-[5%] z-50  right-[2%] cursor-pointer"
         src="/images/blast.png"
         width={300}
         height={74}
@@ -135,11 +135,11 @@ export const AbsoluteImagesComponent = () => {
       />
       <div
         style={{ zIndex: 200 }}
-        className="fixed md:flex hidden rounded-[14px] 2xl:rounded-[40px] 2xl:gap-y-[45px] flex-col gap-y-[30px] justify-center items-center py-[24px] px-[18px] 2xl:px-[36px] 2xl:py-[48px] bg-black z-100 top-1/2 left-[4%] transform -translate-x-1/2 -translate-y-1/2"
+        className="fixed md:flex hidden rounded-[14px] large-desktop:rounded-[40px] large-desktop:gap-y-[45px] flex-col gap-y-[30px] justify-center items-center py-[24px] px-[18px] large-desktop:px-[36px] large-desktop:py-[48px] bg-black z-100 top-1/2 left-[4%] transform -translate-x-1/2 -translate-y-1/2"
       >
-        <TwitterSvg className="cursor-pointer 2xl:h-[60px] 2xl:w-[60px] hover:text-[#FCFC03]" />
-        <DiscordSvg className="cursor-pointer 2xl:h-[60px] 2xl:w-[60px]" />
-        <TelegramSvg className="cursor-pointer 2xl:h-[60px] 2xl:w-[60px]" />
+        <TwitterSvg className="cursor-pointer large-desktop:h-[60px] large-desktop:w-[60px]" />
+        <DiscordSvg className="cursor-pointer large-desktop:h-[60px] large-desktop:w-[60px]" />
+        <TelegramSvg className="cursor-pointer large-desktop:h-[60px] large-desktop:w-[60px]" />
       </div>
       <div
         style={{ zIndex: 200 }}
