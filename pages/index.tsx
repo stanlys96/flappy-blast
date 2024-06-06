@@ -343,7 +343,7 @@ export default function HomePage() {
           )}
         </div>
       </div>
-      <div className="h-[125vh] md:h-[100vh] desktop:h-[100vh] large-desktop:h-[80vh] flex flex-col justify-center items-center px-[150px] py-[150px] bg-black">
+      <div className="h-[140vh] md:h-[100vh] desktop:h-[100vh] large-desktop:h-[80vh] flex flex-col justify-center items-center px-[150px] bg-black">
         <div>
           <p className="pixel-caps text-[#FCFC03] text-[24px] md:text-[48px] desktop:text-[4rem] large-desktop:text-[5rem] text-center mb-[50px]">
             $FLAP TOKENOMICS
