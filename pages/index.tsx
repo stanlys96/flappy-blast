@@ -320,7 +320,7 @@ export default function HomePage() {
                 isHovered4
                   ? "text-[20px] text-black bg-white border-white"
                   : "text-[28px] text-[#FCFC03] border-[#FCFC03]"
-              } cursor-pointer large-desktop:w-[12vw] transition duration-500 z-50 large-desktop:h-[15vh] h-[150px] p-[14px] border border-[9px] flex items-center justify-center`}
+              } cursor-pointer transition duration-500 large-desktop:w-[12vw] large-desktop:h-[15vh] h-[150px] p-[14px] border border-[9px] flex items-center justify-center`}
             >
               <p className="text-center font-bold">{text4}</p>
             </div>
@@ -406,7 +406,9 @@ export default function HomePage() {
             <p className="text-white text-[14px] desktop:text-[2rem] large-desktop:text-[2rem]">
               in collaboration with
             </p>
-            <BladeSvg className="h-[25px] md:h-[50px] w-fit" />
+            <a href="https://app.bladeswap.xyz/swap" target="_blank">
+              <BladeSvg className="h-[25px] cursor-pointer md:h-[50px] w-fit" />
+            </a>
           </div>
         </div>
       </div>

@@ -151,25 +151,39 @@ export const AbsoluteImagesComponent = () => {
         height={248}
         alt="greenbin"
       />
-      <BlastSVG
-        style={{ zIndex: 119 }}
-        className="md:w-[250px] w-[150px] large-desktop:w-[300px] fixed bottom-[3%] z-100 md:top-[5%] z-50  right-[2%] cursor-pointer"
-      />
+      <a href="https://blast.io/en" target="_blank">
+        <BlastSVG
+          style={{ zIndex: 119 }}
+          className="md:w-[250px] w-[150px] large-desktop:w-[300px] fixed bottom-[3%] z-100 md:top-[5%] z-50  right-[2%] cursor-pointer"
+        />
+      </a>
       <div
         style={{ zIndex: 200 }}
         className="fixed md:flex hidden rounded-[14px] large-desktop:rounded-[40px] large-desktop:gap-y-[45px] flex-col gap-y-[30px] justify-center items-center py-[24px] px-[18px] large-desktop:px-[36px] large-desktop:py-[48px] bg-black z-100 top-1/2 left-[4%] transform -translate-x-1/2 -translate-y-1/2"
       >
-        <TwitterSvg className="cursor-pointer large-desktop:h-[60px] large-desktop:w-[60px]" />
-        <DiscordSvg className="cursor-pointer large-desktop:h-[60px] large-desktop:w-[60px]" />
-        <TelegramSvg className="cursor-pointer large-desktop:h-[60px] large-desktop:w-[60px]" />
+        <a href="https://x.com/flappyblast" target="_blank">
+          <TwitterSvg className="cursor-pointer large-desktop:h-[60px] large-desktop:w-[60px]" />
+        </a>
+        <a href="https://discord.gg/qNcNxfVmVA" target="_blank">
+          <DiscordSvg className="cursor-pointer large-desktop:h-[60px] large-desktop:w-[60px]" />
+        </a>
+        <a href="https://t.me/flappyblast" target="_blank">
+          <TelegramSvg className="cursor-pointer large-desktop:h-[60px] large-desktop:w-[60px]" />
+        </a>
       </div>
       <div
         style={{ zIndex: 200 }}
         className="fixed md:hidden flex rounded-[14px] flex-col gap-y-[30px] justify-center items-center px-[10px] py-[16px] bg-black z-100 bottom-[-6%] left-[8%] transform -translate-x-1/2 -translate-y-1/2"
       >
-        <TwitterSvg className="cursor-pointer h-[20px] w-[20px]" />
-        <DiscordSvg className="cursor-pointer h-[20px] w-[20px]" />
-        <TelegramSvg className="cursor-pointer h-[20px] w-[20px]" />
+        <a href="https://x.com/flappyblast" target="_blank">
+          <TwitterSvg className="cursor-pointer h-[20px] w-[20px]" />
+        </a>
+        <a href="https://discord.gg/qNcNxfVmVA" target="_blank">
+          <DiscordSvg className="cursor-pointer h-[20px] w-[20px]" />
+        </a>
+        <a href="https://t.me/flappyblast" target="_blank">
+          <TelegramSvg className="cursor-pointer h-[20px] w-[20px]" />
+        </a>
       </div>
     </div>
   );
