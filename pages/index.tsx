@@ -258,11 +258,11 @@ export default function HomePage() {
               onMouseLeave={handleMouseLeave}
               className={`w-[240px] ${
                 isHovered
-                  ? "text-[14px] text-black bg-white border-white"
+                  ? "text-[18px] text-black bg-white border-white"
                   : "text-[28px] text-[#FCFC03] border-[#FCFC03]"
               } cursor-pointer 2xl:w-[12vw] 2xl:h-[15vh] h-[150px] p-[14px] border border-[9px] flex items-center justify-center`}
             >
-              <p className="text-center">{text}</p>
+              <p className="text-center font-bold">{text}</p>
             </div>
             <Image
               src="/images/standing-capa.png"
@@ -277,11 +277,11 @@ export default function HomePage() {
               onMouseLeave={handleMouseLeave2}
               className={`w-[240px] ${
                 isHovered2
-                  ? "text-[14px] text-black bg-white border-white"
+                  ? "text-[18px] text-black bg-white border-white"
                   : "text-[28px] text-[#FCFC03] border-[#FCFC03]"
               } cursor-pointer 2xl:w-[12vw] 2xl:h-[15vh] h-[150px] p-[14px] border border-[9px] flex items-center justify-center`}
             >
-              <p className="text-center">{text2}</p>
+              <p className="text-center font-bold">{text2}</p>
             </div>
             <Image
               src="/images/standing-capa.png"
@@ -296,11 +296,11 @@ export default function HomePage() {
               onMouseLeave={handleMouseLeave3}
               className={`w-[240px] ${
                 isHovered3
-                  ? "text-[14px] text-black bg-white border-white"
+                  ? "text-[20px] text-black bg-white border-white"
                   : "text-[28px] text-[#FCFC03] border-[#FCFC03]"
               } cursor-pointer 2xl:w-[12vw] 2xl:h-[15vh] h-[150px] p-[14px] border border-[9px] flex items-center justify-center`}
             >
-              <p className="text-center">{text3}</p>
+              <p className="text-center font-bold">{text3}</p>
             </div>
             <Image
               src="/images/standing-capa.png"
@@ -315,11 +315,11 @@ export default function HomePage() {
               onMouseLeave={handleMouseLeave4}
               className={`w-[240px] ${
                 isHovered4
-                  ? "text-[14px] text-black bg-white border-white"
+                  ? "text-[20px] text-black bg-white border-white"
                   : "text-[28px] text-[#FCFC03] border-[#FCFC03]"
               } cursor-pointer 2xl:w-[12vw] 2xl:h-[15vh] h-[150px] p-[14px] border border-[9px] flex items-center justify-center`}
             >
-              <p className="text-center">{text4}</p>
+              <p className="text-center font-bold">{text4}</p>
             </div>
             <Image
               src="/images/standing-capa.png"
