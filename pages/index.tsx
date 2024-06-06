@@ -155,7 +155,7 @@ export default function HomePage() {
           </div> */}
         </div>
       </HeroLayout>
-      <div className="flex md:flex-row flex-col py-[50px] justify-center items-center h-[105vh] desktop:h-[80vh] large-desktop:h-[100vh] bg-black md:pt-[50px] md:pt-0">
+      <div className="flex md:flex-row flex-col py-[50px] justify-center items-center h-[110vh] desktop:h-[80vh] large-desktop:h-[100vh] bg-black md:pt-[50px] md:pt-0">
         <div className="flex flex-1 md:pl-[150px] justify-center items-center md:items-start flex-col gap-y-[20px] desktop:gap-y-[40px]">
           <p className="flappy-birdy text-[#FCFC03] md:text-left text-center md:px-0 px-[20px] text-[80px] desktop:text-[120px] large-desktop:text-[140px] md:text-[100px] leading-[75px]">
             homage to the legendary game
