@@ -8,6 +8,7 @@ import { CarouselData } from "@/src/helper/helper";
 import { GroundLargeSvg } from "@/src/components/GroundLargeSvg";
 import { GroundSvg } from "@/src/components/GroundSvg";
 import { GroundMobileSvg } from "@/src/components/GroundMobileSvg";
+import { GroundCarouselSvg } from "@/src/components/GroundCarouselSvg";
 
 export default function HomePage() {
   const [time, setTime] = useState({ hours: 0, minutes: 0, seconds: 0 });
@@ -154,7 +155,7 @@ export default function HomePage() {
           </div> */}
         </div>
       </HeroLayout>
-      <div className="flex md:flex-row flex-col justify-center items-center h-[120vh] desktop:h-[80vh] large-desktop:h-[100vh] bg-black pt-[50px] md:pt-0">
+      <div className="flex md:flex-row flex-col justify-center items-center h-[100vh] desktop:h-[80vh] large-desktop:h-[100vh] bg-black md:pt-[50px] md:pt-0">
         <div className="flex flex-1 md:pl-[150px] justify-center items-center md:items-start flex-col gap-y-[20px] desktop:gap-y-[40px]">
           <p className="flappy-birdy text-[#FCFC03] md:text-left text-center md:px-0 px-[20px] text-[80px] desktop:text-[120px] large-desktop:text-[140px] md:text-[100px] leading-[75px]">
             homage to the legendary game
@@ -195,21 +196,6 @@ export default function HomePage() {
               key={data.id}
               className="flex h-full w-full flex-col items-center justify-end relative"
             >
-              <div className="p-[30px] h-[30vh] w-[80vw] mx-auto">
-                <div className="flex justify-center items-center w-full h-full">
-                  <div
-                    className={`${
-                      data.isHovered
-                        ? "text-[14px] text-black bg-white border-white"
-                        : "text-[28px] text-[#FCFC03] border-[#FCFC03]"
-                    } cursor-pointer h-full m-auto p-[14px] border border-[9px] flex items-center justify-center`}
-                  >
-                    <p className="text-center">
-                      {data.isHovered ? data.textHovered : data.currentText}
-                    </p>
-                  </div>
-                </div>
-              </div>
               <div
                 onClick={() => {
                   let currentCarouselData = totalCarouselData.find(
@@ -226,9 +212,21 @@ export default function HomePage() {
                     setTotalCarouselData(tempData);
                   }
                 }}
-                className="md:hidden block absolute top-2/3 cursor-pointer left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-[#FFFFFF60] p-[20px] gap-[10px]"
+                className="p-[30px] h-[30vh] w-[80vw] mx-auto"
               >
-                <p className="text-[14px]">click to view details</p>
+                <div className="flex justify-center items-center w-full h-full">
+                  <div
+                    className={`${
+                      data.isHovered
+                        ? "text-[14px] text-black bg-white border-white"
+                        : "text-[28px] text-[#FCFC03] border-[#FCFC03]"
+                    } cursor-pointer h-full m-auto p-[14px] border border-[9px] flex items-center justify-center`}
+                  >
+                    <p className="text-center">
+                      {data.isHovered ? data.textHovered : data.currentText}
+                    </p>
+                  </div>
+                </div>
               </div>
               <div className="flex justify-center h-full w-full items-end">
                 <Image
@@ -244,7 +242,7 @@ export default function HomePage() {
         </Carousel>
         <div style={{ zIndex: 100 }} className="w-full absolute bottom-0 z-100">
           {maxWidth <= 430 ? (
-            <GroundMobileSvg className="z-100" />
+            <GroundCarouselSvg className="z-100" />
           ) : maxWidth > 1728 ? (
             <GroundLargeSvg className="z-100" />
           ) : (
@@ -345,7 +343,7 @@ export default function HomePage() {
           )}
         </div>
       </div>
-      <div className="h-[150vh] md:h-[100vh] desktop:h-[100vh] large-desktop:h-[80vh] flex flex-col justify-center items-center px-[150px] py-[150px] bg-black">
+      <div className="h-[125vh] md:h-[100vh] desktop:h-[100vh] large-desktop:h-[80vh] flex flex-col justify-center items-center px-[150px] py-[150px] bg-black">
         <div>
           <p className="pixel-caps text-[#FCFC03] text-[24px] md:text-[48px] desktop:text-[4rem] large-desktop:text-[5rem] text-center mb-[50px]">
             $FLAP TOKENOMICS
@@ -405,7 +403,7 @@ export default function HomePage() {
             </div>
           </div>
           <div className="md:mt-0 mt-[50px] flex flex-col p-[30px] gap-y-[20px] border border-[12px] border-[#404833] w-fit mx-auto border-dashed-custom justify-center items-center py-[36px]">
-            <p className="text-white desktop:text-[2rem] large-desktop:text-[2rem]">
+            <p className="text-white text-[14px] desktop:text-[2rem] large-desktop:text-[2rem]">
               in collaboration with
             </p>
             <BladeSvg className="h-[25px] md:h-[50px] w-fit" />
