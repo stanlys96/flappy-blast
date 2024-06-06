@@ -5,6 +5,9 @@ import { BladeSvg } from "@/src/components/BladeSvg";
 import { HeroLayout } from "@/src/layouts/HeroLayout";
 import { Carousel } from "antd";
 import { CarouselData } from "@/src/helper/helper";
+import { GroundLargeSvg } from "@/src/components/GroundLargeSvg";
+import { GroundSvg } from "@/src/components/GroundSvg";
+import { GroundMobileSvg } from "@/src/components/GroundMobileSvg";
 
 export default function HomePage() {
   const [time, setTime] = useState({ hours: 0, minutes: 0, seconds: 0 });
@@ -105,7 +108,7 @@ export default function HomePage() {
   return (
     <div className="w-[100vw] overflow-hidden">
       <HeroLayout>
-        <div className="flex flex-col h-[100vh] md:h-[80vh] justify-center items-center">
+        <div className="flex flex-col h-[100vh] md:h-[80vh] desktop:h-[100vh] large-desktop:h-[80vh] justify-center items-center">
           <p className="text-[20px] md:text-left text-center md:text-[2rem] desktop:text-[4rem] large-desktop:text-[5rem] mb-[20px]  text-white">
             unruggable meme & infinite
           </p>
@@ -240,17 +243,16 @@ export default function HomePage() {
           ))}
         </Carousel>
         <div style={{ zIndex: 100 }} className="w-full absolute bottom-0 z-100">
-          <Image
-            style={{ zIndex: 100 }}
-            className="z-100 w-[100vw]"
-            src="/images/ground.png"
-            width={2232}
-            height={223}
-            alt="ground"
-          />
+          {maxWidth <= 430 ? (
+            <GroundMobileSvg className="z-100" />
+          ) : maxWidth > 1728 ? (
+            <GroundLargeSvg className="z-100" />
+          ) : (
+            <GroundSvg className="z-100" />
+          )}
         </div>
       </div>
-      <div className="md:block hidden h-[100vh] desktop:h-[80vh] large-desktop:h-[100vh] bg-[#262626] relative">
+      <div className="md:block hidden h-[100vh] desktop:h-[100vh] large-desktop:h-[100vh] bg-[#262626] relative">
         <div className="grid grid-cols-4 gap-x-[50px] justify-center items-end h-full px-[100px]">
           <div className="flex flex-col gap-y-[25px] items-center">
             <div
@@ -334,17 +336,16 @@ export default function HomePage() {
           </div>
         </div>
         <div style={{ zIndex: 100 }} className="w-full absolute bottom-0 z-100">
-          <Image
-            style={{ zIndex: 100 }}
-            className="z-100 w-[100vw]"
-            src="/images/ground.png"
-            width={2232}
-            height={100}
-            alt="ground"
-          />
+          {maxWidth <= 430 ? (
+            <GroundMobileSvg className="z-100" />
+          ) : maxWidth > 1728 ? (
+            <GroundLargeSvg className="z-100" />
+          ) : (
+            <GroundSvg className="z-100" />
+          )}
         </div>
       </div>
-      <div className="h-[150vh] md:h-[100vh] desktop:h-[80vh] large-desktop:h-[80vh] flex flex-col justify-center items-center px-[150px] py-[150px] bg-black">
+      <div className="h-[150vh] md:h-[100vh] desktop:h-[100vh] large-desktop:h-[80vh] flex flex-col justify-center items-center px-[150px] py-[150px] bg-black">
         <div>
           <p className="pixel-caps text-[#FCFC03] text-[24px] md:text-[48px] desktop:text-[4rem] large-desktop:text-[5rem] text-center mb-[50px]">
             $FLAP TOKENOMICS
@@ -403,11 +404,11 @@ export default function HomePage() {
               </div>
             </div>
           </div>
-          <div className="md:mt-0 mt-[50px] flex flex-col gap-y-[20px] border border-[12px] border-[#404833] w-fit mx-auto border-dashed-custom justify-center items-center py-[36px]">
+          <div className="md:mt-0 mt-[50px] flex flex-col p-[30px] gap-y-[20px] border border-[12px] border-[#404833] w-fit mx-auto border-dashed-custom justify-center items-center py-[36px]">
             <p className="text-white desktop:text-[2rem] large-desktop:text-[2rem]">
               in collaboration with
             </p>
-            <BladeSvg className="w-[300px] md:w-[500px] h-[25px] md:h-[50px]" />
+            <BladeSvg className="h-[25px] md:h-[50px] w-fit" />
           </div>
         </div>
       </div>

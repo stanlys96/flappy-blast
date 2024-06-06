@@ -5,6 +5,9 @@ import { TwitterSvg } from "./TwitterSvg";
 import { TelegramSvg } from "./TelegramSvg";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import { GroundSvg } from "./GroundSvg";
+import { GroundLargeSvg } from "./GroundLargeSvg";
+import { GroundMobileSvg } from "./GroundMobileSvg";
 
 export const AbsoluteImagesComponent = () => {
   const router = useRouter();
@@ -36,7 +39,7 @@ export const AbsoluteImagesComponent = () => {
         >
           <a
             onClick={() => router.push("/")}
-            className={`pixel-caps text-[12px] hover:text-[#B0CD80] md:text-[16px] desktop:text-[20px] large-desktop:text-[28px] cursor-pointer ${
+            className={`pixel-caps text-[12px] flex items-center justify-center hover:text-[#B0CD80] md:text-[16px] desktop:text-[20px] large-desktop:text-[28px] cursor-pointer ${
               router.pathname === "/"
                 ? "text-[#FCFC03] hover:text-[#FCFC03]"
                 : "text-white"
@@ -46,7 +49,7 @@ export const AbsoluteImagesComponent = () => {
           </a>
           <a
             onClick={() => router.push("/airdrop")}
-            className={`pixel-caps text-[12px] hover:text-[#B0CD80] md:text-[16px] desktop:text-[20px] large-desktop:text-[28px] cursor-pointer ${
+            className={`pixel-caps text-[12px] flex items-center justify-center hover:text-[#B0CD80] md:text-[16px] desktop:text-[20px] large-desktop:text-[28px] cursor-pointer ${
               router.pathname === "/airdrop"
                 ? "text-[#FCFC03] hover:text-[#FCFC03]"
                 : "text-white"
@@ -56,7 +59,7 @@ export const AbsoluteImagesComponent = () => {
           </a>
           <a
             onClick={() => router.push("/referral")}
-            className={`pixel-caps text-[12px] hover:text-[#B0CD80] md:text-[16px] desktop:text-[20px] large-desktop:text-[28px] cursor-pointer ${
+            className={`pixel-caps text-[12px] flex items-center justify-center hover:text-[#B0CD80] md:text-[16px] desktop:text-[20px] large-desktop:text-[28px] cursor-pointer ${
               router.pathname === "/referral"
                 ? "text-[#FCFC03] hover:text-[#FCFC03]"
                 : "text-white"
@@ -69,33 +72,56 @@ export const AbsoluteImagesComponent = () => {
       <Image
         className="absolute top-[13%] left-[5%]"
         src="/images/cloud.png"
-        width={maxWidth < 500 ? 100 : maxWidth > 1500 ? 300 : 150}
+        width={
+          maxWidth < 500
+            ? 100
+            : maxWidth > 1500
+            ? 200
+            : maxWidth > 2000
+            ? 300
+            : 150
+        }
         height={122}
         alt="cloud"
       />
       <Image
         className="absolute top-[15%] right-[8%]"
         src="/images/cloud.png"
-        width={maxWidth < 500 ? 100 : maxWidth > 1500 ? 300 : 150}
+        width={
+          maxWidth < 500
+            ? 100
+            : maxWidth > 1500
+            ? 200
+            : maxWidth > 2000
+            ? 300
+            : 150
+        }
         height={122}
         alt="cloud"
       />
       <Image
         className="absolute top-[1%] left-[45%]"
         src="/images/cloud.png"
-        width={maxWidth < 500 ? 100 : maxWidth > 1500 ? 300 : 150}
+        width={
+          maxWidth < 500
+            ? 100
+            : maxWidth > 1500
+            ? 200
+            : maxWidth > 2000
+            ? 300
+            : 150
+        }
         height={122}
         alt="cloud"
       />
       <div style={{ zIndex: 100 }} className="w-full absolute bottom-0 z-100">
-        <Image
-          style={{ zIndex: 100 }}
-          className="z-100 w-[100vw]"
-          src="/images/ground.png"
-          width={1730}
-          height={223}
-          alt="ground"
-        />
+        {maxWidth <= 430 ? (
+          <GroundMobileSvg className="z-100" />
+        ) : maxWidth > 1728 ? (
+          <GroundLargeSvg className="z-100" />
+        ) : (
+          <GroundSvg className="z-100" />
+        )}
       </div>
       <Image
         className="absolute top-[-5%] desktop:top-0 large-desktop:top-[-5%] w-[30%] md:w-[10%] left-[-15%] md:left-[-2%]"
@@ -125,13 +151,9 @@ export const AbsoluteImagesComponent = () => {
         height={248}
         alt="greenbin"
       />
-      <Image
+      <BlastSVG
         style={{ zIndex: 119 }}
         className="md:w-[250px] w-[150px] large-desktop:w-[300px] fixed bottom-[3%] z-100 md:top-[5%] z-50  right-[2%] cursor-pointer"
-        src="/images/blast.png"
-        width={300}
-        height={74}
-        alt="greenbin"
       />
       <div
         style={{ zIndex: 200 }}
