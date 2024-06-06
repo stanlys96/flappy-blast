@@ -32,11 +32,11 @@ export const AbsoluteImagesComponent = () => {
       >
         <div
           style={{ zIndex: 120 }}
-          className="bg-[#404833] fixed top-[2%] md:p-0 p-[15px] md:px-[44px] md:py-[22px] mt-[30px] rounded-[71px] flex items-center justify-center gap-x-[20px]"
+          className="bg-[#404833] fixed top-[2%] md:p-0 p-[15px] 2xl:p-[40px] md:px-[44px] md:py-[22px] mt-[30px] rounded-[71px] flex items-center justify-center gap-x-[20px] 2xl:gap-x-[40px]"
         >
           <a
             onClick={() => router.push("/")}
-            className={`pixel-caps text-[12px] md:text-[16px] cursor-pointer ${
+            className={`pixel-caps text-[12px] md:text-[16px] 2xl:text-[2rem] cursor-pointer ${
               router.pathname === "/" ? "text-[#FCFC03]" : "text-white"
             }`}
           >
@@ -44,7 +44,7 @@ export const AbsoluteImagesComponent = () => {
           </a>
           <a
             onClick={() => router.push("/airdrop")}
-            className={`pixel-caps text-[12px] md:text-[16px] cursor-pointer ${
+            className={`pixel-caps text-[12px] md:text-[16px] 2xl:text-[2rem] cursor-pointer ${
               router.pathname === "/airdrop" ? "text-[#FCFC03]" : "text-white"
             }`}
           >
@@ -52,7 +52,7 @@ export const AbsoluteImagesComponent = () => {
           </a>
           <a
             onClick={() => router.push("/referral")}
-            className={`pixel-caps text-[12px] md:text-[16px] cursor-pointer ${
+            className={`pixel-caps text-[12px] md:text-[16px] 2xl:text-[2rem] cursor-pointer ${
               router.pathname === "/referral" ? "text-[#FCFC03]" : "text-white"
             }`}
           >
@@ -120,8 +120,8 @@ export const AbsoluteImagesComponent = () => {
         alt="greenbin"
       />
       <Image
-        style={{ zIndex: 100 }}
-        className="md:w-[250px] w-[150px] fixed bottom-[3%] z-100 md:top-[5%] z-50  right-[2%] cursor-pointer"
+        style={{ zIndex: 119 }}
+        className="md:w-[250px] w-[150px] 2xl:w-[500px] fixed bottom-[3%] z-100 md:top-[5%] z-50  right-[2%] cursor-pointer"
         src="/images/blast.png"
         width={300}
         height={74}
@@ -129,11 +129,11 @@ export const AbsoluteImagesComponent = () => {
       />
       <div
         style={{ zIndex: 200 }}
-        className="fixed md:flex hidden rounded-[14px] flex-col gap-y-[30px] justify-center items-center py-[24px] px-[18px] bg-black z-100 top-1/2 left-[4%] transform -translate-x-1/2 -translate-y-1/2"
+        className="fixed md:flex hidden rounded-[14px] 2xl:rounded-[40px] flex-col gap-y-[30px] justify-center items-center py-[24px] px-[18px] 2xl:px-[36px] 2xl:py-[48px] bg-black z-100 top-1/2 left-[4%] transform -translate-x-1/2 -translate-y-1/2"
       >
-        <TwitterSvg className="cursor-pointer" />
-        <DiscordSvg className="cursor-pointer" />
-        <TelegramSvg className="cursor-pointer" />
+        <TwitterSvg className="cursor-pointer 2xl:h-[80px] 2xl:w-[80px]" />
+        <DiscordSvg className="cursor-pointer 2xl:h-[80px] 2xl:w-[80px]" />
+        <TelegramSvg className="cursor-pointer 2xl:h-[80px] 2xl:w-[80px]" />
       </div>
       <div
         style={{ zIndex: 200 }}
