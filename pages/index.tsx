@@ -108,7 +108,7 @@ export default function HomePage() {
   return (
     <div className="w-[100vw] overflow-hidden">
       <HeroLayout>
-        <div className="flex flex-col h-[100vh] md:h-[80vh] desktop:h-[100vh] large-desktop:h-[80vh] justify-center items-center">
+        <div className="flex flex-col h-[80vh] md:h-[80vh] desktop:h-[100vh] large-desktop:h-[80vh] justify-center items-center">
           <p className="text-[20px] md:text-left text-center md:text-[2rem] desktop:text-[4rem] large-desktop:text-[5rem] mb-[20px]  text-white">
             unruggable meme & infinite
           </p>

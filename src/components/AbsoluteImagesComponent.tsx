@@ -124,28 +124,28 @@ export const AbsoluteImagesComponent = () => {
         )}
       </div>
       <Image
-        className="absolute top-[-5%] desktop:top-0 large-desktop:top-[-5%] w-[30%] md:w-[10%] left-[-15%] md:left-[-2%]"
+        className="absolute top-0 desktop:top-0 large-desktop:top-[-5%] w-[30%] md:w-[10%] left-[-15%] md:left-[-2%]"
         src="/images/top-bottom.png"
         width={391}
         height={248}
         alt="greenbin"
       />
       <Image
-        className="absolute bottom-0 md:bottom-[12%] w-[30%] z-50 md:w-[10%] left-[-15%] md:left-[-2%]"
+        className="absolute bottom-[15%] md:bottom-[12%] w-[30%] z-50 md:w-[10%] left-[-15%] md:left-[-2%]"
         src="/images/top-top.png"
         width={391}
         height={248}
         alt="greenbin"
       />
       <Image
-        className="absolute top-[-5%] desktop:top-0 large-desktop:top-[-5%] w-[30%] right-[-15%] md:right-[-2%] md:w-[10%]"
+        className="absolute top-0 desktop:top-0 large-desktop:top-[-5%] w-[30%] right-[-15%] md:right-[-2%] md:w-[10%]"
         src="/images/top-bottom-side.png"
         width={391}
         height={248}
         alt="greenbin"
       />
       <Image
-        className="absolute bottom-0 w-[30%] md:bottom-[12%] md:w-[10%] z-50 right-[-15%] md:right-[-2%]"
+        className="absolute bottom-[15%] w-[30%] md:bottom-[12%] md:w-[10%] z-50 right-[-15%] md:right-[-2%]"
         src="/images/top-top-side.png"
         width={391}
         height={248}
