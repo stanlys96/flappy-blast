@@ -527,4 +527,5 @@ label {
 
 .svg-container:hover svg path {
   fill: #fcfc03; /* Replace with your desired hover color */
+  transition: 500ms ease-in;
 }

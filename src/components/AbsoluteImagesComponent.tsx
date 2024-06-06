@@ -39,7 +39,7 @@ export const AbsoluteImagesComponent = () => {
         >
           <a
             onClick={() => router.push("/")}
-            className={`pixel-caps text-[12px] flex items-center justify-center hover:text-[#B0CD80] md:text-[16px] desktop:text-[20px] large-desktop:text-[28px] cursor-pointer ${
+            className={`pixel-caps text-[12px] flex items-center justify-center transition duration-500 hover:text-[#B0CD80] md:text-[16px] desktop:text-[20px] large-desktop:text-[28px] cursor-pointer ${
               router.pathname === "/"
                 ? "text-[#FCFC03] hover:text-[#FCFC03]"
                 : "text-white"
@@ -49,7 +49,7 @@ export const AbsoluteImagesComponent = () => {
           </a>
           <a
             onClick={() => router.push("/airdrop")}
-            className={`pixel-caps text-[12px] flex items-center justify-center hover:text-[#B0CD80] md:text-[16px] desktop:text-[20px] large-desktop:text-[28px] cursor-pointer ${
+            className={`pixel-caps text-[12px] flex items-center justify-center transition duration-500 hover:text-[#B0CD80] md:text-[16px] desktop:text-[20px] large-desktop:text-[28px] cursor-pointer ${
               router.pathname === "/airdrop"
                 ? "text-[#FCFC03] hover:text-[#FCFC03]"
                 : "text-white"
@@ -59,7 +59,7 @@ export const AbsoluteImagesComponent = () => {
           </a>
           <a
             onClick={() => router.push("/referral")}
-            className={`pixel-caps text-[12px] flex items-center justify-center hover:text-[#B0CD80] md:text-[16px] desktop:text-[20px] large-desktop:text-[28px] cursor-pointer ${
+            className={`pixel-caps text-[12px] flex items-center justify-center transition duration-500 hover:text-[#B0CD80] md:text-[16px] desktop:text-[20px] large-desktop:text-[28px] cursor-pointer ${
               router.pathname === "/referral"
                 ? "text-[#FCFC03] hover:text-[#FCFC03]"
                 : "text-white"

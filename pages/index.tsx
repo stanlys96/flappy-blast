@@ -250,7 +250,7 @@ export default function HomePage() {
           )}
         </div>
       </div>
-      <div className="md:block hidden h-[100vh] desktop:h-[100vh] large-desktop:h-[100vh] bg-[#262626] relative">
+      <div className="md:block hidden h-[100vh] desktop:h-[100vh] large-desktop:h-[80vh] bg-[#262626] relative">
         <div className="grid grid-cols-4 gap-x-[50px] justify-center items-end h-full px-[100px]">
           <div className="flex flex-col gap-y-[25px] items-center">
             <div
@@ -260,12 +260,12 @@ export default function HomePage() {
                 isHovered
                   ? "text-[18px] text-black bg-white border-white"
                   : "text-[28px] text-[#FCFC03] border-[#FCFC03]"
-              } cursor-pointer large-desktop:w-[12vw] large-desktop:h-[15vh] h-[150px] p-[14px] border border-[9px] flex items-center justify-center`}
+              } cursor-pointer large-desktop:w-[12vw] transition duration-500 large-desktop:h-[15vh] h-[150px] p-[14px] border border-[9px] flex items-center justify-center`}
             >
               <p className="text-center font-bold">{text}</p>
             </div>
             <Image
-              className="md:mb-[100px] desktop:mb-[150px] large-desktop:mb-[250px]"
+              className="md:mb-[150px] desktop:mb-[150px]"
               src="/images/standing-capa.png"
               width={maxWidth > 1500 ? 350 : 200}
               height={500}
@@ -280,12 +280,12 @@ export default function HomePage() {
                 isHovered2
                   ? "text-[18px] text-black bg-white border-white"
                   : "text-[28px] text-[#FCFC03] border-[#FCFC03]"
-              } cursor-pointer large-desktop:w-[12vw] large-desktop:h-[15vh] h-[150px] p-[14px] border border-[9px] flex items-center justify-center`}
+              } cursor-pointer large-desktop:w-[12vw] transition duration-500 large-desktop:h-[15vh] h-[150px] p-[14px] border border-[9px] flex items-center justify-center`}
             >
               <p className="text-center font-bold">{text2}</p>
             </div>
             <Image
-              className="md:mb-[100px] desktop:mb-[150px] large-desktop:mb-[250px]"
+              className="md:mb-[150px] desktop:mb-[150px]"
               src="/images/standing-capa.png"
               width={maxWidth > 1500 ? 350 : 200}
               height={200}
@@ -300,12 +300,12 @@ export default function HomePage() {
                 isHovered3
                   ? "text-[20px] text-black bg-white border-white"
                   : "text-[28px] text-[#FCFC03] border-[#FCFC03]"
-              } cursor-pointer large-desktop:w-[12vw] large-desktop:h-[15vh] h-[150px] p-[14px] border border-[9px] flex items-center justify-center`}
+              } cursor-pointer transition duration-500 large-desktop:w-[12vw] large-desktop:h-[15vh] h-[150px] p-[14px] border border-[9px] flex items-center justify-center`}
             >
               <p className="text-center font-bold">{text3}</p>
             </div>
             <Image
-              className="md:mb-[100px] desktop:mb-[150px] large-desktop:mb-[250px]"
+              className="md:mb-[150px] desktop:mb-[150px]"
               src="/images/standing-capa.png"
               width={maxWidth > 1500 ? 350 : 200}
               height={200}
@@ -320,12 +320,12 @@ export default function HomePage() {
                 isHovered4
                   ? "text-[20px] text-black bg-white border-white"
                   : "text-[28px] text-[#FCFC03] border-[#FCFC03]"
-              } cursor-pointer large-desktop:w-[12vw] large-desktop:h-[15vh] h-[150px] p-[14px] border border-[9px] flex items-center justify-center`}
+              } cursor-pointer large-desktop:w-[12vw] transition duration-500 z-50 large-desktop:h-[15vh] h-[150px] p-[14px] border border-[9px] flex items-center justify-center`}
             >
               <p className="text-center font-bold">{text4}</p>
             </div>
             <Image
-              className="md:mb-[100px] desktop:mb-[150px] large-desktop:mb-[250px]"
+              className="md:mb-[150px] desktop:mb-[150px]"
               src="/images/standing-capa.png"
               width={maxWidth > 1500 ? 350 : 200}
               height={200}
