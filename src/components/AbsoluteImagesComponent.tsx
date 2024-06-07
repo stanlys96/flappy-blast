@@ -39,7 +39,7 @@ export const AbsoluteImagesComponent = () => {
         >
           <a
             onClick={() => router.push("/")}
-            className={`pixel-caps text-[12px] p-0 flex items-center text-center justify-center transition duration-500 hover:text-[#B0CD80] md:text-[16px] desktop:text-[20px] large-desktop:text-[28px] cursor-pointer ${
+            className={`pixel-caps text-[12px] leading-0 p-0 flex items-center text-center justify-center transition duration-500 hover:text-[#B0CD80] md:text-[16px] desktop:text-[20px] large-desktop:text-[28px] cursor-pointer ${
               router.pathname === "/"
                 ? "text-[#FCFC03] hover:text-[#FCFC03]"
                 : "text-white"
@@ -49,7 +49,7 @@ export const AbsoluteImagesComponent = () => {
           </a>
           <a
             onClick={() => router.push("/airdrop")}
-            className={`pixel-caps text-[12px] p-0 flex items-center text-center justify-center transition duration-500 hover:text-[#B0CD80] md:text-[16px] desktop:text-[20px] large-desktop:text-[28px] cursor-pointer ${
+            className={`pixel-caps text-[12px] leading-0 p-0 flex items-center text-center justify-center transition duration-500 hover:text-[#B0CD80] md:text-[16px] desktop:text-[20px] large-desktop:text-[28px] cursor-pointer ${
               router.pathname === "/airdrop"
                 ? "text-[#FCFC03] hover:text-[#FCFC03]"
                 : "text-white"
@@ -59,7 +59,7 @@ export const AbsoluteImagesComponent = () => {
           </a>
           <a
             onClick={() => router.push("/referral")}
-            className={`pixel-caps text-[12px] p-0 text-center flex items-center justify-center transition duration-500 hover:text-[#B0CD80] md:text-[16px] desktop:text-[20px] large-desktop:text-[28px] cursor-pointer ${
+            className={`pixel-caps text-[12px] leading-0 p-0 text-center flex items-center justify-center transition duration-500 hover:text-[#B0CD80] md:text-[16px] desktop:text-[20px] large-desktop:text-[28px] cursor-pointer ${
               router.pathname === "/referral"
                 ? "text-[#FCFC03] hover:text-[#FCFC03]"
                 : "text-white"
