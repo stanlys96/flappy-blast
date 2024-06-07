@@ -345,14 +345,14 @@ export default function HomePage() {
       </div>
       <div className="h-[140vh] md:h-[120vh] desktop:h-[100vh] large-desktop:h-[90vh] flex flex-col justify-center items-center px-[150px] bg-black">
         <div className="flex flex-col justify-center items-center">
-          <p className="pixel-caps text-[#FCFC03] text-[2rem] md:text-[48px] desktop:text-[4rem] large-desktop:text-[5rem] text-center mb-[50px]">
+          <p className="pixel-caps desktop:mt-[50px] large-desktop:mt-0 text-[#FCFC03] text-[2rem] md:text-[48px] desktop:text-[4rem] large-desktop:text-[5rem] text-center mb-[50px]">
             $FLAP TOKENOMICS
           </p>
           <div className="w-full flex justify-center items-center md:hidden block ">
             <FlappyCoinSvg className="h-[300px] w-[300px] desktop:h-[450px] large-desktop:w-[600px]" />
           </div>
           <div className="flex w-fit md:flex-row flex-col justify-center items-center gap-x-[40px] mt-[25px] md:mt-0 md:my-[50px] large-desktop:mt-[80px]">
-            <div className="md:flex w-[400.25px] large-desktop:w-[500.25px] hidden flex-col items-end gap-y-[40px]">
+            <div className="md:flex w-[400.25px] desktop:w-[450.25px] large-desktop:w-[500.25px] hidden flex-col items-end gap-y-[40px]">
               <div className="flex items-center gap-x-[30px]">
                 <p className="pixel-caps text-[#FCFC03] desktop:text-[1.5rem] large-desktop:text-[2rem]">
                   95 % Liquidity
@@ -381,7 +381,7 @@ export default function HomePage() {
                 </p>
               </div>
             </div>
-            <div className="flex md:w-[400.25px] large-desktop:w-[500.25px] mt-[40px] md:mt-0 md:flex-col-reverse flex-col gap-y-[40px]">
+            <div className="flex md:w-[400.25px] desktop:w-[450.25px] large-desktop:w-[500.25px] mt-[40px] md:mt-0 md:flex-col-reverse flex-col gap-y-[40px]">
               <div className="flex items-center gap-x-[30px]">
                 <div className="w-[50px] h-[50px] bg-[#22A2FF] rounded-full" />
                 <p className="pixel-caps text-[#22A2FF] desktop:text-[1.5rem] large-desktop:text-[2rem]">
@@ -402,7 +402,7 @@ export default function HomePage() {
               </div>
             </div>
           </div>
-          <div className="large-desktop:mt-[100px] mt-[50px] md:mt-[75px] flex flex-col p-[30px] large-desktop:p-[60px] gap-y-[20px] border border-[12px] border-[#404833] w-fit mx-auto border-dashed-custom justify-center items-center py-[36px]">
+          <div className="large-desktop:mt-[100px] mt-[50px] md:mt-[25px] desktop:mt-[20px] flex flex-col p-[30px] large-desktop:p-[60px] gap-y-[20px] border border-[12px] border-[#404833] w-fit mx-auto border-dashed-custom justify-center items-center py-[36px]">
             <p className="text-white text-[16px] md:text-[2rem] desktop:text-[2rem] large-desktop:text-[3rem]">
               in collaboration with
             </p>
