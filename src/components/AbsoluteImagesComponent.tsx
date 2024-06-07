@@ -35,11 +35,11 @@ export const AbsoluteImagesComponent = () => {
       >
         <div
           style={{ zIndex: 120 }}
-          className="bg-[#404833] fixed top-[2%] md:p-0 p-[15px] desktop:p-[30px] large-desktop:p-[40px] md:px-[44px] md:py-[22px] mt-[30px] rounded-[71px] flex items-center justify-center gap-x-[20px] large-desktop:gap-x-[40px]"
+          className="bg-[#404833] fixed top-[2%] md:p-0 p-[15px] desktop:px-[60px] md:py-[15px] desktop:py-[30px] large-desktop:px-[60px] large-desktop:py-[40px] md:px-[45px] md:py-[22px] mt-[30px] rounded-[71px] flex items-center justify-center gap-x-[20px] large-desktop:gap-x-[40px]"
         >
           <a
             onClick={() => router.push("/")}
-            className={`pixel-caps text-[12px] leading-0 p-0 flex items-center text-center justify-center transition duration-500 hover:text-[#B0CD80] md:text-[16px] desktop:text-[20px] large-desktop:text-[28px] cursor-pointer ${
+            className={`text-[1rem] leading-0 p-0 flex items-center text-center justify-center transition duration-500 hover:text-[#B0CD80] md:text-[2rem] desktop:text-[2.5rem] large-desktop:text-[3.5rem] cursor-pointer ${
               router.pathname === "/"
                 ? "text-[#FCFC03] hover:text-[#FCFC03]"
                 : "text-white"
@@ -49,7 +49,7 @@ export const AbsoluteImagesComponent = () => {
           </a>
           <a
             onClick={() => router.push("/airdrop")}
-            className={`pixel-caps text-[12px] leading-0 p-0 flex items-center text-center justify-center transition duration-500 hover:text-[#B0CD80] md:text-[16px] desktop:text-[20px] large-desktop:text-[28px] cursor-pointer ${
+            className={`text-[1rem] leading-0 p-0 flex items-center text-center justify-center transition duration-500 hover:text-[#B0CD80] md:text-[2rem] desktop:text-[2.5rem] large-desktop:text-[3.5rem] cursor-pointer ${
               router.pathname === "/airdrop"
                 ? "text-[#FCFC03] hover:text-[#FCFC03]"
                 : "text-white"
@@ -59,7 +59,7 @@ export const AbsoluteImagesComponent = () => {
           </a>
           <a
             onClick={() => router.push("/referral")}
-            className={`pixel-caps text-[12px] leading-0 p-0 text-center flex items-center justify-center transition duration-500 hover:text-[#B0CD80] md:text-[16px] desktop:text-[20px] large-desktop:text-[28px] cursor-pointer ${
+            className={`text-[1rem] leading-0 p-0 text-center flex items-center justify-center transition duration-500 hover:text-[#B0CD80] md:text-[2rem] desktop:text-[2.5rem] large-desktop:text-[3.5rem] cursor-pointer ${
               router.pathname === "/referral"
                 ? "text-[#FCFC03] hover:text-[#FCFC03]"
                 : "text-white"
