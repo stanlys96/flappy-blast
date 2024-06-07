@@ -35,7 +35,7 @@ export const AbsoluteImagesComponent = () => {
       >
         <div
           style={{ zIndex: 120 }}
-          className="bg-[#404833] fixed top-[2%] md:p-0 p-[15px] desktop:px-[60px] md:py-[15px] desktop:py-[30px] large-desktop:px-[60px] large-desktop:py-[40px] md:px-[45px] md:py-[22px] mt-[30px] rounded-[71px] flex items-center justify-center gap-x-[20px] large-desktop:gap-x-[40px]"
+          className="bg-[#404833] fixed top-[2%] md:p-0 p-[15px] desktop:px-[60px] md:py-[15px] desktop:py-[20px] large-desktop:px-[60px] large-desktop:py-[25px] md:px-[45px] mt-[30px] rounded-[71px] flex items-center justify-center gap-x-[20px] large-desktop:gap-x-[40px]"
         >
           <a
             onClick={() => router.push("/")}
