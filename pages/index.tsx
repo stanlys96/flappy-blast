@@ -156,8 +156,8 @@ export default function HomePage() {
           </div> */}
         </div>
       </HeroLayout>
-      <div className="flex md:flex-row flex-col py-[25px] justify-center items-center h-[110vh] desktop:h-[100vh] large-desktop:h-[100vh] bg-black md:pt-[50px] md:pt-0">
-        <div className="flex flex-1 md:pl-[150px] justify-center items-center md:items-start flex-col gap-y-[20px] desktop:gap-y-[40px] large-desktop:pl-[250px]">
+      <div className="flex md:flex-row gap-y-[40px] flex-col py-[25px] justify-center items-center h-[100vh] desktop:h-[100vh] large-desktop:h-[100vh] bg-black md:pt-[50px] md:pt-0">
+        <div className="flex md:pl-[150px] justify-center items-center md:items-start flex-col gap-y-[20px] desktop:gap-y-[40px] large-desktop:pl-[250px]">
           <p className="flappy-birdy text-[#FCFC03] md:text-left text-center md:px-0 px-[20px] text-[80px] desktop:text-[120px] large-desktop:text-[140px] md:text-[100px] leading-[75px]">
             homage to the legendary game
           </p>
@@ -176,7 +176,7 @@ export default function HomePage() {
             . It&apos;s like having a magic money tree that only grows bigger!
           </p>
         </div>
-        <div className="flex flex-1 w-full justify-center items-center md:mt-0">
+        <div className="flex w-full justify-center items-center md:mt-0">
           <Image
             className="w-2/3 md:w-1/2 rounded-[12px]"
             width={510}
