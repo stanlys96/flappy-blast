@@ -61,6 +61,7 @@ export default function FlappyBird() {
     return () => {
       scriptElements.forEach((script: any) => {
         if (script && script.parentNode === document.body) {
+          console.log("!!!!!");
           document.body.removeChild(script);
         }
       });

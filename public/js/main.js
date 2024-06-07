@@ -38,6 +38,7 @@ var loopGameloop;
 var loopPipeloop;
 
 $(document).ready(function () {
+  console.log("DOCUMENT READY!");
   if (window.location.search == "?debug") debugmode = true;
   if (window.location.search == "?easy") pipeheight = 200;
 
@@ -128,85 +129,94 @@ function updatePlayer(player) {
 }
 
 function gameloop() {
-  var player = $("#player");
+  try {
+    var player = $("#player");
 
-  //update the player speed/position
-  velocity += gravity;
-  position += velocity;
+    //update the player speed/position
+    velocity += gravity;
+    position += velocity;
 
-  //update the player
-  updatePlayer(player);
+    //update the player
+    updatePlayer(player);
 
-  //create the bounding box
-  var box = document.getElementById("player").getBoundingClientRect();
-  var origwidth = 34.0;
-  var origheight = 24.0;
+    //create the bounding box
+    var box = document.getElementById("player").getBoundingClientRect();
+    var origwidth = 34.0;
+    var origheight = 24.0;
 
-  var boxwidth = origwidth - Math.sin(Math.abs(rotation) / 90) * 8;
-  var boxheight = (origheight + box.height) / 2;
-  var boxleft = (box.width - boxwidth) / 2 + box.left;
-  var boxtop = (box.height - boxheight) / 2 + box.top;
-  var boxright = boxleft + boxwidth;
-  var boxbottom = boxtop + boxheight;
+    var boxwidth = origwidth - Math.sin(Math.abs(rotation) / 90) * 8;
+    var boxheight = (origheight + box.height) / 2;
+    var boxleft = (box.width - boxwidth) / 2 + box.left;
+    var boxtop = (box.height - boxheight) / 2 + box.top;
+    var boxright = boxleft + boxwidth;
+    var boxbottom = boxtop + boxheight;
 
-  //if we're in debug mode, draw the bounding box
-  if (debugmode) {
-    var boundingbox = $("#playerbox");
-    boundingbox.css("left", boxleft);
-    boundingbox.css("top", boxtop);
-    boundingbox.css("height", boxheight);
-    boundingbox.css("width", boxwidth);
-  }
+    //if we're in debug mode, draw the bounding box
+    if (debugmode) {
+      var boundingbox = $("#playerbox");
+      boundingbox.css("left", boxleft);
+      boundingbox.css("top", boxtop);
+      boundingbox.css("height", boxheight);
+      boundingbox.css("width", boxwidth);
+    }
 
-  //did we hit the ground?
-  if (box.bottom >= $("#land").offset().top) {
-    playerDead();
-    return;
-  }
-
-  //have they tried to escape through the ceiling? :o
-  var ceiling = $("#ceiling");
-  if (boxtop <= ceiling.offset().top + ceiling.height()) position = 0;
-
-  //we can't go any further without a pipe
-  if (pipes[0] == null) return;
-
-  //determine the bounding box of the next pipes inner area
-  var nextpipe = pipes[0];
-  var nextpipeupper = nextpipe.children(".pipe_upper");
-
-  var pipetop = nextpipeupper.offset().top + nextpipeupper.height();
-  var pipeleft = nextpipeupper.offset().left - 2; // for some reason it starts at the inner pipes offset, not the outer pipes.
-  var piperight = pipeleft + pipewidth;
-  var pipebottom = pipetop + pipeheight;
-
-  if (debugmode) {
-    var boundingbox = $("#pipebox");
-    boundingbox.css("left", pipeleft);
-    boundingbox.css("top", pipetop);
-    boundingbox.css("height", pipeheight);
-    boundingbox.css("width", pipewidth);
-  }
-
-  //have we gotten inside the pipe yet?
-  if (boxright > pipeleft) {
-    //we're within the pipe, have we passed between upper and lower pipes?
-    if (boxtop > pipetop && boxbottom < pipebottom) {
-      //yeah! we're within bounds
-    } else {
-      //no! we touched the pipe
+    //did we hit the ground?
+    if (box.bottom >= $("#land").offset().top) {
       playerDead();
       return;
     }
-  }
 
-  //have we passed the imminent danger?
-  if (boxleft > piperight) {
-    //yes, remove it
-    pipes.splice(0, 1);
+    //have they tried to escape through the ceiling? :o
+    var ceiling = $("#ceiling");
+    if (boxtop <= ceiling.offset().top + ceiling.height()) position = 0;
 
-    //and score a point
-    playerScore();
+    //we can't go any further without a pipe
+    if (pipes[0] == null) return;
+
+    //determine the bounding box of the next pipes inner area
+    var nextpipe = pipes[0];
+    var nextpipeupper = nextpipe.children(".pipe_upper");
+
+    var pipetop = nextpipeupper.offset().top + nextpipeupper.height();
+    var pipeleft = nextpipeupper.offset().left - 2; // for some reason it starts at the inner pipes offset, not the outer pipes.
+    var piperight = pipeleft + pipewidth;
+    var pipebottom = pipetop + pipeheight;
+
+    if (debugmode) {
+      var boundingbox = $("#pipebox");
+      boundingbox.css("left", pipeleft);
+      boundingbox.css("top", pipetop);
+      boundingbox.css("height", pipeheight);
+      boundingbox.css("width", pipewidth);
+    }
+
+    //have we gotten inside the pipe yet?
+    if (boxright > pipeleft) {
+      //we're within the pipe, have we passed between upper and lower pipes?
+      if (boxtop > pipetop && boxbottom < pipebottom) {
+        //yeah! we're within bounds
+      } else {
+        //no! we touched the pipe
+        playerDead();
+        return;
+      }
+    }
+
+    //have we passed the imminent danger?
+    if (boxleft > piperight) {
+      //yes, remove it
+      pipes.splice(0, 1);
+
+      //and score a point
+      playerScore();
+    }
+  } catch (e) {
+    clearInterval(loopGameloop);
+    clearInterval(loopPipeloop);
+    loopGameloop = null;
+    loopPipeloop = null;
+    buzz.all().setVolume(0);
+    console.log(e);
   }
 }
 

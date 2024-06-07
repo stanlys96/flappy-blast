@@ -38,7 +38,7 @@ export default function AirdropPage() {
         style={{ zIndex: 119 }}
         className="flex justify-center items-center w-[80%] md:w-[60%] z-150 mx-auto relative h-[100vh]"
       >
-        <div className="bg-white px-[30px] justify-center items-center md:px-[60px] py-[100px] rounded-[22px] mt-[30px] w-full flex flex-col gap-y-[15px]">
+        <div className="bg-white px-[30px] justify-center items-center md:px-[60px] py-[100px] rounded-[22px] mt-[30px] w-full flex flex-col gap-y-[15px] w-[1000px]">
           {/* {currentState === "index" && (
             <div>
               <div className="flex flex-col gap-y-[20px]">
@@ -118,7 +118,7 @@ export default function AirdropPage() {
             </div>
           )}
           {currentState === "flap" && (
-            <div className="flex flex-col gap-y-[20px]">
+            <div className="flex flex-col gap-y-[20px] w-[1000px]">
               <div className="flex justify-start">
                 {!address ? (
                   <div

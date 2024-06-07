@@ -124,7 +124,7 @@ export default function HomePage() {
           </div>
           <div className="block md:hidden flex items-center">
             <Image
-              width={300}
+              width={400}
               height={70}
               alt="flappy-blast"
               src="/images/flappy-blast.png"
@@ -156,7 +156,7 @@ export default function HomePage() {
         </div>
       </HeroLayout>
       <div className="flex md:flex-row flex-col py-[25px] justify-center items-center h-[110vh] desktop:h-[80vh] large-desktop:h-[100vh] bg-black md:pt-[50px] md:pt-0">
-        <div className="flex flex-1 md:pl-[150px] justify-center items-center md:items-start flex-col gap-y-[20px] desktop:gap-y-[40px]">
+        <div className="flex flex-1 md:pl-[150px] justify-center items-center md:items-start flex-col gap-y-[20px] desktop:gap-y-[40px] large-desktop:pl-[250px]">
           <p className="flappy-birdy text-[#FCFC03] md:text-left text-center md:px-0 px-[20px] text-[80px] desktop:text-[120px] large-desktop:text-[140px] md:text-[100px] leading-[75px]">
             homage to the legendary game
           </p>
@@ -186,7 +186,7 @@ export default function HomePage() {
           />
         </div>
       </div>
-      <div className="md:hidden block h-full bg-[#262626] relative w-full">
+      <div className="md:hidden block h-full bg-[#262626] relative w-full pt-[50px] md:pt-0">
         <Carousel
           className="h-full w-full flex justify-center items-center mx-auto"
           arrows
@@ -222,7 +222,7 @@ export default function HomePage() {
                         : "text-[28px] text-[#FCFC03] border-[#FCFC03]"
                     } cursor-pointer h-full m-auto p-[14px] border border-[9px] flex items-center justify-center`}
                   >
-                    <p className="text-center">
+                    <p className={`text-center font-bold`}>
                       {data.isHovered ? data.textHovered : data.currentText}
                     </p>
                   </div>
@@ -233,7 +233,7 @@ export default function HomePage() {
                   src="/images/standing-capa.png"
                   className="w-[55%] h-[55%]"
                   width={222}
-                  height={349}
+                  height={333}
                   alt="capa"
                 />
               </div>
@@ -343,7 +343,7 @@ export default function HomePage() {
           )}
         </div>
       </div>
-      <div className="h-[140vh] md:h-[100vh] desktop:h-[100vh] large-desktop:h-[80vh] flex flex-col justify-center items-center px-[150px] bg-black">
+      <div className="h-[140vh] md:h-[120vh] desktop:h-[100vh] large-desktop:h-[90vh] flex flex-col justify-center items-center px-[150px] bg-black">
         <div>
           <p className="pixel-caps text-[#FCFC03] text-[2rem] md:text-[48px] desktop:text-[4rem] large-desktop:text-[5rem] text-center mb-[50px]">
             $FLAP TOKENOMICS
@@ -351,8 +351,8 @@ export default function HomePage() {
           <div className="w-full flex justify-center items-center md:hidden block ">
             <FlappyCoinSvg className="h-[300px] w-[300px] desktop:h-[450px] large-desktop:w-[600px]" />
           </div>
-          <div className="flex md:flex-row flex-col justify-center items-center gap-x-[40px] mt-[25px] md:mt-0 md:my-[50px]">
-            <div className="md:flex hidden flex-col items-end gap-y-[40px]">
+          <div className="flex md:flex-row flex-col justify-center items-center gap-x-[40px] mt-[25px] md:mt-0 md:my-[50px] large-desktop:mt-[80px]">
+            <div className="md:flex hidden flex-col items-end gap-y-[40px] w-[406.25px] large-desktop:w-fit">
               <div className="flex items-center gap-x-[30px]">
                 <p className="pixel-caps text-[#FCFC03] desktop:text-[1.5rem] large-desktop:text-[2rem]">
                   95 % Liquidity
@@ -381,7 +381,7 @@ export default function HomePage() {
                 </p>
               </div>
             </div>
-            <div className="flex mt-[40px] md:mt-0 md:flex-col-reverse flex-col gap-y-[40px]">
+            <div className="flex mt-[40px] desktop:w-[406.25px] large-desktop:w-fit md:mt-0 md:flex-col-reverse flex-col gap-y-[40px]">
               <div className="flex items-center gap-x-[30px]">
                 <div className="w-[50px] h-[50px] bg-[#22A2FF] rounded-full" />
                 <p className="pixel-caps text-[#22A2FF] desktop:text-[1.5rem] large-desktop:text-[2rem]">
@@ -402,7 +402,7 @@ export default function HomePage() {
               </div>
             </div>
           </div>
-          <div className="md:mt-0 mt-[50px] flex flex-col p-[30px] large-desktop:p-[60px] gap-y-[20px] border border-[12px] border-[#404833] w-fit mx-auto border-dashed-custom justify-center items-center py-[36px]">
+          <div className="large-desktop:mt-[100px] mt-[50px] md:mt-[75px] flex flex-col p-[30px] large-desktop:p-[60px] gap-y-[20px] border border-[12px] border-[#404833] w-fit mx-auto border-dashed-custom justify-center items-center py-[36px]">
             <p className="text-white text-[16px] md:text-[2rem] desktop:text-[2rem] large-desktop:text-[3rem]">
               in collaboration with
             </p>
