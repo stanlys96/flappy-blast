@@ -9,6 +9,7 @@ export const GroundMobileSvg = ({ className, onClick }: Props) => {
   return (
     <div className={className} onClick={onClick}>
       <svg
+        className={className}
         width="430"
         height="223"
         viewBox="0 0 430 223"

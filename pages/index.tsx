@@ -249,7 +249,7 @@ export default function HomePage() {
         </Carousel>
         <div style={{ zIndex: 100 }} className="w-full absolute bottom-0 z-100">
           {maxWidth <= 430 ? (
-            <GroundCarouselSvg className="z-100" />
+            <GroundCarouselSvg className="z-100 absolute bottom-[-3px]" />
           ) : maxWidth > 1728 ? (
             <GroundLargeSvg className="z-100" />
           ) : (
@@ -342,7 +342,7 @@ export default function HomePage() {
         </div>
         <div style={{ zIndex: 100 }} className="w-full absolute bottom-0 z-100">
           {maxWidth <= 430 ? (
-            <GroundMobileSvg className="z-100" />
+            <GroundMobileSvg className="z-100 " />
           ) : maxWidth > 1728 ? (
             <GroundLargeSvg className="z-100" />
           ) : (
