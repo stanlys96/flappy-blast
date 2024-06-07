@@ -530,3 +530,7 @@ label {
   fill: #fcfc03; /* Replace with your desired hover color */
   transition: 500ms ease-in;
 }
+
+.width-240 {
+  width: 240px !important;
+}

@@ -209,6 +209,7 @@ export default function HomePage() {
                       !currentCarouselData?.isHovered;
                     let tempData = totalCarouselData;
                     tempData[currentCarouselDataIndex] = currentCarouselData;
+                    console.log(tempData);
                     setTotalCarouselData(tempData);
                   }
                 }}
@@ -216,9 +217,9 @@ export default function HomePage() {
               >
                 <div className="flex justify-center items-center w-full h-full">
                   <div
-                    className={`${
+                    className={`w-[240px] ${
                       data.isHovered
-                        ? "text-[14px] text-black bg-white border-white"
+                        ? "text-[24px] text-black bg-white border-white"
                         : "text-[28px] text-[#FCFC03] border-[#FCFC03]"
                     } cursor-pointer h-full m-auto p-[14px] border border-[9px] flex items-center justify-center`}
                   >
@@ -236,6 +237,11 @@ export default function HomePage() {
                   height={333}
                   alt="capa"
                 />
+              </div>
+              <div className="absolute bg-[#FFFFFF60] w-2/3 left-1/2 transform -translate-x-1/2  top-2/3 h-fit p-[16px] ">
+                <p className="text-black text-center text-[18px]">
+                  click the box to view details
+                </p>
               </div>
             </div>
           ))}
@@ -278,9 +284,9 @@ export default function HomePage() {
               onMouseLeave={handleMouseLeave2}
               className={`w-[240px] ${
                 isHovered2
-                  ? "text-[18px] text-black bg-white border-white"
+                  ? "text-[20px] text-black bg-white border-white"
                   : "text-[28px] text-[#FCFC03] border-[#FCFC03]"
-              } cursor-pointer large-desktop:w-[12vw] transition duration-500 large-desktop:h-[15vh] h-[150px] p-[14px] border border-[9px] flex items-center justify-center`}
+              } cursor-pointer transition duration-500 large-desktop:w-[12vw] large-desktop:h-[15vh] h-[150px] p-[14px] border border-[9px] flex items-center justify-center`}
             >
               <p className="text-center font-bold">{text2}</p>
             </div>
