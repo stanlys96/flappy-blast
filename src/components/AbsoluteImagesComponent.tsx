@@ -11,6 +11,7 @@ import { GroundMobileSvg } from "./GroundMobileSvg";
 
 export const AbsoluteImagesComponent = () => {
   const router = useRouter();
+
   const useScreenWidth = () => {
     const [width, setWidth] = useState(0);
 
@@ -27,6 +28,28 @@ export const AbsoluteImagesComponent = () => {
   };
   const maxWidth = useScreenWidth();
 
+  const [show, setShow] = useState(true);
+  let lastScrollY = 0;
+
+  const handleScroll = () => {
+    if (window.scrollY > lastScrollY) {
+      // Scroll Down
+      setShow(false);
+    } else {
+      // Scroll Up
+      setShow(true);
+    }
+    lastScrollY = window.scrollY;
+  };
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [lastScrollY]);
+
   return (
     <div className="overflow-hidden">
       <div
@@ -35,7 +58,9 @@ export const AbsoluteImagesComponent = () => {
       >
         <div
           style={{ zIndex: 120 }}
-          className="bg-[#404833] fixed top-[2%] md:p-0 py-[15px] px-[30px] desktop:px-[60px] md:py-[15px] desktop:py-[20px] large-desktop:px-[60px] large-desktop:py-[25px] md:px-[45px] mt-[30px] rounded-[71px] flex items-center justify-center gap-x-[20px] large-desktop:gap-x-[40px]"
+          className={`bg-[#404833] ${
+            show ? "show-menu" : "hide-menu"
+          } fixed top-menu top-[2%] md:p-0 py-[15px] px-[30px] desktop:px-[60px] md:py-[15px] desktop:py-[20px] large-desktop:px-[60px] large-desktop:py-[25px] md:px-[45px] mt-[30px] rounded-[71px] flex items-center justify-center gap-x-[20px] large-desktop:gap-x-[40px]`}
         >
           <a
             onClick={() => router.push("/")}
