@@ -22,6 +22,7 @@ export default function HomePage() {
   const [isHovered3, setIsHovered3] = useState(false);
   const [isHovered4, setIsHovered4] = useState(false);
   const [totalCarouselData, setTotalCarouselData] = useState(CarouselData);
+  const [totalCarousel, setTotalCarousel] = useState([0, 1, 2, 3]);
 
   const handleMouseEnter = () => {
     setText("The price can only go up, starting at the initial sale price.");
@@ -155,7 +156,7 @@ export default function HomePage() {
           </div> */}
         </div>
       </HeroLayout>
-      <div className="flex md:flex-row flex-col py-[25px] justify-center items-center h-[110vh] desktop:h-[80vh] large-desktop:h-[100vh] bg-black md:pt-[50px] md:pt-0">
+      <div className="flex md:flex-row flex-col py-[25px] justify-center items-center h-[110vh] desktop:h-[100vh] large-desktop:h-[100vh] bg-black md:pt-[50px] md:pt-0">
         <div className="flex flex-1 md:pl-[150px] justify-center items-center md:items-start flex-col gap-y-[20px] desktop:gap-y-[40px] large-desktop:pl-[250px]">
           <p className="flappy-birdy text-[#FCFC03] md:text-left text-center md:px-0 px-[20px] text-[80px] desktop:text-[120px] large-desktop:text-[140px] md:text-[100px] leading-[75px]">
             homage to the legendary game
@@ -256,7 +257,7 @@ export default function HomePage() {
           )}
         </div>
       </div>
-      <div className="md:block hidden h-[100vh] desktop:h-[100vh] large-desktop:h-[80vh] bg-[#262626] relative">
+      <div className="md:block hidden h-[100vh] desktop:h-[120vh] large-desktop:h-[80vh] bg-[#262626] relative">
         <div className="grid grid-cols-4 gap-x-[50px] justify-center items-end h-full px-[100px]">
           <div className="flex flex-col gap-y-[25px] items-center">
             <div
@@ -349,7 +350,7 @@ export default function HomePage() {
           )}
         </div>
       </div>
-      <div className="h-[140vh] md:h-[120vh] desktop:h-[100vh] large-desktop:h-[90vh] flex flex-col justify-center items-center px-[150px] bg-black">
+      <div className="h-[140vh] md:h-[120vh] desktop:h-[120vh] large-desktop:h-[90vh] flex flex-col justify-center items-center px-[150px] bg-black">
         <div className="flex flex-col justify-center items-center">
           <p className="pixel-caps md:mt-[50px] desktop:mt-[50px] large-desktop:mt-[70px] text-[#FCFC03] text-[2rem] md:text-[48px] desktop:text-[4rem] large-desktop:text-[5rem] text-center mb-[50px]">
             $FLAP TOKENOMICS
