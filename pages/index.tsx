@@ -402,7 +402,7 @@ export default function HomePage() {
               </div>
             </div>
           </div>
-          <div className="large-desktop:mt-[30px] mt-[50px] md:mt-[25px] desktop:mt-[20px] flex flex-col p-[30px] large-desktop:p-[60px] gap-y-[20px] border border-[12px] border-[#404833] w-fit mx-auto border-dashed-custom justify-center items-center py-[36px]">
+          <div className="large-desktop:mt-[100px] mt-[50px] md:mt-[25px] desktop:mt-[20px] flex flex-col p-[30px] large-desktop:p-[60px] gap-y-[20px] border border-[12px] border-[#404833] w-fit mx-auto border-dashed-custom justify-center items-center py-[36px]">
             <p className="text-white text-[16px] md:text-[2rem] desktop:text-[2rem] large-desktop:text-[3rem]">
               in collaboration with
             </p>
