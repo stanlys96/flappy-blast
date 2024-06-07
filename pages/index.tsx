@@ -345,7 +345,7 @@ export default function HomePage() {
       </div>
       <div className="h-[140vh] md:h-[120vh] desktop:h-[100vh] large-desktop:h-[90vh] flex flex-col justify-center items-center px-[150px] bg-black">
         <div className="flex flex-col justify-center items-center">
-          <p className="pixel-caps md:mt-[50px] desktop:mt-[50px] large-desktop:mt-[30px] text-[#FCFC03] text-[2rem] md:text-[48px] desktop:text-[4rem] large-desktop:text-[5rem] text-center mb-[50px]">
+          <p className="pixel-caps md:mt-[50px] desktop:mt-[50px] large-desktop:mt-[70px] text-[#FCFC03] text-[2rem] md:text-[48px] desktop:text-[4rem] large-desktop:text-[5rem] text-center mb-[50px]">
             $FLAP TOKENOMICS
           </p>
           <div className="w-full flex justify-center items-center md:hidden block ">
