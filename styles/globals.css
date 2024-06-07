@@ -62,6 +62,7 @@ body {
 
 .pixel-caps {
   font-family: "PixelCaps";
+  place-items: center;
 }
 
 .flappy-birdy {
