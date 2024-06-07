@@ -240,7 +240,7 @@ export default function HomePage() {
                 />
               </div>
               <div className="absolute bg-[#FFFFFF60] w-2/3 left-1/2 transform -translate-x-1/2  top-2/3 h-fit p-[16px] ">
-                <p className="text-black text-center text-[18px]">
+                <p className="text-black text-center font-bold text-[18px]">
                   click the box to view details
                 </p>
               </div>
