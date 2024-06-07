@@ -110,12 +110,12 @@ export default function HomePage() {
     <div className="w-[100vw] overflow-hidden">
       <HeroLayout>
         <div className="flex flex-col h-[80vh] md:h-[80vh] desktop:h-[100vh] large-desktop:h-[80vh] justify-center items-center">
-          <p className="text-[20px] md:text-left text-center md:text-[2rem] desktop:text-[4rem] large-desktop:text-[5rem] mb-[20px]  text-white">
+          <p className="text-[24px] md:text-left text-center md:text-[2rem] desktop:text-[4rem] large-desktop:text-[5rem] mb-[20px]  text-white">
             unruggable meme & infinite
           </p>
           <div className="md:block hidden flex items-center justify-center">
             <Image
-              className="desktop:w-[750px] large-desktop:w-[954px] md:w-[600px]"
+              className="w-full desktop:w-[750px] large-desktop:w-[954px] md:w-[600px]"
               width={954}
               height={180}
               alt="flappy-blast"
@@ -345,7 +345,7 @@ export default function HomePage() {
       </div>
       <div className="h-[140vh] md:h-[100vh] desktop:h-[100vh] large-desktop:h-[80vh] flex flex-col justify-center items-center px-[150px] bg-black">
         <div>
-          <p className="pixel-caps text-[#FCFC03] text-[24px] md:text-[48px] desktop:text-[4rem] large-desktop:text-[5rem] text-center mb-[50px]">
+          <p className="pixel-caps text-[#FCFC03] text-[2rem] md:text-[48px] desktop:text-[4rem] large-desktop:text-[5rem] text-center mb-[50px]">
             $FLAP TOKENOMICS
           </p>
           <div className="w-full flex justify-center items-center md:hidden block ">
@@ -407,7 +407,7 @@ export default function HomePage() {
               in collaboration with
             </p>
             <a href="https://app.bladeswap.xyz/swap" target="_blank">
-              <BladeSvg className="h-[40px] cursor-pointer md:h-[75px] large-desktop:h-[120px] w-fit" />
+              <BladeSvg className="h-[50px] cursor-pointer md:h-[75px] large-desktop:h-[120px] w-fit" />
             </a>
           </div>
         </div>

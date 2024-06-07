@@ -154,7 +154,7 @@ export const AbsoluteImagesComponent = () => {
       <a href="https://blast.io/en" target="_blank">
         <BlastSVG
           style={{ zIndex: 119 }}
-          className="md:w-[250px] w-[150px] large-desktop:w-[300px] fixed bottom-[3%] z-100 md:top-[5%] z-50  right-[2%] cursor-pointer"
+          className="md:w-[250px] w-[150px] h-fit large-desktop:w-[300px] fixed bottom-[3%] z-100 md:top-[5%] z-50  right-[2%] cursor-pointer"
         />
       </a>
       <div
