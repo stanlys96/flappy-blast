@@ -5,41 +5,41 @@ import { useAccount, useDisconnect, useEnsAvatar, useEnsName } from "wagmi";
 import { useWeb3Modal } from "@web3modal/wagmi/react";
 import FlappyBird from "@/src/components/FlappyBird";
 
-export default function AirdropPage() {
-  const { address } = useAccount();
-  const [isClientMobile, setIsClientMobile] = useState(false);
+import { signIn, signOut, useSession } from "next-auth/react";
 
-  const [currentState, setCurrentState] = useState<
-    "index" | "flap" | "leaderboard"
-  >("index");
-  const { disconnect } = useDisconnect();
-  const { data: ensName } = useEnsName({
-    address,
-  });
-  const [domLoaded, setDomLoaded] = useState(false);
-  const ensAvatar = useEnsAvatar({
-    name: ensName ?? "",
-  });
-  const { open } = useWeb3Modal();
-  useEffect(() => {
-    setDomLoaded(true);
-    if (typeof window !== "undefined") {
-      const userAgent = navigator.userAgent.toLowerCase();
-      const isMobileDevice = /mobile|android|iphone|ipad|tablet/.test(
-        userAgent
-      );
-      setIsClientMobile(isMobileDevice);
-    }
-  }, []);
-  if (!domLoaded) return <div></div>;
-  return (
-    <HeroLayout>
-      <div
-        style={{ zIndex: 119 }}
-        className="flex justify-center items-center w-[80%] md:w-[60%] z-150 mx-auto relative h-[100vh]"
-      >
-        <div className="bg-white px-[30px] justify-center items-center md:px-[60px] py-[100px] rounded-[22px] mt-[30px] w-full flex flex-col gap-y-[15px] w-[1000px]">
-          {/* {currentState === "index" && (
+export default function AirdropPage() {
+	const { data: session, status } = useSession();
+
+	const { address } = useAccount();
+	const [isClientMobile, setIsClientMobile] = useState(false);
+
+	const [currentState, setCurrentState] = useState<"index" | "flap" | "leaderboard">("index");
+	const { disconnect } = useDisconnect();
+	const { data: ensName } = useEnsName({
+		address,
+	});
+	const [domLoaded, setDomLoaded] = useState(false);
+	const ensAvatar = useEnsAvatar({
+		name: ensName ?? "",
+	});
+	const { open } = useWeb3Modal();
+	useEffect(() => {
+		setDomLoaded(true);
+		if (typeof window !== "undefined") {
+			const userAgent = navigator.userAgent.toLowerCase();
+			const isMobileDevice = /mobile|android|iphone|ipad|tablet/.test(userAgent);
+			setIsClientMobile(isMobileDevice);
+		}
+	}, []);
+	if (!domLoaded) return <div></div>;
+	return (
+		<HeroLayout>
+			<div
+				style={{ zIndex: 119 }}
+				className="flex justify-center items-center w-[80%] md:w-[60%] z-150 mx-auto relative h-[100vh]"
+			>
+				<div className="bg-white px-[30px] justify-center items-center md:px-[60px] py-[100px] rounded-[22px] mt-[30px] w-full flex flex-col gap-y-[15px] w-[1000px]">
+					{/* {currentState === "index" && (
             <div>
               <div className="flex flex-col gap-y-[20px]">
                 <div className="flex gap-x-[10px] items-center">
@@ -170,9 +170,9 @@ export default function AirdropPage() {
               </div>
             </div>
           )} */}
-          <p>Coming soon :)</p>
-        </div>
-      </div>
-    </HeroLayout>
-  );
+					<p>Coming soon :)</p>
+				</div>
+			</div>
+		</HeroLayout>
+	);
 }
