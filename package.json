@@ -24,6 +24,7 @@
     "next-auth": "^4.24.7",
     "react": "^18",
     "react-dom": "^18",
+    "twitter-api-v2": "^1.17.1",
     "viem": "^2.13.3",
     "wagmi": "^2.9.8"
   },

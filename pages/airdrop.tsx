@@ -4,25 +4,23 @@ import { useEffect, useState } from "react";
 import { useAccount, useDisconnect, useEnsAvatar, useEnsName } from "wagmi";
 import { useWeb3Modal } from "@web3modal/wagmi/react";
 import FlappyBird from "@/src/components/FlappyBird";
+import TwitterIntentHandler from "@/src/components/TwitterIntentHandler";
 
 import { signIn, signOut, useSession } from "next-auth/react";
 
 export default function AirdropPage() {
 	const { data: session, status } = useSession();
-
+	console.log(session);
 	const { address } = useAccount();
 	const [isClientMobile, setIsClientMobile] = useState(false);
-
 	const [currentState, setCurrentState] = useState<"index" | "flap" | "leaderboard">("index");
 	const { disconnect } = useDisconnect();
-	const { data: ensName } = useEnsName({
-		address,
-	});
+	const { data: ensName } = useEnsName({ address });
 	const [domLoaded, setDomLoaded] = useState(false);
-	const ensAvatar = useEnsAvatar({
-		name: ensName ?? "",
-	});
+	const ensAvatar = useEnsAvatar({ name: ensName ?? "" });
 	const { open } = useWeb3Modal();
+	const [data, setData] = useState(null);
+
 	useEffect(() => {
 		setDomLoaded(true);
 		if (typeof window !== "undefined") {
@@ -31,14 +29,61 @@ export default function AirdropPage() {
 			setIsClientMobile(isMobileDevice);
 		}
 	}, []);
+
+	const fetchData = async () => {
+		try {
+			const response = await fetch("/api/twitter");
+			const result = await response.json();
+			setData(result);
+		} catch (error) {
+			console.error("Error fetching data from API:", error);
+		}
+	};
+
 	if (!domLoaded) return <div></div>;
+
 	return (
 		<HeroLayout>
+			<TwitterIntentHandler />
 			<div
 				style={{ zIndex: 119 }}
 				className="flex justify-center items-center w-[80%] md:w-[60%] z-150 mx-auto relative h-[100vh]"
 			>
 				<div className="bg-white px-[30px] justify-center items-center md:px-[60px] py-[100px] rounded-[22px] mt-[30px] w-full flex flex-col gap-y-[15px] w-[1000px]">
+					<div>
+						{!session && (
+							<>
+								Not signed in <br />
+								<button onClick={() => signIn()}>Sign in</button>
+							</>
+						)}
+						{session && (
+							<>
+								<div className="flex flex-col gap-2">
+									<a href="https://twitter.com/intent/follow?screen_name=flappyblast">
+										Follow @flappyblast
+									</a>
+									<a href="https://twitter.com/intent/retweet?tweet_id=463440424141459456">Retweet</a>
+									<a href="https://twitter.com/intent/like?tweet_id=463440424141459456">Like</a>
+									<a href="https://twitter.com/intent/tweet?text=Hello%20world&hashtags=yrdy">
+										Tweet
+									</a>
+								</div>
+								Signed in as {session.user?.name} <br />
+								<button onClick={() => signOut()}>Sign out</button>
+								<div>
+									<h1>Fetch Data from API</h1>
+									<button onClick={fetchData}>Fetch Data</button>
+									{data && (
+										<div>
+											<h2>API Response:</h2>
+											<pre>{JSON.stringify(data, null, 2)}</pre>
+										</div>
+									)}
+								</div>
+							</>
+						)}
+					</div>
 					{/* {currentState === "index" && (
             <div>
               <div className="flex flex-col gap-y-[20px]">
