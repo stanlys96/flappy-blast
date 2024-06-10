@@ -30,16 +30,6 @@ export default function AirdropPage() {
 		}
 	}, []);
 
-	const fetchData = async () => {
-		try {
-			const response = await fetch("/api/twitter");
-			const result = await response.json();
-			setData(result);
-		} catch (error) {
-			console.error("Error fetching data from API:", error);
-		}
-	};
-
 	if (!domLoaded) return <div></div>;
 
 	return (
@@ -51,7 +41,7 @@ export default function AirdropPage() {
 			>
 				<div className="bg-white px-[30px] justify-center items-center md:px-[60px] py-[100px] rounded-[22px] mt-[30px] w-full flex flex-col gap-y-[15px] w-[1000px]">
 					<div>
-						{!session && (
+						{/* {!session && (
 							<>
 								Not signed in <br />
 								<button onClick={() => signIn()}>Sign in</button>
@@ -83,7 +73,7 @@ export default function AirdropPage() {
 								</div>
 							</>
 						)}
-					</div>
+					</div> */}
 					{/* {currentState === "index" && (
             <div>
               <div className="flex flex-col gap-y-[20px]">
