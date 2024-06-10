@@ -7,10 +7,11 @@ import FlappyBird from "@/src/components/FlappyBird";
 import TwitterIntentHandler from "@/src/components/TwitterIntentHandler";
 
 import { signIn, signOut, useSession } from "next-auth/react";
+import { getUsers } from "./api/strapi";
+import { Button, Modal } from "antd";
 
 export default function AirdropPage() {
 	const { data: session, status } = useSession();
-	console.log(session);
 	const { address } = useAccount();
 	const [isClientMobile, setIsClientMobile] = useState(false);
 	const [currentState, setCurrentState] = useState<"index" | "flap" | "leaderboard">("index");
@@ -30,6 +31,31 @@ export default function AirdropPage() {
 		}
 	}, []);
 
+	const [isModalOpen, setIsModalOpen] = useState(false);
+
+	const showModal = () => {
+		setIsModalOpen(true);
+	};
+
+	const handleOk = () => {
+		setIsModalOpen(false);
+	};
+
+	const handleCancel = () => {
+		setIsModalOpen(false);
+	};
+
+	const [user, setUser] = useState(null);
+
+	const fetchRestaurantData = async () => {
+		try {
+			const data = await getUsers();
+			setUser(data);
+		} catch (error) {
+			console.error("There was an error fetching the data!", error);
+		}
+	};
+
 	if (!domLoaded) return <div></div>;
 
 	return (
@@ -40,8 +66,19 @@ export default function AirdropPage() {
 				className="flex justify-center items-center w-[80%] md:w-[60%] z-150 mx-auto relative h-[100vh]"
 			>
 				<div className="bg-white px-[30px] justify-center items-center md:px-[60px] py-[100px] rounded-[22px] mt-[30px] w-full flex flex-col gap-y-[15px] w-[1000px]">
-					<div>
-						{/* {!session && (
+					<Button type="primary" onClick={showModal}>
+						Open Modal
+					</Button>
+					<Modal title="Basic Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+						<div className="flex flex-col gap-2">
+							<a href="https://twitter.com/intent/follow?screen_name=flappyblast">Follow @flappyblast</a>
+							<a href="https://twitter.com/intent/retweet?tweet_id=463440424141459456">Retweet</a>
+							<a href="https://twitter.com/intent/like?tweet_id=463440424141459456">Like</a>
+							<a href="https://twitter.com/intent/tweet?text=Hello%20world&hashtags=yrdy">Tweet</a>
+						</div>
+					</Modal>
+					{/* <div>
+						{!session && (
 							<>
 								Not signed in <br />
 								<button onClick={() => signIn()}>Sign in</button>
@@ -49,28 +86,8 @@ export default function AirdropPage() {
 						)}
 						{session && (
 							<>
-								<div className="flex flex-col gap-2">
-									<a href="https://twitter.com/intent/follow?screen_name=flappyblast">
-										Follow @flappyblast
-									</a>
-									<a href="https://twitter.com/intent/retweet?tweet_id=463440424141459456">Retweet</a>
-									<a href="https://twitter.com/intent/like?tweet_id=463440424141459456">Like</a>
-									<a href="https://twitter.com/intent/tweet?text=Hello%20world&hashtags=yrdy">
-										Tweet
-									</a>
-								</div>
 								Signed in as {session.user?.name} <br />
 								<button onClick={() => signOut()}>Sign out</button>
-								<div>
-									<h1>Fetch Data from API</h1>
-									<button onClick={fetchData}>Fetch Data</button>
-									{data && (
-										<div>
-											<h2>API Response:</h2>
-											<pre>{JSON.stringify(data, null, 2)}</pre>
-										</div>
-									)}
-								</div>
 							</>
 						)}
 					</div> */}
