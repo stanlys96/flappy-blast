@@ -192,7 +192,7 @@ export const AbsoluteImagesComponent = () => {
         <a href="https://discord.gg/qNcNxfVmVA" target="_blank">
           <DiscordSvg className="cursor-pointer large-desktop:h-[60px] large-desktop:w-[60px]" />
         </a>
-        <a href="https://t.me/flappyblast" target="_blank">
+        <a href="https://t.me/+esBMo_0AwCcwZWZl" target="_blank">
           <TelegramSvg className="cursor-pointer large-desktop:h-[60px] large-desktop:w-[60px]" />
         </a>
       </div>
@@ -206,7 +206,7 @@ export const AbsoluteImagesComponent = () => {
         <a href="https://discord.gg/qNcNxfVmVA" target="_blank">
           <DiscordSvg className="cursor-pointer h-[20px] w-[20px]" />
         </a>
-        <a href="https://t.me/flappyblast" target="_blank">
+        <a href="https://t.me/+esBMo_0AwCcwZWZl" target="_blank">
           <TelegramSvg className="cursor-pointer h-[20px] w-[20px]" />
         </a>
       </div>
