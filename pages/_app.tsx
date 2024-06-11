@@ -9,7 +9,7 @@ import { defaultWagmiConfig } from "@web3modal/wagmi";
 import { SessionProvider } from "next-auth/react";
 
 const queryClient = new QueryClient();
-const PROJECT_ID = process.env.NEXT_PUBLIC_PROJECT_ID ?? "asdasd";
+const PROJECT_ID = process.env.NEXT_PUBLIC_PROJECT_ID ?? "";
 
 const metadata = {
 	name: "Hyfen",
