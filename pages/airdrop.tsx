@@ -5,94 +5,134 @@ import { useAccount, useDisconnect, useEnsAvatar, useEnsName } from "wagmi";
 import { useWeb3Modal } from "@web3modal/wagmi/react";
 import FlappyBird from "@/src/components/FlappyBird";
 import TwitterIntentHandler from "@/src/components/TwitterIntentHandler";
-
+import useSWR from "swr";
+import Cookie from "js-cookie";
 import { signIn, signOut, useSession } from "next-auth/react";
 // import { getUsers } from "./api/strapi";
 import { Button, Modal } from "antd";
-import { ExportOutlined, CaretRightOutlined, CheckOutlined } from "@ant-design/icons";
+import {
+  ExportOutlined,
+  CaretRightOutlined,
+  CheckOutlined,
+} from "@ant-design/icons";
+import { axiosApi, fetcherStrapi } from "@/utils/axios";
 
 export default function AirdropPage() {
-	const { data: session, status } = useSession();
-	const { address } = useAccount();
-	const [isClientMobile, setIsClientMobile] = useState(false);
-	const [currentState, setCurrentState] = useState<"index" | "flap" | "leaderboard">("index");
-	const { disconnect } = useDisconnect();
-	const { data: ensName } = useEnsName({ address });
-	const [domLoaded, setDomLoaded] = useState(false);
-	const ensAvatar = useEnsAvatar({ name: ensName ?? "" });
-	const { open } = useWeb3Modal();
-	const [data, setData] = useState(null);
+  const { data: session, status } = useSession();
+  const { address } = useAccount();
+  const [isClientMobile, setIsClientMobile] = useState(false);
+  const [currentState, setCurrentState] = useState<
+    "index" | "flap" | "leaderboard"
+  >("index");
+  const { disconnect } = useDisconnect();
+  const { data: ensName } = useEnsName({ address });
+  const [domLoaded, setDomLoaded] = useState(false);
+  const ensAvatar = useEnsAvatar({ name: ensName ?? "" });
+  const { open } = useWeb3Modal();
+  const [data, setData] = useState(null);
+  const { data: walletData, mutate: walletMutate } = useSWR(
+    `/api/wallet-accounts?filters[wallet_address][$eq]=${address}`,
+    fetcherStrapi
+  );
 
-	useEffect(() => {
-		setDomLoaded(true);
-		if (typeof window !== "undefined") {
-			const userAgent = navigator.userAgent.toLowerCase();
-			const isMobileDevice = /mobile|android|iphone|ipad|tablet/.test(userAgent);
-			setIsClientMobile(isMobileDevice);
-		}
-	}, []);
+  useEffect(() => {
+    setDomLoaded(true);
+    if (typeof window !== "undefined") {
+      const userAgent = navigator.userAgent.toLowerCase();
+      const isMobileDevice = /mobile|android|iphone|ipad|tablet/.test(
+        userAgent
+      );
+      setIsClientMobile(isMobileDevice);
+    }
+  }, []);
 
-	const [isTwitterModalOpen, setIsTwitterModalOpen] = useState(true);
+  const [isTwitterModalOpen, setIsTwitterModalOpen] = useState(true);
 
-	const [verificationStatus, setVerificationStatus] = useState({
-		follow: "unopened",
-		retweet: "unopened",
-		like: "unopened",
-		tweet: "unopened",
-	});
+  const [verificationStatus, setVerificationStatus] = useState({
+    follow: "unopened",
+    retweet: "unopened",
+    like: "unopened",
+    tweet: "unopened",
+  });
 
-	const handleOpenLink = (button: string) => {
-		setTimeout(() => {
-			setVerificationStatus((prevStatus) => ({
-				...prevStatus,
-				[button]: "unverified",
-			}));
-		}, 1000);
-	};
+  const handleOpenLink = (button: string) => {
+    setTimeout(() => {
+      setVerificationStatus((prevStatus) => ({
+        ...prevStatus,
+        [button]: "unverified",
+      }));
+    }, 1000);
+  };
 
-	const handleVerification = (button: string) => {
-		setVerificationStatus((prevStatus) => ({
-			...prevStatus,
-			[button]: "verifying",
-		}));
-		const randomDelay = Math.floor(Math.random() * 3000) + 1000; // Random delay between 1 to 4 seconds
-		setTimeout(() => {
-			setVerificationStatus((prevStatus) => ({
-				...prevStatus,
-				[button]: "verified",
-			}));
-		}, randomDelay);
-	};
+  const handleVerification = (button: string) => {
+    setVerificationStatus((prevStatus) => ({
+      ...prevStatus,
+      [button]: "verifying",
+    }));
+    const randomDelay = Math.floor(Math.random() * 3000) + 1000; // Random delay between 1 to 4 seconds
+    setTimeout(() => {
+      setVerificationStatus((prevStatus) => ({
+        ...prevStatus,
+        [button]: "verified",
+      }));
+    }, randomDelay);
+  };
 
-	const [isAllVerifiedModalOpen, setIsAllVerifiedModalOpen] = useState(false);
-	const [twitterAllVerified, setTwitterAllVerified] = useState(false);
+  const [isAllVerifiedModalOpen, setIsAllVerifiedModalOpen] = useState(false);
+  const [twitterAllVerified, setTwitterAllVerified] = useState(false);
 
-	useEffect(() => {
-		if (
-			verificationStatus.follow === "verified" &&
-			verificationStatus.retweet === "verified" &&
-			verificationStatus.like === "verified" &&
-			verificationStatus.tweet === "verified"
-		) {
-			setTimeout(() => {
-				setTwitterAllVerified(true);
-				setIsAllVerifiedModalOpen(true);
-				setIsTwitterModalOpen(false);
-			}, 2000); // Delay in milliseconds
-		}
-	}, [verificationStatus]);
+  useEffect(() => {
+    if (
+      verificationStatus.follow === "verified" &&
+      verificationStatus.retweet === "verified" &&
+      verificationStatus.like === "verified" &&
+      verificationStatus.tweet === "verified"
+    ) {
+      setTimeout(() => {
+        setTwitterAllVerified(true);
+        setIsAllVerifiedModalOpen(true);
+        setIsTwitterModalOpen(false);
+      }, 2000); // Delay in milliseconds
+    }
+  }, [verificationStatus]);
 
-	if (!domLoaded) return <div></div>;
+  useEffect(() => {
+    if (address) {
+      axiosApi
+        .get(`/api/wallet-accounts?filters[wallet_address][$eq]=${address}`)
+        .then((response) => {
+          if (response?.data?.data.length === 0) {
+            axiosApi
+              .post("/api/wallet-accounts", {
+                data: {
+                  wallet_address: address,
+                },
+              })
+              .then((response) => {
+                walletMutate();
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+          }
+        });
+      Cookie.set("wallet_address", address as string, {
+        expires: 1,
+      });
+    }
+  }, [address, walletData]);
 
-	return (
-		<HeroLayout>
-			<TwitterIntentHandler />
-			<div
-				style={{ zIndex: 119 }}
-				className="flex justify-center items-center w-[80%] md:w-[60%] z-150 mx-auto relative h-[100vh]"
-			>
-				<div className="bg-white px-[30px] justify-center items-center md:px-[60px] py-[100px] rounded-[22px] mt-[30px] w-full flex flex-col gap-y-[15px] w-[1000px]">
-					{/* <div className="flex flex-col gap-y-[20px] w-full">
+  if (!domLoaded) return <div></div>;
+
+  return (
+    <HeroLayout>
+      <TwitterIntentHandler />
+      <div
+        style={{ zIndex: 119 }}
+        className="flex justify-center items-center w-[80%] md:w-[60%] z-150 mx-auto relative h-[100vh]"
+      >
+        <div className="bg-white px-[30px] justify-center items-center md:px-[60px] py-[100px] rounded-[22px] mt-[30px] w-full flex flex-col gap-y-[15px] w-[1000px]">
+          {/* <div className="flex flex-col gap-y-[20px] w-full">
 						<div className="flex flex-col justify-start">
 							{!session && (
 								<>
@@ -343,7 +383,7 @@ export default function AirdropPage() {
 							)}
 						</div>
 					</div> */}
-					{/* {currentState === "index" && (
+          {/* {currentState === "index" && (
 						<div>
 							<div className="flex flex-col gap-y-[20px]">
 								<div className="flex gap-x-[10px] items-center">
@@ -440,9 +480,9 @@ export default function AirdropPage() {
 							</div>
 						</div>
 					)} */}
-					<p>Coming soon :)</p>
-				</div>
-			</div>
-		</HeroLayout>
-	);
+          <p>Coming soon :)</p>
+        </div>
+      </div>
+    </HeroLayout>
+  );
 }

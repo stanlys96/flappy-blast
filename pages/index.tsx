@@ -390,7 +390,7 @@ export default function HomePage() {
             </div>
             <div className="flex md:w-[400.25px] desktop:w-[450.25px] large-desktop:w-[550.25px] mt-[40px] md:mt-0 md:flex-col-reverse flex-col gap-y-[40px]">
               <div className="flex justify-start items-center gap-x-[30px]">
-                <div className="w-[30px] h-[30px] bg-[#22A2FF] rounded-full" />
+                <div className="md:w-[50px] md:h-[50px] w-[30px] h-[30px] bg-[#22A2FF] rounded-full" />
                 <p className="pixel-caps text-[#22A2FF] desktop:text-[1.5rem] large-desktop:text-[2rem]">
                   2.5 % AIRDROP
                 </p>
