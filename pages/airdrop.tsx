@@ -7,7 +7,7 @@ import FlappyBird from "@/src/components/FlappyBird";
 import TwitterIntentHandler from "@/src/components/TwitterIntentHandler";
 
 import { signIn, signOut, useSession } from "next-auth/react";
-import { getUsers } from "./api/strapi";
+// import { getUsers } from "./api/strapi";
 import { Button, Modal } from "antd";
 import { ExportOutlined, CaretRightOutlined, CheckOutlined } from "@ant-design/icons";
 
@@ -33,17 +33,6 @@ export default function AirdropPage() {
 	}, []);
 
 	const [isTwitterModalOpen, setIsTwitterModalOpen] = useState(true);
-
-	const [user, setUser] = useState(null);
-
-	const fetchRestaurantData = async () => {
-		try {
-			const data = await getUsers();
-			setUser(data);
-		} catch (error) {
-			console.error("There was an error fetching the data!", error);
-		}
-	};
 
 	const [verificationStatus, setVerificationStatus] = useState({
 		follow: "unopened",
@@ -103,367 +92,354 @@ export default function AirdropPage() {
 				className="flex justify-center items-center w-[80%] md:w-[60%] z-150 mx-auto relative h-[100vh]"
 			>
 				<div className="bg-white px-[30px] justify-center items-center md:px-[60px] py-[100px] rounded-[22px] mt-[30px] w-full flex flex-col gap-y-[15px] w-[1000px]">
-					<>
-						{!session && (
-							<>
-								<Button type="primary" onClick={() => signIn()}>
-									Login to X
-								</Button>
-							</>
-						)}
-						{session && (
-							<>
-								{session.user?.name} <br />
-								<Button type="primary" onClick={() => signOut()}>
-									Logout
-								</Button>
-								<Modal
-									centered
-									title={
-										<div style={{ textAlign: "center", fontSize: "24px", fontWeight: "bold" }}>
-											X account not eligible yet
+					{/* <div className="flex flex-col gap-y-[20px] w-full">
+						<div className="flex flex-col justify-start">
+							{!session && (
+								<>
+									<div
+										onClick={() => signIn()}
+										className="border border-[#BDBDBD] py-[11px] px-[19px] rounded-[10px] flex gap-x-[10px] cursor-pointer items-center"
+									>
+										<p className="font-bold md:text-[16px] text-[12px]">Login to X</p>
+									</div>
+								</>
+							)}
+							{session && (
+								<>
+									<div className="flex flex-col w-fit gap-y-4">
+										<div>Hi, {session.user?.name}</div>
+										<div
+											onClick={() => signOut()}
+											className="border border-[#BDBDBD] py-[11px] px-[19px] rounded-[10px] flex gap-x-[10px] cursor-pointer items-center"
+										>
+											<p className="font-bold md:text-[16px] text-[12px]">Logout from X</p>
 										</div>
-									}
-									open={isTwitterModalOpen && !twitterAllVerified}
-									onCancel={() => setIsTwitterModalOpen(false)}
-									footer={null}
-									closable={false} // Remove the "X" button
-									maskClosable={false} // Prevent closing by clicking outside
-								>
-									<div className="flex flex-col gap-2">
-										<div className="text-center flex flex-col gap-6 mb-6">
-											<div>
-												<p>To become eligible, please complete the one-time tasks.</p>
-												<p>
-													After that, you can play FlappyBlast and easily qualify for the
-													airdrop!
-												</p>
+									</div>
+
+									<Modal
+										centered
+										title={
+											<div style={{ textAlign: "center", fontSize: "24px", fontWeight: "bold" }}>
+												X account not eligible yet
 											</div>
-											<div>
-												<p>Step 2/2 - Social Campaign</p>
+										}
+										open={isTwitterModalOpen && !twitterAllVerified}
+										onCancel={() => setIsTwitterModalOpen(false)}
+										footer={null}
+										closable={false} // Remove the "X" button
+										// maskClosable={false} // Prevent closing by clicking outside
+									>
+										<div className="flex flex-col gap-2">
+											<div className="text-center flex flex-col gap-6 mb-6">
+												<div>
+													<p>To become eligible, please complete the one-time tasks.</p>
+													<p>
+														After that, you can play FlappyBlast and easily qualify for the
+														airdrop!
+													</p>
+												</div>
+												<div>
+													<p>Step 2/2 - Social Campaign</p>
+												</div>
 											</div>
-										</div>
-										<div className="flex justify-between">
-											<a href="https://twitter.com/intent/follow?screen_name=flappyblast">
-												<p className=" font-bold">
-													1. <span className="underline">Follow @Flappyblast on X</span>
-												</p>
-											</a>
-											{verificationStatus.follow === "unopened" ? (
+											<div className="flex justify-between">
 												<a href="https://twitter.com/intent/follow?screen_name=flappyblast">
+													<p className=" font-bold">
+														1. <span className="underline">Follow @Flappyblast on X</span>
+													</p>
+												</a>
+												{verificationStatus.follow === "unopened" ? (
+													<a href="https://twitter.com/intent/follow?screen_name=flappyblast">
+														<Button
+															type="primary"
+															onClick={() => handleOpenLink("follow")}
+															icon={<ExportOutlined />}
+															iconPosition={"end"}
+														>
+															Follow
+														</Button>
+													</a>
+												) : (
 													<Button
 														type="primary"
-														onClick={() => handleOpenLink("follow")}
-														icon={<ExportOutlined />}
+														onClick={() => handleVerification("follow")}
+														loading={
+															verificationStatus.follow === "verifying" ? true : false
+														}
+														icon={
+															verificationStatus.follow === "unverified" ? (
+																<CaretRightOutlined />
+															) : verificationStatus.follow === "verified" ? (
+																<CheckOutlined />
+															) : (
+																false
+															)
+														}
 														iconPosition={"end"}
 													>
-														Follow
+														{verificationStatus.follow === "verifying"
+															? "Verifying..."
+															: verificationStatus.follow === "verified"
+															? "Verified"
+															: "Verify"}
 													</Button>
-												</a>
-											) : (
-												<Button
-													type="primary"
-													onClick={() => handleVerification("follow")}
-													loading={verificationStatus.follow === "verifying" ? true : false}
-													icon={
-														verificationStatus.follow === "unverified" ? (
-															<CaretRightOutlined />
-														) : verificationStatus.follow === "verified" ? (
-															<CheckOutlined />
-														) : (
-															false
-														)
-													}
-													iconPosition={"end"}
-												>
-													{verificationStatus.follow === "verifying"
-														? "Verifying..."
-														: verificationStatus.follow === "verified"
-														? "Verified"
-														: "Verify"}
-												</Button>
-											)}
-										</div>
-										<div className="flex justify-between">
-											<a href="https://twitter.com/intent/retweet?tweet_id=463440424141459456">
-												<p className=" font-bold">
-													2.{" "}
-													<span className="underline">Retweet @Flappyblast's post on X</span>
-												</p>
-											</a>
-											{verificationStatus.retweet === "unopened" ? (
+												)}
+											</div>
+											<div className="flex justify-between">
 												<a href="https://twitter.com/intent/retweet?tweet_id=463440424141459456">
+													<p className=" font-bold">
+														2.{" "}
+														<span className="underline">
+															Retweet @Flappyblast's post on X
+														</span>
+													</p>
+												</a>
+												{verificationStatus.retweet === "unopened" ? (
+													<a href="https://twitter.com/intent/retweet?tweet_id=463440424141459456">
+														<Button
+															type="primary"
+															onClick={() => handleOpenLink("retweet")}
+															icon={<ExportOutlined />}
+															iconPosition={"end"}
+														>
+															Retweet
+														</Button>
+													</a>
+												) : (
 													<Button
 														type="primary"
-														onClick={() => handleOpenLink("retweet")}
-														icon={<ExportOutlined />}
+														onClick={() => handleVerification("retweet")}
+														loading={
+															verificationStatus.retweet === "verifying" ? true : false
+														}
+														icon={
+															verificationStatus.retweet === "unverified" ? (
+																<CaretRightOutlined />
+															) : verificationStatus.retweet === "verified" ? (
+																<CheckOutlined />
+															) : (
+																false
+															)
+														}
 														iconPosition={"end"}
 													>
-														Retweet
+														{verificationStatus.retweet === "verifying"
+															? "Verifying..."
+															: verificationStatus.retweet === "verified"
+															? "Verified"
+															: "Verify"}
 													</Button>
-												</a>
-											) : (
-												<Button
-													type="primary"
-													onClick={() => handleVerification("retweet")}
-													loading={verificationStatus.retweet === "verifying" ? true : false}
-													icon={
-														verificationStatus.retweet === "unverified" ? (
-															<CaretRightOutlined />
-														) : verificationStatus.retweet === "verified" ? (
-															<CheckOutlined />
-														) : (
-															false
-														)
-													}
-													iconPosition={"end"}
-												>
-													{verificationStatus.retweet === "verifying"
-														? "Verifying..."
-														: verificationStatus.retweet === "verified"
-														? "Verified"
-														: "Verify"}
-												</Button>
-											)}
-										</div>
-										<div className="flex justify-between">
-											<a href="https://twitter.com/intent/like?tweet_id=463440424141459456">
-												<p className=" font-bold">
-													3. <span className="underline">Like @Flappyblast's post on X</span>
-												</p>
-											</a>
-											{verificationStatus.like === "unopened" ? (
+												)}
+											</div>
+											<div className="flex justify-between">
 												<a href="https://twitter.com/intent/like?tweet_id=463440424141459456">
+													<p className=" font-bold">
+														3.{" "}
+														<span className="underline">Like @Flappyblast's post on X</span>
+													</p>
+												</a>
+												{verificationStatus.like === "unopened" ? (
+													<a href="https://twitter.com/intent/like?tweet_id=463440424141459456">
+														<Button
+															type="primary"
+															onClick={() => handleOpenLink("like")}
+															icon={<ExportOutlined />}
+															iconPosition={"end"}
+														>
+															Like
+														</Button>
+													</a>
+												) : (
 													<Button
 														type="primary"
-														onClick={() => handleOpenLink("like")}
-														icon={<ExportOutlined />}
+														onClick={() => handleVerification("like")}
+														loading={verificationStatus.like === "verifying" ? true : false}
+														icon={
+															verificationStatus.like === "unverified" ? (
+																<CaretRightOutlined />
+															) : verificationStatus.like === "verified" ? (
+																<CheckOutlined />
+															) : (
+																false
+															)
+														}
 														iconPosition={"end"}
 													>
-														Like
+														{verificationStatus.like === "verifying"
+															? "Verifying..."
+															: verificationStatus.like === "verified"
+															? "Verified"
+															: "Verify"}
 													</Button>
-												</a>
-											) : (
-												<Button
-													type="primary"
-													onClick={() => handleVerification("like")}
-													loading={verificationStatus.like === "verifying" ? true : false}
-													icon={
-														verificationStatus.like === "unverified" ? (
-															<CaretRightOutlined />
-														) : verificationStatus.like === "verified" ? (
-															<CheckOutlined />
-														) : (
-															false
-														)
-													}
-													iconPosition={"end"}
-												>
-													{verificationStatus.like === "verifying"
-														? "Verifying..."
-														: verificationStatus.like === "verified"
-														? "Verified"
-														: "Verify"}
-												</Button>
-											)}
-										</div>
-										<div className="flex justify-between">
-											<a href="https://twitter.com/intent/tweet?text=Hello%20world&hashtags=yrdy">
-												<p className=" font-bold">
-													4. <span className="underline">Tweet about @Flappyblast on X</span>
-												</p>
-											</a>
-											{verificationStatus.tweet === "unopened" ? (
+												)}
+											</div>
+											<div className="flex justify-between">
 												<a href="https://twitter.com/intent/tweet?text=Hello%20world&hashtags=yrdy">
+													<p className=" font-bold">
+														4.{" "}
+														<span className="underline">Tweet about @Flappyblast on X</span>
+													</p>
+												</a>
+												{verificationStatus.tweet === "unopened" ? (
+													<a href="https://twitter.com/intent/tweet?text=Hello%20world&hashtags=yrdy">
+														<Button
+															type="primary"
+															onClick={() => handleOpenLink("tweet")}
+															icon={<ExportOutlined />}
+															iconPosition={"end"}
+														>
+															Tweet
+														</Button>
+													</a>
+												) : (
 													<Button
 														type="primary"
-														onClick={() => handleOpenLink("tweet")}
-														icon={<ExportOutlined />}
+														onClick={() => handleVerification("tweet")}
+														loading={
+															verificationStatus.tweet === "verifying" ? true : false
+														}
+														icon={
+															verificationStatus.tweet === "unverified" ? (
+																<CaretRightOutlined />
+															) : verificationStatus.tweet === "verified" ? (
+																<CheckOutlined />
+															) : (
+																false
+															)
+														}
 														iconPosition={"end"}
 													>
-														Tweet
+														{verificationStatus.tweet === "verifying"
+															? "Verifying..."
+															: verificationStatus.tweet === "verified"
+															? "Verified"
+															: "Verify"}
 													</Button>
-												</a>
-											) : (
-												<Button
-													type="primary"
-													onClick={() => handleVerification("tweet")}
-													loading={verificationStatus.tweet === "verifying" ? true : false}
-													icon={
-														verificationStatus.tweet === "unverified" ? (
-															<CaretRightOutlined />
-														) : verificationStatus.tweet === "verified" ? (
-															<CheckOutlined />
-														) : (
-															false
-														)
-													}
-													iconPosition={"end"}
-												>
-													{verificationStatus.tweet === "verifying"
-														? "Verifying..."
-														: verificationStatus.tweet === "verified"
-														? "Verified"
-														: "Verify"}
-												</Button>
-											)}
+												)}
+											</div>
 										</div>
-									</div>
-								</Modal>
-								<Modal
-									centered
-									title={
-										<div style={{ textAlign: "center", fontSize: "24px", fontWeight: "bold" }}>
-											Your X account is eligible for airdrop 🎉
+									</Modal>
+									<Modal
+										centered
+										title={
+											<div style={{ textAlign: "center", fontSize: "24px", fontWeight: "bold" }}>
+												Your X account is eligible for airdrop 🎉
+											</div>
+										}
+										open={!isTwitterModalOpen && isAllVerifiedModalOpen && twitterAllVerified}
+										onCancel={() => setIsAllVerifiedModalOpen(false)}
+										footer={null}
+										closable={false}
+									>
+										<div className="text-center my-6">
+											<p>
+												Congrats! Just play Flappyblast and share your scores with us! Join our
+												fun Discord community to share and compare.
+												<span className="underline">Join here!</span>
+											</p>
 										</div>
-									}
-									open={!isTwitterModalOpen && isAllVerifiedModalOpen && twitterAllVerified}
-									onCancel={() => setIsAllVerifiedModalOpen(false)}
-									footer={null}
-									closable={false}
-								>
-									<div className="text-center my-6">
-										<p>
-											Congrats! Just play Flappyblast and share your scores with us! Join our fun
-											Discord community to share and compare.
-											<span className="underline">Join here!</span>
-										</p>
-									</div>
-								</Modal>
-							</>
-						)}
-					</>
+									</Modal>
+								</>
+							)}
+						</div>
+					</div> */}
 					{/* {currentState === "index" && (
-            <div>
-              <div className="flex flex-col gap-y-[20px]">
-                <div className="flex gap-x-[10px] items-center">
-                  <p className="font-bold text-black md:text-[16px] text-[12px]">
-                    1. <span className="underline">complete zealy quests</span>
-                  </p>
-                  <div className="p-[5px] rounded-[6px] bg-[#FF6666]">
-                    <p className="text-[#560000] md:text-[12px] text-[10px]">
-                      REQUIRED
-                    </p>
-                  </div>
-                </div>
-                <div className="flex gap-x-[10px] items-center">
-                  <p className="md:text-left text-center font-bold md:text-[16px] text-[12px]">
-                    2. connect wallet and play flappyblast
-                  </p>
-                  <div className="p-[5px] rounded-[6px] bg-[#FF6666]">
-                    <p className="text-[#560000] md:text-[12px] text-[10px]">
-                      REQUIRED
-                    </p>
-                  </div>
-                </div>
-                <p className="md:text-left text-center font-bold md:text-[16px] text-[12px]">
-                  3. top 100 players will get extra allocation
-                </p>
-                <p className="md:text-left text-center font-bold md:text-[16px] text-[12px]">
-                  4. good luck and $FLAP up ;)
-                </p>
-              </div>
-              <div className="flex md:flex-row flex-col gap-x-[40px] justify-center items-center">
-                <div
-                  onClick={() => setCurrentState("flap")}
-                  className="md:block hidden relative mt-[25px] cursor-pointer"
-                >
-                  <Image
-                    width={300}
-                    height={100}
-                    alt="button"
-                    src="/images/flap_button.png"
-                  />
-                </div>
-                <div
-                  onClick={() => setCurrentState("flap")}
-                  className="block md:hidden relative mt-[25px] cursor-pointer"
-                >
-                  <Image
-                    width={150}
-                    height={100}
-                    alt="button"
-                    src="/images/flap_button.png"
-                  />
-                </div>
-                <div
-                  // onClick={() => setCurrentState("leaderboard")}
-                  className="md:block hidden relative mt-[25px] cursor-pointer"
-                >
-                  <Image
-                    width={300}
-                    height={100}
-                    alt="button"
-                    src="/images/leaderbord_button.png"
-                  />
-                </div>
-                <div
-                  // onClick={() => setCurrentState("leaderboard")}
-                  className="block md:hidden relative mt-[25px] cursor-pointer"
-                >
-                  <Image
-                    width={150}
-                    height={100}
-                    alt="button"
-                    src="/images/leaderbord_button.png"
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-          {currentState === "flap" && (
-            <div className="flex flex-col gap-y-[20px] w-[1000px]">
-              <div className="flex justify-start">
-                {!address ? (
-                  <div
-                    onClick={() => open()}
-                    className="border border-[#BDBDBD] py-[11px] px-[19px] rounded-[10px] flex gap-x-[10px] cursor-pointer items-center"
-                  >
-                    <p className="font-bold md:text-[16px] text-[12px]">
-                      Connect Wallet
-                    </p>
-                  </div>
-                ) : (
-                  <div
-                    onClick={() => disconnect()}
-                    className="border border-[#BDBDBD] py-[11px] px-[19px] rounded-[10px] flex gap-x-[10px] cursor-pointer items-center"
-                  >
-                    {ensAvatar?.data && (
-                      <img
-                        className="w-[30px] h-[30px] hidden md:block rounded-full"
-                        src={ensAvatar?.data ?? ""}
-                      />
-                    )}
-                    <p className="font-bold md:text-[16px] text-[12px]">
-                      {address.slice(0, 5) +
-                        "..." +
-                        address.slice(address.length - 4)}
-                    </p>
-                    {ensName && (
-                      <p className="font-bold md:text-[16px] text-[12px]">
-                        {ensName}
-                      </p>
-                    )}
-                  </div>
-                )}
-              </div>
-              <div
-                className={`rounded-[8px] bg-[#F1F1F1] w-full ${
-                  !address
-                    ? "h-[400px]"
-                    : "h-[400px] md:h-[600px] md:pb-[500px] p-[30px]"
-                } relative flex justify-center items-center`}
-              >
-                {!address ? (
-                  <p>Connect Wallet</p>
-                ) : isClientMobile ? (
-                  <p>Please use desktop to play the game.</p>
-                ) : (
-                  <FlappyBird />
-                )}
-              </div>
-            </div>
-          )} */}
+						<div>
+							<div className="flex flex-col gap-y-[20px]">
+								<div className="flex gap-x-[10px] items-center">
+									<p className="font-bold text-black md:text-[16px] text-[12px]">
+										1. <span className="underline">complete zealy quests</span>
+									</p>
+									<div className="p-[5px] rounded-[6px] bg-[#FF6666]">
+										<p className="text-[#560000] md:text-[12px] text-[10px]">REQUIRED</p>
+									</div>
+								</div>
+								<div className="flex gap-x-[10px] items-center">
+									<p className="md:text-left text-center font-bold md:text-[16px] text-[12px]">
+										2. connect wallet and play flappyblast
+									</p>
+									<div className="p-[5px] rounded-[6px] bg-[#FF6666]">
+										<p className="text-[#560000] md:text-[12px] text-[10px]">REQUIRED</p>
+									</div>
+								</div>
+								<p className="md:text-left text-center font-bold md:text-[16px] text-[12px]">
+									3. top 100 players will get extra allocation
+								</p>
+								<p className="md:text-left text-center font-bold md:text-[16px] text-[12px]">
+									4. good luck and $FLAP up ;)
+								</p>
+							</div>
+							<div className="flex md:flex-row flex-col gap-x-[40px] justify-center items-center">
+								<div
+									onClick={() => setCurrentState("flap")}
+									className="md:block hidden relative mt-[25px] cursor-pointer"
+								>
+									<Image width={300} height={100} alt="button" src="/images/flap_button.png" />
+								</div>
+								<div
+									onClick={() => setCurrentState("flap")}
+									className="block md:hidden relative mt-[25px] cursor-pointer"
+								>
+									<Image width={150} height={100} alt="button" src="/images/flap_button.png" />
+								</div>
+								<div
+									// onClick={() => setCurrentState("leaderboard")}
+									className="md:block hidden relative mt-[25px] cursor-pointer"
+								>
+									<Image width={300} height={100} alt="button" src="/images/leaderbord_button.png" />
+								</div>
+								<div
+									// onClick={() => setCurrentState("leaderboard")}
+									className="block md:hidden relative mt-[25px] cursor-pointer"
+								>
+									<Image width={150} height={100} alt="button" src="/images/leaderbord_button.png" />
+								</div>
+							</div>
+						</div>
+					)}
+					{currentState === "flap" && (
+						<div className="flex flex-col gap-y-[20px] w-[1000px]">
+							<div className="flex justify-start">
+								{!address ? (
+									<div
+										onClick={() => open()}
+										className="border border-[#BDBDBD] py-[11px] px-[19px] rounded-[10px] flex gap-x-[10px] cursor-pointer items-center"
+									>
+										<p className="font-bold md:text-[16px] text-[12px]">Connect Wallet</p>
+									</div>
+								) : (
+									<div
+										onClick={() => disconnect()}
+										className="border border-[#BDBDBD] py-[11px] px-[19px] rounded-[10px] flex gap-x-[10px] cursor-pointer items-center"
+									>
+										{ensAvatar?.data && (
+											<img
+												className="w-[30px] h-[30px] hidden md:block rounded-full"
+												src={ensAvatar?.data ?? ""}
+											/>
+										)}
+										<p className="font-bold md:text-[16px] text-[12px]">
+											{address.slice(0, 5) + "..." + address.slice(address.length - 4)}
+										</p>
+										{ensName && <p className="font-bold md:text-[16px] text-[12px]">{ensName}</p>}
+									</div>
+								)}
+							</div>
+							<div
+								className={`rounded-[8px] bg-[#F1F1F1] w-full ${
+									!address ? "h-[400px]" : "h-[400px] md:h-[600px] md:pb-[500px] p-[30px]"
+								} relative flex justify-center items-center`}
+							>
+								{!address ? (
+									<p>Connect Wallet</p>
+								) : isClientMobile ? (
+									<p>Please use desktop to play the game.</p>
+								) : (
+									<FlappyBird />
+								)}
+							</div>
+						</div>
+					)} */}
 					<p>Coming soon :)</p>
 				</div>
 			</div>
