@@ -156,15 +156,15 @@ export default function HomePage() {
           </div> */}
         </div>
       </HeroLayout>
-      <div className="flex md:flex-row gap-y-[40px] flex-col py-[25px] justify-center items-center h-[120vh] desktop:h-[100vh] large-desktop:h-[100vh] bg-black md:pt-[50px] md:pt-0">
+      <div className="flex md:flex-row gap-y-[40px] flex-col py-[25px] justify-center items-center h-[140vh] desktop:h-[100vh] large-desktop:h-[100vh] bg-black md:pt-[50px] md:pt-0">
         <div className="flex md:flex-1 md:pl-[150px] justify-center items-center md:items-start flex-col gap-y-[20px] desktop:gap-y-[40px] large-desktop:pl-[250px]">
-          <p className="flappy-birdy text-[#FCFC03] md:text-left text-center md:px-0 px-[20px] text-[80px] desktop:text-[120px] large-desktop:text-[140px] md:text-[100px] leading-[75px]">
+          <p className="flappy-birdy text-[#FCFC03] md:text-left text-center md:px-0 px-[20px] text-[80px] md:text-[80px] desktop:text-[120px] large-desktop:text-[140px] md:text-[100px] leading-[75px]">
             homage to the legendary game
           </p>
           <p className="inter md:text-left text-center text-white py-[10px] font-bold px-[21px] border border-[6px] desktop:text-[2rem] large-desktop:my-[30px] large-desktop:text-[4rem] text-[1rem] md:text-[28px] w-fit">
             how it&apos;s unruggable, are you sure?
           </p>
-          <p className="inter md:text-left text-center md:px-0 px-[20px] text-[16px] md:text-[18px] desktop:text-[1.5rem] large-desktop:text-[2rem] font-normal text-white">
+          <p className="inter md:text-left text-center md:px-0 px-[20px] text-[14px] md:text-[18px] desktop:text-[1.5rem] large-desktop:text-[2rem] font-normal text-white">
             The protocol keeps all its tokens on the blockchain to always
             protect their value. This creates a baseline value that never goes
             down. Over time, protocol fees are used to boost this baseline
@@ -240,7 +240,7 @@ export default function HomePage() {
                 />
               </div>
               <div className="absolute bg-[#FFFFFF60] w-2/3 left-1/2 transform -translate-x-1/2  top-2/3 h-fit p-[16px] ">
-                <p className="text-black text-center font-bold text-[18px] opacity-100">
+                <p className="text-black text-center font-bold text-[12px] md:text-[18px] opacity-100">
                   click the box to view details
                 </p>
               </div>
@@ -352,11 +352,11 @@ export default function HomePage() {
       </div>
       <div className="h-[140vh] md:h-[120vh] desktop:h-[120vh] large-desktop:h-[90vh] flex flex-col justify-center items-center px-[150px] bg-black">
         <div className="flex flex-col justify-center items-center">
-          <p className="pixel-caps md:mt-[50px] desktop:mt-[50px] large-desktop:mt-[70px] text-[#FCFC03] text-[2rem] md:text-[48px] desktop:text-[4rem] large-desktop:text-[5rem] text-center mb-[50px]">
+          <p className="pixel-caps md:mt-[50px] desktop:mt-[50px] large-desktop:mt-[70px] text-[#FCFC03] text-[1.5rem] md:text-[48px] desktop:text-[4rem] large-desktop:text-[5rem] text-center mb-[50px]">
             $FLAP TOKENOMICS
           </p>
           <div className="w-full flex justify-center items-center md:hidden block ">
-            <FlappyCoinSvg className="h-[300px] w-[300px] desktop:h-[450px] large-desktop:w-[600px]" />
+            <FlappyCoinSvg className="h-[150px] w-[150px] md:h-[300px] md:w-[300px] desktop:h-[450px] large-desktop:w-[600px]" />
           </div>
           <div className="flex w-fit md:flex-row flex-col justify-center items-center gap-x-[40px] mt-[25px] md:mt-0 md:my-[50px] large-desktop:mt-[40px]">
             <div className="md:flex w-[400.25px] desktop:w-[450.25px] large-desktop:w-[550.25px] hidden flex-col items-end gap-y-[40px]">
@@ -375,28 +375,28 @@ export default function HomePage() {
             </div>
             <FlappyCoinSvg className="md:block hidden h-[250px] w-[250px]" />
             <div className="flex md:hidden block flex-col gap-y-[40px]">
-              <div className="flex items-center gap-x-[30px]">
-                <div className="w-[50px] h-[50px] bg-[#FCFC03] rounded-full" />
+              <div className="flex justify-start items-center gap-x-[30px]">
+                <div className="w-[30px] h-[30px] bg-[#FCFC03] rounded-full" />
                 <p className="pixel-caps text-[#FCFC03] desktop:text-[1.5rem] large-desktop:text-[2rem]">
                   95 % Liquidity
                 </p>
               </div>
-              <div className="flex items-center gap-x-[30px]">
-                <div className="w-[50px] h-[50px] bg-[#FF00C7] rounded-full" />
+              <div className="flex justify-start items-center gap-x-[30px]">
+                <div className="w-[30px] h-[30px] bg-[#FF00C7] rounded-full" />
                 <p className="pixel-caps text-[#FF00C7] desktop:text-[1.5rem] large-desktop:text-[2rem]">
                   2.5 % REFERRAL
                 </p>
               </div>
             </div>
             <div className="flex md:w-[400.25px] desktop:w-[450.25px] large-desktop:w-[550.25px] mt-[40px] md:mt-0 md:flex-col-reverse flex-col gap-y-[40px]">
-              <div className="flex items-center gap-x-[30px]">
-                <div className="w-[50px] h-[50px] bg-[#22A2FF] rounded-full" />
+              <div className="flex justify-start items-center gap-x-[30px]">
+                <div className="w-[30px] h-[30px] bg-[#22A2FF] rounded-full" />
                 <p className="pixel-caps text-[#22A2FF] desktop:text-[1.5rem] large-desktop:text-[2rem]">
                   2.5 % AIRDROP
                 </p>
               </div>
-              <div className="md:hidden flex items-center gap-x-[30px]">
-                <div className="w-[50px] h-[50px] bg-[#838383] rounded-full" />
+              <div className="md:hidden flex justify-start items-center gap-x-[30px]">
+                <div className="w-[30px] h-[30px] bg-[#838383] rounded-full" />
                 <p className="pixel-caps text-[#838383] desktop:text-[1.5rem] large-desktop:text-[2rem]">
                   0 % Team
                 </p>

@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createWeb3Modal } from "@web3modal/wagmi/react";
 import { defaultWagmiConfig } from "@web3modal/wagmi";
 const queryClient = new QueryClient();
-const PROJECT_ID = process.env.NEXT_PUBLIC_PROJECT_ID;
+const PROJECT_ID = process.env.NEXT_PUBLIC_PROJECT_ID ?? "asdasd";
 
 const metadata = {
   name: "Hyfen",
