@@ -2,7 +2,7 @@ import { HeroLayout } from "@/src/layouts/HeroLayout";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useAccount, useDisconnect, useEnsAvatar, useEnsName } from "wagmi";
-import { useWeb3Modal } from "@web3modal/wagmi/react";
+import { useWeb3Modal, useWeb3ModalState } from "@web3modal/wagmi/react";
 import FlappyBird from "@/src/components/FlappyBird";
 import TwitterIntentHandler from "@/src/components/TwitterIntentHandler";
 import useSWR from "swr";
@@ -14,6 +14,7 @@ import { axiosApi, fetcherStrapi } from "@/utils/axios";
 
 export default function AirdropPage() {
 	const { data: session, status } = useSession();
+	const [userData, setUserData] = useState(null);
 	const { address } = useAccount();
 	const [isClientMobile, setIsClientMobile] = useState(false);
 	const [currentState, setCurrentState] = useState<"index" | "flap" | "leaderboard">("index");
@@ -22,6 +23,7 @@ export default function AirdropPage() {
 	const [domLoaded, setDomLoaded] = useState(false);
 	const ensAvatar = useEnsAvatar({ name: ensName ?? "" });
 	const { open } = useWeb3Modal();
+	const { open: web3ModalOpen, selectedNetworkId } = useWeb3ModalState();
 	const [data, setData] = useState(null);
 	const { data: walletData, mutate: walletMutate } = useSWR(
 		`/api/wallet-accounts?filters[wallet_address][$eq]=${address}`,
@@ -37,8 +39,11 @@ export default function AirdropPage() {
 		}
 	}, []);
 
-	// 0 connect wallet, 1 twitter social action, 2 congrats, 3 finished
+	// 0 connect wallet, 1 twitter social action, 2 congrats, 3 finished, 10 hide
 	const [modalStep, setModalStep] = useState(10);
+	const [walletPopup, setIsWalletPopup] = useState(false);
+	const [checkingWallet, setCheckingWallet] = useState(false);
+	const [checkingSocialAction, setCheckingSocialAction] = useState(false);
 
 	const [verificationStatus, setVerificationStatus] = useState({
 		follow: "unopened",
@@ -48,7 +53,9 @@ export default function AirdropPage() {
 	});
 
 	const handleConnectWallet = () => {
-		setModalStep(0);
+		setCheckingWallet(true);
+		setIsWalletPopup(true);
+		setModalStep(10);
 		open();
 	};
 
@@ -76,17 +83,64 @@ export default function AirdropPage() {
 	};
 
 	useEffect(() => {
-		var isWallet = true;
-		var isTwitter = true;
-
-		// Implement fetch data from database here
-
-		if (!isWallet) {
-			setModalStep(0);
-		} else if (!isTwitter) {
-			setModalStep(1);
+		if (walletPopup === true && web3ModalOpen === false) {
+			setIsWalletPopup(false);
 		}
-	});
+	}, [web3ModalOpen]);
+
+	useEffect(() => {
+		if (!walletPopup) {
+			// Get Twitter data
+			axiosApi.get(`/api/twitter-accounts?filters[twitter_id][$eq]=${session?.user.id}`).then((response) => {
+				if (response.data.data.length != 0 && userData === null) {
+					const accountData = response.data.data[0];
+					const { id, attributes } = accountData;
+					// Merge id into attributes
+					const userDataWithId = { ...attributes, id };
+					setUserData(userDataWithId);
+				}
+			});
+
+			if (userData) {
+				// Get Wallet data
+				axiosApi
+					.get(`/api/wallet-accounts?filters[twitter_account][twitter_id][$eq]=${session?.user.id}`)
+					.then((response) => {
+						if (response.data.data.length != 0) {
+							const wallet_address = response.data.data[0].attributes.wallet_address;
+							Cookie.set(wallet_address, address as string, {
+								expires: 1,
+							});
+							if (userData!["is_wallet"] != true) {
+								axiosApi
+									.put(`/api/twitter-accounts/${userData["id"]}`, {
+										data: {
+											is_wallet: true,
+										},
+									})
+									.then((response) => {
+										if (response.status == 200) {
+											const updatedUserData = { ...userData, is_wallet: true };
+											setUserData(updatedUserData);
+										}
+									})
+									.catch((err) => {
+										console.log(err);
+									});
+							}
+						}
+					});
+
+				if (userData["is_wallet"] != true) {
+					setModalStep(0);
+				} else if (userData["is_socialaction"] != true && !checkingSocialAction) {
+					setModalStep(1);
+				} else if (userData["is_wallet"] === true && userData["is_socialaction"] === true && modalStep != 2) {
+					setModalStep(3);
+				}
+			}
+		}
+	}, [session?.user.id, userData, modalStep, walletPopup]);
 
 	useEffect(() => {
 		if (
@@ -95,27 +149,43 @@ export default function AirdropPage() {
 			verificationStatus.like === "verified" &&
 			verificationStatus.tweet === "verified"
 		) {
-			setTimeout(() => {
-				setModalStep(2);
-			}, 2000); // Delay in milliseconds
+			setCheckingSocialAction(true);
+			setModalStep(2);
+			if (userData!["is_socialaction"] != true) {
+				axiosApi
+					.put(`/api/twitter-accounts/${userData!["id"]}`, {
+						data: {
+							is_socialaction: true,
+						},
+					})
+					.then((response) => {
+						if (response.status == 200) {
+							setCheckingSocialAction(false);
+							const updatedUserData = { ...userData, is_socialaction: true };
+							setUserData(updatedUserData);
+						}
+					})
+					.catch((err) => {
+						console.log(err);
+					});
+			}
 		}
 	}, [verificationStatus]);
 
 	useEffect(() => {
 		if (address) {
-			if (modalStep < 2) {
-				setModalStep(2);
-			}
 			axiosApi.get(`/api/wallet-accounts?filters[wallet_address][$eq]=${address}`).then((response) => {
 				if (response?.data?.data.length === 0) {
 					axiosApi
 						.post("/api/wallet-accounts", {
 							data: {
 								wallet_address: address,
+								twitter_account: userData!["id"],
 							},
 						})
 						.then((response) => {
 							walletMutate();
+							setCheckingWallet(false);
 						})
 						.catch((err) => {
 							console.log(err);
@@ -598,15 +668,19 @@ export default function AirdropPage() {
 									</>
 								)}
 							</div>
-							<div className={`rounded-[8px] w-full ${modalStep < 3 || !session ? "bg-[#F1F1F1]" : ""}`}>
+							<div
+								className={`rounded-[8px] w-full ${
+									modalStep < 3 || modalStep == 10 || !session ? "bg-[#F1F1F1]" : ""
+								}`}
+							>
 								<div
 									className={`flex flex-col justify-center${
-										modalStep < 3 || !session ? "mx-6 my-12" : ""
+										modalStep < 3 || modalStep == 10 || !session ? "mx-6 my-12" : ""
 									}`}
 								>
 									{modalStep === 0 || !session ? (
 										<p className="text-center">Login to Twitter to play FlappyBlast</p>
-									) : modalStep > 0 && modalStep < 3 ? (
+									) : (modalStep > 0 && modalStep < 3) || modalStep == 10 ? (
 										<p className="text-center">Complete tasks to play FlappyBlast</p>
 									) : isClientMobile ? (
 										<p className="text-center">Please use a desktop to play the game.</p>
