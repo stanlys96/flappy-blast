@@ -2,7 +2,7 @@ import { HeroLayout } from "@/src/layouts/HeroLayout";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useAccount, useDisconnect, useEnsAvatar, useEnsName } from "wagmi";
-import { useWeb3Modal } from "@web3modal/wagmi/react";
+import { useWeb3Modal, useWeb3ModalState } from "@web3modal/wagmi/react";
 import FlappyBird from "@/src/components/FlappyBird";
 import TwitterIntentHandler from "@/src/components/TwitterIntentHandler";
 import useSWR from "swr";
@@ -14,7 +14,8 @@ import { axiosApi, fetcherStrapi } from "@/utils/axios";
 
 export default function AirdropPage() {
 	const { data: session, status } = useSession();
-	const { address } = useAccount();
+	const [userData, setUserData] = useState(null);
+	const { address, chain } = useAccount();
 	const [isClientMobile, setIsClientMobile] = useState(false);
 	const [currentState, setCurrentState] = useState<"index" | "flap" | "leaderboard">("index");
 	const { disconnect } = useDisconnect();
@@ -22,6 +23,7 @@ export default function AirdropPage() {
 	const [domLoaded, setDomLoaded] = useState(false);
 	const ensAvatar = useEnsAvatar({ name: ensName ?? "" });
 	const { open } = useWeb3Modal();
+	const { open: web3ModalOpen, selectedNetworkId } = useWeb3ModalState();
 	const [data, setData] = useState(null);
 	const { data: walletData, mutate: walletMutate } = useSWR(
 		`/api/wallet-accounts?filters[wallet_address][$eq]=${address}`,
@@ -37,8 +39,12 @@ export default function AirdropPage() {
 		}
 	}, []);
 
-	// 0 connect wallet, 1 twitter social action, 2 congrats, 3 finished
+	// 0 connect wallet, 1 twitter social action, 2 congrats, 3 finished, 10 hide
 	const [modalStep, setModalStep] = useState(10);
+	const [walletPopup, setIsWalletPopup] = useState(false);
+	const [checkingWallet, setCheckingWallet] = useState(false);
+	const [isBlast, setIsBlast] = useState(true);
+	const [checkingSocialAction, setCheckingSocialAction] = useState(false);
 
 	const [verificationStatus, setVerificationStatus] = useState({
 		follow: "unopened",
@@ -48,7 +54,9 @@ export default function AirdropPage() {
 	});
 
 	const handleConnectWallet = () => {
-		setModalStep(0);
+		setCheckingWallet(true);
+		setIsWalletPopup(true);
+		setModalStep(10);
 		open();
 	};
 
@@ -76,17 +84,75 @@ export default function AirdropPage() {
 	};
 
 	useEffect(() => {
-		var isWallet = true;
-		var isTwitter = true;
-
-		// Implement fetch data from database here
-
-		if (!isWallet) {
-			setModalStep(0);
-		} else if (!isTwitter) {
-			setModalStep(1);
+		if (walletPopup === true && web3ModalOpen === false) {
+			if (chain?.name === "Blast") {
+				setIsWalletPopup(false);
+			} else {
+				setIsBlast(false);
+				setIsWalletPopup(false);
+			}
 		}
-	});
+	}, [web3ModalOpen]);
+
+	useEffect(() => {
+		if (!isBlast) {
+			setModalStep(0);
+		}
+	}, [isBlast]);
+
+	useEffect(() => {
+		if (!walletPopup) {
+			// Get Twitter data
+			axiosApi.get(`/api/twitter-accounts?filters[twitter_id][$eq]=${session?.user.id}`).then((response) => {
+				if (response.data.data.length != 0 && userData === null) {
+					const accountData = response.data.data[0];
+					const { id, attributes } = accountData;
+					// Merge id into attributes
+					const userDataWithId = { ...attributes, id };
+					setUserData(userDataWithId);
+				}
+			});
+
+			if (userData) {
+				// Get Wallet data
+				axiosApi
+					.get(`/api/wallet-accounts?filters[twitter_account][twitter_id][$eq]=${session?.user.id}`)
+					.then((response) => {
+						if (response.data.data.length != 0) {
+							const wallet_address = response.data.data[0].attributes.wallet_address;
+							Cookie.set(wallet_address, address as string, {
+								expires: 1,
+							});
+							if (userData!["is_wallet"] != true) {
+								axiosApi
+									.put(`/api/twitter-accounts/${userData["id"]}`, {
+										data: {
+											is_wallet: true,
+										},
+									})
+									.then((response) => {
+										if (response.status == 200) {
+											const updatedUserData = { ...userData, is_wallet: true };
+											setUserData(updatedUserData);
+										}
+									})
+									.catch((err) => {
+										console.log(err);
+									});
+							}
+						}
+					});
+
+				if (userData["is_wallet"] != true) {
+					setModalStep(0);
+				} else if (userData["is_socialaction"] != true && !checkingSocialAction) {
+					setModalStep(1);
+				} else if (userData["is_wallet"] === true && userData["is_socialaction"] === true && modalStep != 2) {
+					setModalStep(3);
+				}
+			}
+		}
+	}, [session?.user.id, userData, modalStep, walletPopup]);
 
 	useEffect(() => {
 		if (
@@ -95,27 +161,43 @@ export default function AirdropPage() {
 			verificationStatus.like === "verified" &&
 			verificationStatus.tweet === "verified"
 		) {
-			setTimeout(() => {
-				setModalStep(2);
-			}, 2000); // Delay in milliseconds
+			setCheckingSocialAction(true);
+			setModalStep(2);
+			if (userData!["is_socialaction"] != true) {
+				axiosApi
+					.put(`/api/twitter-accounts/${userData!["id"]}`, {
+						data: {
+							is_socialaction: true,
+						},
+					})
+					.then((response) => {
+						if (response.status == 200) {
+							setCheckingSocialAction(false);
+							const updatedUserData = { ...userData, is_socialaction: true };
+							setUserData(updatedUserData);
+						}
+					})
+					.catch((err) => {
+						console.log(err);
+					});
+			}
 		}
 	}, [verificationStatus]);
 
 	useEffect(() => {
 		if (address) {
-			if (modalStep < 2) {
-				setModalStep(2);
-			}
 			axiosApi.get(`/api/wallet-accounts?filters[wallet_address][$eq]=${address}`).then((response) => {
 				if (response?.data?.data.length === 0) {
 					axiosApi
 						.post("/api/wallet-accounts", {
 							data: {
 								wallet_address: address,
+								twitter_account: userData!["id"],
 							},
 						})
 						.then((response) => {
 							walletMutate();
+							setCheckingWallet(false);
 						})
 						.catch((err) => {
 							console.log(err);
@@ -140,7 +222,7 @@ export default function AirdropPage() {
 				<div className="bg-white px-6 justify-center items-center md:px-12 py-12 rounded-[22px] mt-[30px] w-full flex flex-col gap-y-[15px] w-[1000px]">
 					{currentState === "index" && (
 						<div>
-							<div className="flex flex-col gap-y-[20px]">
+							<div className="flex flex-col items-center md:items-start gap-y-[20px]">
 								<div className="flex gap-x-[10px] items-center">
 									<p className="font-bold text-black md:text-[16px] text-[12px]">
 										1. <span className="underline">complete zealy quests</span>
@@ -265,7 +347,7 @@ export default function AirdropPage() {
 														<p>Step 1/2 - Connect Wallet</p>
 													</div>
 												</div>
-												<div className="flex justify-center w-full">
+												<div className="flex flex-col justify-center items-center w-full gap-2">
 													<div className="w-fit">
 														<Button
 															type="primary"
@@ -283,6 +365,11 @@ export default function AirdropPage() {
 															Connect Wallet
 														</Button>
 													</div>
+													{!isBlast && (
+														<p className="text-red-500">
+															*Please switch your network to Blast and try again.
+														</p>
+													)}
 												</div>
 												<div className="text-center bg-[#F0F0F0] p-4 font-bold mx-6 mt-4">
 													NOTICE: This action can only be done once, you will not able to
@@ -593,23 +680,50 @@ export default function AirdropPage() {
 													our fun Discord community to share and compare. &nbsp;
 													<span className="underline">Join here!</span>
 												</p>
+
+												<div className="flex justify-center w-full">
+													<div
+														onClick={() => setModalStep(3)}
+														className="md:block hidden relative mt-[25px] cursor-pointer"
+													>
+														<Image
+															width={300}
+															height={100}
+															alt="button"
+															src="/images/flap_button.png"
+														/>
+													</div>
+													<div
+														onClick={() => setModalStep(3)}
+														className="block md:hidden relative mt-[25px] cursor-pointer"
+													>
+														<Image
+															width={150}
+															height={100}
+															alt="button"
+															src="/images/flap_button.png"
+														/>
+													</div>
+												</div>
 											</div>
 										</Modal>
 									</>
 								)}
 							</div>
-							<div className={`rounded-[8px] w-full ${modalStep < 3 || !session ? "bg-[#F1F1F1]" : ""}`}>
+							<div
+								className={`rounded-[8px] w-full ${
+									modalStep < 3 || modalStep == 10 || !session ? "bg-[#F1F1F1]" : ""
+								}`}
+							>
 								<div
 									className={`flex flex-col justify-center${
-										modalStep < 3 || !session ? "mx-6 my-12" : ""
+										modalStep < 3 || modalStep == 10 || !session ? "mx-6 my-12" : ""
 									}`}
 								>
 									{modalStep === 0 || !session ? (
 										<p className="text-center">Login to Twitter to play FlappyBlast</p>
-									) : modalStep > 0 && modalStep < 3 ? (
+									) : (modalStep > 0 && modalStep < 3) || modalStep == 10 ? (
 										<p className="text-center">Complete tasks to play FlappyBlast</p>
-									) : isClientMobile ? (
-										<p className="text-center">Please use a desktop to play the game.</p>
 									) : (
 										<FlappyBird />
 									)}
@@ -619,8 +733,8 @@ export default function AirdropPage() {
 					)}
 					{currentState === "leaderboard" && (
 						<>
-							<div className="flex flex-row justify-between w-full">
-								<div className="pixel-caps text-2xl font-bold">LEADERBOARDS</div>
+							<div className="flex flex-col gap-4 md:gap-0 md:flex-row items-center justify-between w-full">
+								<div className="pixel-caps text-md md:text-2xl font-bold">LEADERBOARDS</div>
 								<Button
 									type="primary"
 									onClick={() => setCurrentState("flap")}
@@ -641,32 +755,36 @@ export default function AirdropPage() {
 								<table className="w-full">
 									<thead className="pixel-caps bg-white sticky top-0 z-20">
 										<tr className="table-header">
-											<th className="py-2 px-4">RANK</th>
-											<th className="py-2 px-4">PP</th>
-											<th className="py-2 px-4">TWITTER NAME</th>
-											<th className="py-2 px-4">POINTS</th>
+											<th className="py-2 px-4 text-xs md:text-base">RANK</th>
+											<th className="py-2 px-4 text-xs md:text-base hidden md:table-cell">PP</th>
+											<th className="py-2 px-4 text-xs md:text-base">USERNAME</th>
+											<th className="py-2 px-4 text-xs md:text-base">POINTS</th>
 										</tr>
 									</thead>
-									<tbody>
+									<tbody className="overflow-x-auto">
 										{Array.from({ length: 50 }, (_, index) => (
-											<tr className="table-row text-center border-black border-b-2 border-dashed">
-												<td className="py-4 px-4 whitespace-nowrap">{index + 1}</td>
-												<td className="py-4 px-4 whitespace-nowrap">
+											<tr
+												key={index}
+												className="table-row text-center border-black border-b-2 border-dashed"
+											>
+												<td className="py-4 px-2 whitespace-nowrap text-sm md:text-base">
+													{index + 1}
+												</td>
+												<td className="py-4 px-2 whitespace-nowrap hidden md:table-cell">
 													<div className="flex justify-center">
-														<Avatar
-															src={
-																<img
-																	src={
-																		"https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg"
-																	}
-																	alt="avatar"
-																/>
-															}
+														<img
+															className="w-8 h-8 md:w-12 md:h-12 rounded-full"
+															src="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg"
+															alt="avatar"
 														/>
 													</div>
 												</td>
-												<td className="py-4 px-4 whitespace-nowrap">Data 3</td>
-												<td className="py-4 px-4 whitespace-nowrap">Data 4</td>
+												<td className="py-4 px-2 whitespace-nowrap text-sm md:text-base">
+													@{session?.username}
+												</td>
+												<td className="py-4 px-2 whitespace-nowrap text-sm md:text-base">
+													Data 4
+												</td>
 											</tr>
 										))}
 									</tbody>
