@@ -15,7 +15,7 @@ import { axiosApi, fetcherStrapi } from "@/utils/axios";
 export default function AirdropPage() {
 	const { data: session, status } = useSession();
 	const [userData, setUserData] = useState(null);
-	const { address } = useAccount();
+	const { address, chain } = useAccount();
 	const [isClientMobile, setIsClientMobile] = useState(false);
 	const [currentState, setCurrentState] = useState<"index" | "flap" | "leaderboard">("index");
 	const { disconnect } = useDisconnect();
@@ -43,6 +43,7 @@ export default function AirdropPage() {
 	const [modalStep, setModalStep] = useState(10);
 	const [walletPopup, setIsWalletPopup] = useState(false);
 	const [checkingWallet, setCheckingWallet] = useState(false);
+	const [isBlast, setIsBlast] = useState(true);
 	const [checkingSocialAction, setCheckingSocialAction] = useState(false);
 
 	const [verificationStatus, setVerificationStatus] = useState({
@@ -84,9 +85,20 @@ export default function AirdropPage() {
 
 	useEffect(() => {
 		if (walletPopup === true && web3ModalOpen === false) {
-			setIsWalletPopup(false);
+			if (chain?.name === "Blast") {
+				setIsWalletPopup(false);
+			} else {
+				setIsBlast(false);
+				setIsWalletPopup(false);
+			}
 		}
 	}, [web3ModalOpen]);
+
+	useEffect(() => {
+		if (!isBlast) {
+			setModalStep(0);
+		}
+	}, [isBlast]);
 
 	useEffect(() => {
 		if (!walletPopup) {
@@ -335,7 +347,7 @@ export default function AirdropPage() {
 														<p>Step 1/2 - Connect Wallet</p>
 													</div>
 												</div>
-												<div className="flex justify-center w-full">
+												<div className="flex flex-col justify-center items-center w-full gap-2">
 													<div className="w-fit">
 														<Button
 															type="primary"
@@ -353,6 +365,11 @@ export default function AirdropPage() {
 															Connect Wallet
 														</Button>
 													</div>
+													{!isBlast && (
+														<p className="text-red-500">
+															*Please switch your network to Blast and try again.
+														</p>
+													)}
 												</div>
 												<div className="text-center bg-[#F0F0F0] p-4 font-bold mx-6 mt-4">
 													NOTICE: This action can only be done once, you will not able to
@@ -652,7 +669,7 @@ export default function AirdropPage() {
 													Your X account is eligible for airdrop 🎉
 												</div>
 											}
-											open={modalStep == 3}
+											open={modalStep == 2}
 											onCancel={() => setModalStep(3)}
 											footer={null}
 											closable={false}
