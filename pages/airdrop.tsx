@@ -210,7 +210,7 @@ export default function AirdropPage() {
 				<div className="bg-white px-6 justify-center items-center md:px-12 py-12 rounded-[22px] mt-[30px] w-full flex flex-col gap-y-[15px] w-[1000px]">
 					{currentState === "index" && (
 						<div>
-							<div className="flex flex-col gap-y-[20px]">
+							<div className="flex flex-col items-center md:items-start gap-y-[20px]">
 								<div className="flex gap-x-[10px] items-center">
 									<p className="font-bold text-black md:text-[16px] text-[12px]">
 										1. <span className="underline">complete zealy quests</span>
@@ -652,7 +652,7 @@ export default function AirdropPage() {
 													Your X account is eligible for airdrop 🎉
 												</div>
 											}
-											open={modalStep == 2}
+											open={modalStep == 3}
 											onCancel={() => setModalStep(3)}
 											footer={null}
 											closable={false}
@@ -663,6 +663,31 @@ export default function AirdropPage() {
 													our fun Discord community to share and compare. &nbsp;
 													<span className="underline">Join here!</span>
 												</p>
+
+												<div className="flex justify-center w-full">
+													<div
+														onClick={() => setModalStep(3)}
+														className="md:block hidden relative mt-[25px] cursor-pointer"
+													>
+														<Image
+															width={300}
+															height={100}
+															alt="button"
+															src="/images/flap_button.png"
+														/>
+													</div>
+													<div
+														onClick={() => setModalStep(3)}
+														className="block md:hidden relative mt-[25px] cursor-pointer"
+													>
+														<Image
+															width={150}
+															height={100}
+															alt="button"
+															src="/images/flap_button.png"
+														/>
+													</div>
+												</div>
 											</div>
 										</Modal>
 									</>
@@ -682,8 +707,6 @@ export default function AirdropPage() {
 										<p className="text-center">Login to Twitter to play FlappyBlast</p>
 									) : (modalStep > 0 && modalStep < 3) || modalStep == 10 ? (
 										<p className="text-center">Complete tasks to play FlappyBlast</p>
-									) : isClientMobile ? (
-										<p className="text-center">Please use a desktop to play the game.</p>
 									) : (
 										<FlappyBird />
 									)}
@@ -717,7 +740,7 @@ export default function AirdropPage() {
 										<tr className="table-header">
 											<th className="py-2 px-4 text-xs md:text-base">RANK</th>
 											<th className="py-2 px-4 text-xs md:text-base hidden md:table-cell">PP</th>
-											<th className="py-2 px-4 text-xs md:text-base">TWITTER NAME</th>
+											<th className="py-2 px-4 text-xs md:text-base">USERNAME</th>
 											<th className="py-2 px-4 text-xs md:text-base">POINTS</th>
 										</tr>
 									</thead>
