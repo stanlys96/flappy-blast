@@ -33,7 +33,7 @@ export const authOptions = {
 							data: {
 								twitter_id: user.id,
 								twitter_name: user.name,
-								// twitter_username: user.username,
+								twitter_username: user.username,
 								twitter_pic: user.image,
 								is_wallet: false,
 								is_socialaction: false,
