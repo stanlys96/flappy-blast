@@ -693,8 +693,8 @@ export default function AirdropPage() {
 					)}
 					{currentState === "leaderboard" && (
 						<>
-							<div className="flex flex-row justify-between w-full">
-								<div className="pixel-caps text-2xl font-bold">LEADERBOARDS</div>
+							<div className="flex flex-col gap-4 md:gap-0 md:flex-row items-center justify-between w-full">
+								<div className="pixel-caps text-md md:text-2xl font-bold">LEADERBOARDS</div>
 								<Button
 									type="primary"
 									onClick={() => setCurrentState("flap")}
@@ -715,32 +715,36 @@ export default function AirdropPage() {
 								<table className="w-full">
 									<thead className="pixel-caps bg-white sticky top-0 z-20">
 										<tr className="table-header">
-											<th className="py-2 px-4">RANK</th>
-											<th className="py-2 px-4">PP</th>
-											<th className="py-2 px-4">TWITTER NAME</th>
-											<th className="py-2 px-4">POINTS</th>
+											<th className="py-2 px-4 text-xs md:text-base">RANK</th>
+											<th className="py-2 px-4 text-xs md:text-base hidden md:table-cell">PP</th>
+											<th className="py-2 px-4 text-xs md:text-base">TWITTER NAME</th>
+											<th className="py-2 px-4 text-xs md:text-base">POINTS</th>
 										</tr>
 									</thead>
-									<tbody>
+									<tbody className="overflow-x-auto">
 										{Array.from({ length: 50 }, (_, index) => (
-											<tr className="table-row text-center border-black border-b-2 border-dashed">
-												<td className="py-4 px-4 whitespace-nowrap">{index + 1}</td>
-												<td className="py-4 px-4 whitespace-nowrap">
+											<tr
+												key={index}
+												className="table-row text-center border-black border-b-2 border-dashed"
+											>
+												<td className="py-4 px-2 whitespace-nowrap text-sm md:text-base">
+													{index + 1}
+												</td>
+												<td className="py-4 px-2 whitespace-nowrap hidden md:table-cell">
 													<div className="flex justify-center">
-														<Avatar
-															src={
-																<img
-																	src={
-																		"https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg"
-																	}
-																	alt="avatar"
-																/>
-															}
+														<img
+															className="w-8 h-8 md:w-12 md:h-12 rounded-full"
+															src="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg"
+															alt="avatar"
 														/>
 													</div>
 												</td>
-												<td className="py-4 px-4 whitespace-nowrap">Data 3</td>
-												<td className="py-4 px-4 whitespace-nowrap">Data 4</td>
+												<td className="py-4 px-2 whitespace-nowrap text-sm md:text-base">
+													@{session?.username}
+												</td>
+												<td className="py-4 px-2 whitespace-nowrap text-sm md:text-base">
+													Data 4
+												</td>
 											</tr>
 										))}
 									</tbody>
