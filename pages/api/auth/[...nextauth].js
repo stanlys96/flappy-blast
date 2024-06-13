@@ -9,6 +9,11 @@ export const authOptions = {
 			clientId: process.env.TWITTER_CLIENT_ID,
 			clientSecret: process.env.TWITTER_CLIENT_SECRET,
 			version: "2.0", // opt-in to Twitter OAuth 2.0
+			// authorization: {
+			// 	params: {
+			// 		scope: "users.read tweet.read tweet.write offline.access follows.read follows.write",
+			// 	},
+			// },
 			profile({ data }) {
 				return {
 					id: data.id,
@@ -47,7 +52,12 @@ export const authOptions = {
 			}
 			return true; // Return true to proceed with the login
 		},
-		async jwt({ token, user }) {
+		async jwt({ token, user, account }) {
+			// Persist the OAuth access token to the token right after signin
+			if (account && account.access_token && account.refresh_token) {
+				token.refresh_token = account.refresh_token;
+				token.accessToken = account.access_token;
+			}
 			if (user?.id) {
 				token.id = user.id;
 			}
@@ -62,6 +72,13 @@ export const authOptions = {
 			}
 			if (token?.username) {
 				session.username = token.username;
+			}
+			// Add access token to the session object
+			if (token.accessToken) {
+				session.accessToken = token.accessToken;
+			}
+			if (token.refresh_token) {
+				session.refresh_token = token.refresh_token;
 			}
 			return session;
 		},
