@@ -114,8 +114,8 @@ export default function FlappyBird() {
 								<div id="splash"></div>
 								<div id="scoreboard">
 									<div id="medal"></div>
-									<div id="currentscore"></div>
-									<div id="highscore"></div>
+									<div id="currentscore" className="justify-end flex flex-row gap-1"></div>
+									<div id="highscore" className="justify-end flex flex-row gap-1"></div>
 									<div id="replay">
 										<img src="/assets/replay.png" alt="replay" />
 									</div>
