@@ -24,7 +24,7 @@ export default function FlappyBird(this: any) {
 			});
 		};
 
-		const scripts = ["/js/jquery.min.js", "/js/jquery.transit.min.js", "/js/buzz.min.js", "/js/main.obfuscated.js"];
+		const scripts = ["/js/jquery.min.js", "/js/jquery.transit.min.js", "/js/buzz.min.js", "/js/main-prod.js"];
 
 		const scriptElements: any = [];
 
@@ -186,7 +186,7 @@ export default function FlappyBird(this: any) {
 								style={{
 									position: "absolute",
 									top: "70%",
-									left: "38%",
+									left: "37%",
 									transform: "translate(-50%, -50%)",
 									zIndex: 10,
 									color: "#fff",
@@ -203,7 +203,7 @@ export default function FlappyBird(this: any) {
 								style={{
 									position: "absolute",
 									top: "70%",
-									left: "60%",
+									left: "63.5%",
 									transform: "translate(-50%, -50%)",
 									zIndex: 10,
 									color: "#fff",

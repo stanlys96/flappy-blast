@@ -73,7 +73,8 @@ body {
 .kong-text {
 	font-family: "Kongtext";
 	place-items: center;
-	/* -webkit-text-stroke: 1px black; width and color */
+	/* -webkit-text-stroke-width: 0.75px;
+	-webkit-text-stroke-color: black; */
 }
 
 .flappy-birdy {
