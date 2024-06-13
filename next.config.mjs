@@ -11,6 +11,7 @@ const nextConfig = {
 		"rc-tree",
 		"rc-table",
 	],
+	productionBrowserSourceMaps: false,
 };
 
 export default nextConfig;

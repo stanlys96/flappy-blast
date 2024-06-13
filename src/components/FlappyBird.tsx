@@ -24,7 +24,7 @@ export default function FlappyBird(this: any) {
 			});
 		};
 
-		const scripts = ["/js/jquery.min.js", "/js/jquery.transit.min.js", "/js/buzz.min.js", "/js/main.js"];
+		const scripts = ["/js/jquery.min.js", "/js/jquery.transit.min.js", "/js/buzz.min.js", "/js/main.obfuscated.js"];
 
 		const scriptElements: any = [];
 
@@ -88,7 +88,7 @@ export default function FlappyBird(this: any) {
 
 	if (!domLoaded) return <div></div>;
 	return (
-		<div>
+		<>
 			<Head>
 				<title>Floppy Bird</title>
 				<meta http-equiv="content-type" content="text/html; charset=utf-8" />
@@ -249,6 +249,6 @@ export default function FlappyBird(this: any) {
 					</div>
 				</Modal>
 			</body>
-		</div>
+		</>
 	);
 }

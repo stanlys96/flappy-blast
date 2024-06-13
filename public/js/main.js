@@ -474,6 +474,7 @@ $("#share").click(function () {
 			$("#share-score").text(score);
 			$("#share-highscore").text(highscore);
 		}
+		console.log("huhu");
 	}, 10);
 });
 
