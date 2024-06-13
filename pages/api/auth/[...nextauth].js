@@ -54,10 +54,10 @@ export const authOptions = {
 		},
 		async jwt({ token, user, account }) {
 			// Persist the OAuth access token to the token right after signin
-			if (account && account.access_token && account.refresh_token) {
-				token.refresh_token = account.refresh_token;
-				token.accessToken = account.access_token;
-			}
+			// if (account && account.access_token && account.refresh_token) {
+			// 	token.refresh_token = account.refresh_token;
+			// 	token.accessToken = account.access_token;
+			// }
 			if (user?.id) {
 				token.id = user.id;
 			}
@@ -74,12 +74,12 @@ export const authOptions = {
 				session.username = token.username;
 			}
 			// Add access token to the session object
-			if (token.accessToken) {
-				session.accessToken = token.accessToken;
-			}
-			if (token.refresh_token) {
-				session.refresh_token = token.refresh_token;
-			}
+			// if (token.accessToken) {
+			// 	session.accessToken = token.accessToken;
+			// }
+			// if (token.refresh_token) {
+			// 	session.refresh_token = token.refresh_token;
+			// }
 			return session;
 		},
 	},

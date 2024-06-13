@@ -14,7 +14,6 @@ import { axiosApi, fetcherStrapi } from "@/utils/axios";
 
 export default function AirdropPage() {
 	const { data: session, status } = useSession();
-	console.log(session);
 	const [userData, setUserData] = useState(null);
 	const { address, chain } = useAccount();
 	const [isClientMobile, setIsClientMobile] = useState(false);
