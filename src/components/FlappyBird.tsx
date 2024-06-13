@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
 import Head from "next/head";
+import html2canvas from "html2canvas";
+import { Modal, Button } from "antd";
+import TwitterIntentHandler from "@/src/components/TwitterIntentHandler";
 
-export default function FlappyBird() {
+export default function FlappyBird(this: any) {
+	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [domLoaded, setDomLoaded] = useState(false);
 
 	useEffect(() => {
@@ -47,6 +51,13 @@ export default function FlappyBird() {
 			gameContainer.scrollIntoView({ behavior: "smooth", block: "center" });
 		}
 
+		// Event listener for custom event
+		const handleOpenModalEvent = () => {
+			setIsModalOpen(true);
+		};
+
+		window.addEventListener("openModalEvent", handleOpenModalEvent);
+
 		// Cleanup function to remove the scripts when component unmounts
 		return () => {
 			scriptElements.forEach((script: any) => {
@@ -54,8 +65,23 @@ export default function FlappyBird() {
 					document.body.removeChild(script);
 				}
 			});
+			window.removeEventListener("openModalEvent", handleOpenModalEvent);
 		};
 	}, []);
+
+	const downloadShareImage = () => {
+		const element = document.getElementById("share-image-container");
+		if (element instanceof HTMLElement && element !== null) {
+			html2canvas(element).then((canvas) => {
+				const link = document.createElement("a");
+				link.href = canvas.toDataURL("image/png");
+				link.download = "score.png";
+				link.click();
+			});
+		} else {
+			console.error("Element not found or is null");
+		}
+	};
 
 	const token = process.env.NEXT_PUBLIC_STRAPI_TOKEN;
 	const axiosApi = process.env.NEXT_PUBLIC_AXIOS_API;
@@ -104,6 +130,7 @@ export default function FlappyBird() {
 				<link href="/css/main.css" rel="stylesheet" />
 			</Head>
 			<body className="w-full h-fit" style={{ minHeight: "unset" }}>
+				<TwitterIntentHandler />
 				<div id="gamecontainer">
 					<div id="gamescreen">
 						<div id="sky" className="animated">
@@ -132,6 +159,95 @@ export default function FlappyBird() {
 				</div>
 				<div className="boundingbox" id="playerbox"></div>
 				<div className="boundingbox" id="pipebox"></div>
+
+				<Modal
+					centered
+					title={
+						<div
+							style={{
+								textAlign: "center",
+								fontSize: "24px",
+								fontWeight: "bold",
+							}}
+						>
+							Share your score
+						</div>
+					}
+					open={isModalOpen}
+					onCancel={() => setIsModalOpen(false)}
+					footer={null}
+					closable={true}
+				>
+					<div className="text-center my-6 gap-3 flex flex-col">
+						<div id="share-image-container" className="relative inline-block">
+							<img src="/assets/share-score-template.png" alt="my score" />
+							<span
+								id="share-score"
+								style={{
+									position: "absolute",
+									top: "70%",
+									left: "38%",
+									transform: "translate(-50%, -50%)",
+									zIndex: 10,
+									color: "#fff",
+									fontSize: "1.5rem",
+									fontWeight: "bold",
+									textShadow: "0 0 5px rgba(0, 0, 0, 0.5)",
+								}}
+								className="kong-text text-lg"
+							>
+								000
+							</span>
+							<span
+								id="share-highscore"
+								style={{
+									position: "absolute",
+									top: "70%",
+									left: "60%",
+									transform: "translate(-50%, -50%)",
+									zIndex: 10,
+									color: "#fff",
+									fontSize: "1.5rem",
+									fontWeight: "bold",
+									textShadow: "0 0 5px rgba(0, 0, 0, 0.5)",
+								}}
+								className="kong-text text-lg"
+							>
+								000
+							</span>
+						</div>
+						<div className="w-full flex justify-center gap-4">
+							<Button
+								type="primary"
+								style={{
+									border: "1px solid #BDBDBD",
+									borderRadius: "6px",
+									backgroundColor: "#fff",
+									color: "#000",
+								}}
+								className="w-fit"
+								onClick={downloadShareImage}
+							>
+								Download
+							</Button>
+
+							<a href="https://twitter.com/intent/tweet?text=Hello%20world&hashtags=yrdy">
+								<Button
+									type="primary"
+									style={{
+										border: "1px solid #BDBDBD",
+										borderRadius: "6px",
+										backgroundColor: "#fff",
+										color: "#000",
+									}}
+									iconPosition={"end"}
+								>
+									Tweet
+								</Button>
+							</a>
+						</div>
+					</div>
+				</Modal>
 			</body>
 		</div>
 	);

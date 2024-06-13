@@ -730,7 +730,9 @@ export default function AirdropPage() {
 									) : (modalStep > 0 && modalStep < 3) || modalStep == 10 ? (
 										<p className="text-center">Complete tasks to play FlappyBlast</p>
 									) : (
-										<FlappyBird />
+										<>
+											<FlappyBird />
+										</>
 									)}
 								</div>
 							</div>

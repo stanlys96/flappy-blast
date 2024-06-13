@@ -461,30 +461,20 @@ $("#replay").click(function () {
 });
 
 $("#share").click(function () {
-	//make sure we can only click once
-	if (!shareclickable) return;
-	else shareclickable = false;
 	//SWOOSH!
 	soundSwoosh.stop();
 	soundSwoosh.play();
 
-	const tweetText = `Wow, I got a new high score: ${score}`;
-	const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}&hashtags=Flappyblast`;
+	const event = new CustomEvent("openModalEvent");
+	window.dispatchEvent(event);
 
-	// Determine window size and position
-	const windowOptions = "scrollbars=yes,resizable=yes,toolbar=no,location=yes";
-	const maxPopupWidth = 920;
-	const maxPopupHeight = 720;
-	const winWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-	const winHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
-	const width = Math.min(winWidth, maxPopupWidth);
-	const height = Math.min(winHeight, maxPopupHeight);
-	const left = Math.round(winWidth / 2 - width / 2);
-	const top = Math.round(winHeight / 2 - height / 2);
-
-	// Open the Twitter intent URL in a new window with specified dimensions
-	window.open(tweetUrl, "_blank", `${windowOptions},width=${width},height=${height},left=${left},top=${top}`);
-	window.open(tweetUrl);
+	var interval = setInterval(function () {
+		if ($("#share-highscore").length) {
+			clearInterval(interval);
+			$("#share-score").text(score);
+			$("#share-highscore").text(highscore);
+		}
+	}, 10);
 });
 
 function playerScore() {
