@@ -8,7 +8,7 @@ import TwitterIntentHandler from "@/src/components/TwitterIntentHandler";
 import useSWR from "swr";
 import Cookie from "js-cookie";
 import { signIn, signOut, useSession } from "next-auth/react";
-import { Button, Modal, Avatar } from "antd";
+import { Button, Modal, Avatar, Icon, Popover } from "antd";
 import { ExportOutlined, CaretRightOutlined, CheckOutlined, LeftOutlined } from "@ant-design/icons";
 import { axiosApi, fetcherStrapi } from "@/utils/axios";
 
@@ -38,6 +38,32 @@ export default function AirdropPage() {
 			setIsClientMobile(isMobileDevice);
 		}
 	}, []);
+
+	const socialActionButtonStyles = {
+		base: {
+			border: "2px solid #000",
+			borderRadius: "0px",
+			backgroundColor: "#fff",
+			color: "#000",
+		},
+		verifying: {
+			border: "2px solid yellow",
+			color: "#B6B623",
+		},
+		verified: {
+			border: "2px solid green",
+			color: "#149309",
+		},
+	};
+
+	const getSocialActionButtonStyles = (action: string) => {
+		if (verificationStatus[action] === "verifying") {
+			return { ...socialActionButtonStyles.base, ...socialActionButtonStyles.verifying };
+		} else if (verificationStatus[action] === "verified") {
+			return { ...socialActionButtonStyles.base, ...socialActionButtonStyles.verified };
+		}
+		return socialActionButtonStyles.base;
+	};
 
 	// 0 connect wallet, 1 twitter social action, 2 congrats, 3 finished, 10 hide
 	const [modalStep, setModalStep] = useState(10);
@@ -85,7 +111,8 @@ export default function AirdropPage() {
 
 	useEffect(() => {
 		if (walletPopup === true && web3ModalOpen === false) {
-			if (chain?.name === "Blast") {
+			// Change this to blast
+			if (chain?.name === "Ethereum") {
 				setIsWalletPopup(false);
 			} else {
 				setIsBlast(false);
@@ -185,7 +212,8 @@ export default function AirdropPage() {
 	}, [verificationStatus]);
 
 	useEffect(() => {
-		if (address) {
+		// Change this to blast
+		if (address && chain?.name === "Ethereum" && userData) {
 			axiosApi.get(`/api/wallet-accounts?filters[wallet_address][$eq]=${address}`).then((response) => {
 				if (response?.data?.data.length === 0) {
 					axiosApi
@@ -219,7 +247,7 @@ export default function AirdropPage() {
 				style={{ zIndex: 119 }}
 				className="flex justify-center items-center w-[80%] md:w-[60%] z-150 mx-auto relative h-[100vh]"
 			>
-				<div className="bg-white px-6 justify-center items-center md:px-12 py-12 rounded-[22px] mt-[30px] w-full flex flex-col gap-y-[15px] w-[1000px]">
+				<div className="bg-white px-6 justify-center items-center md:px-12 py-6 md:py-12 rounded-[22px] mt-[30px] w-full flex flex-col gap-y-[15px] w-[1000px]">
 					{currentState === "index" && (
 						<div>
 							<div className="flex flex-col items-center md:items-start gap-y-[20px]">
@@ -232,7 +260,7 @@ export default function AirdropPage() {
 									</div>
 								</div>
 								<div className="flex gap-x-[10px] items-center">
-									<p className="md:text-left text-center font-bold md:text-[16px] text-[12px]">
+									<p className="font-bold md:text-left text-center md:text-[16px] text-[12px]">
 										2. connect wallet and play flappyblast
 									</p>
 									<div className="p-[5px] rounded-[6px] bg-[#FF6666]">
@@ -279,40 +307,59 @@ export default function AirdropPage() {
 							<div className="flex justify-start">
 								{!session && (
 									<>
-										<div
+										<Button
+											type="primary"
+											style={{
+												border: "2px solid #000",
+												borderRadius: "0px",
+												backgroundColor: "#fff",
+												color: "#000",
+												fontWeight: "bold",
+											}}
 											onClick={() => signIn()}
-											className="border border-[#BDBDBD] py-[11px] px-[19px] rounded-[10px] flex gap-x-[10px] cursor-pointer items-center"
 										>
-											<p className="font-bold md:text-[16px] text-[12px]">Login to X</p>
-										</div>
+											<img alt="X" className="w-4 h-4" src="/assets/x-logo-black.png" />
+											<p>Login to X</p>
+										</Button>
 									</>
 								)}
 								{session && (
 									<>
-										<div className="flex justify-between w-full">
-											<Button
-												type="primary"
-												onClick={() => signOut()}
-												style={{
-													border: "2px solid #000",
-													borderRadius: "0px",
-													backgroundColor: "#fff",
-													color: "#000",
-												}}
+										<div className="flex flex-wrap gap-4 justify-between w-full">
+											<Popover
+												content={
+													<a className="text-red-500 font-bold" onClick={() => signOut()}>
+														Logout
+													</a>
+												}
+												placement="bottomLeft"
+												trigger="click"
 											>
-												Logout from X
-											</Button>
+												<Button
+													type="primary"
+													style={{
+														border: "2px solid #000",
+														borderRadius: "0px",
+														backgroundColor: "#fff",
+														color: "#000",
+														fontWeight: "bold",
+													}}
+												>
+													<img alt="X" className="w-4 h-4" src="/assets/x-logo-black.png" />
+													<p>@{session.username}</p>
+												</Button>
+											</Popover>
 											<Button
 												type="primary"
 												onClick={() => setCurrentState("leaderboard")}
 												style={{
-													border: "2px solid #000",
-													borderRadius: "0px",
+													border: "1px solid #BDBDBD",
+													borderRadius: "6px",
 													backgroundColor: "#fff",
 													color: "#000",
 												}}
 											>
-												Leaderboard
+												Leaderboards
 											</Button>
 										</div>
 
@@ -414,7 +461,7 @@ export default function AirdropPage() {
 														href="https://twitter.com/intent/follow?screen_name=flappyblast"
 														onClick={() => handleOpenLink("follow")}
 													>
-														<p className=" font-bold">
+														<p className="">
 															1.{" "}
 															<span className="underline">Follow @Flappyblast on X</span>
 														</p>
@@ -440,20 +487,10 @@ export default function AirdropPage() {
 														<Button
 															type="primary"
 															onClick={() => handleVerification("follow")}
-															style={{
-																border: "2px solid #000",
-																borderRadius: "0px",
-																backgroundColor: "#fff",
-																color: "#000",
-															}}
-															loading={
-																verificationStatus.follow === "verifying" ? true : false
-															}
+															style={getSocialActionButtonStyles("follow")}
 															icon={
 																verificationStatus.follow === "unverified" ? (
 																	<CaretRightOutlined style={{ color: "#000" }} />
-																) : verificationStatus.follow === "verified" ? (
-																	<CheckOutlined style={{ color: "#000" }} />
 																) : (
 																	false
 																)
@@ -463,7 +500,7 @@ export default function AirdropPage() {
 															{verificationStatus.follow === "verifying"
 																? "Verifying..."
 																: verificationStatus.follow === "verified"
-																? "Verified"
+																? "Done"
 																: "Verify"}
 														</Button>
 													)}
@@ -473,7 +510,7 @@ export default function AirdropPage() {
 														href="https://twitter.com/intent/retweet?tweet_id=463440424141459456"
 														onClick={() => handleOpenLink("retweet")}
 													>
-														<p className=" font-bold">
+														<p className="">
 															2.{" "}
 															<span className="underline">
 																Retweet @Flappyblast's post on X
@@ -501,22 +538,10 @@ export default function AirdropPage() {
 														<Button
 															type="primary"
 															onClick={() => handleVerification("retweet")}
-															style={{
-																border: "2px solid #000",
-																borderRadius: "0px",
-																backgroundColor: "#fff",
-																color: "#000",
-															}}
-															loading={
-																verificationStatus.retweet === "verifying"
-																	? true
-																	: false
-															}
+															style={getSocialActionButtonStyles("retweet")}
 															icon={
 																verificationStatus.retweet === "unverified" ? (
 																	<CaretRightOutlined style={{ color: "#000" }} />
-																) : verificationStatus.retweet === "verified" ? (
-																	<CheckOutlined style={{ color: "#000" }} />
 																) : (
 																	false
 																)
@@ -526,7 +551,7 @@ export default function AirdropPage() {
 															{verificationStatus.retweet === "verifying"
 																? "Verifying..."
 																: verificationStatus.retweet === "verified"
-																? "Verified"
+																? "Done"
 																: "Verify"}
 														</Button>
 													)}
@@ -536,7 +561,7 @@ export default function AirdropPage() {
 														href="https://twitter.com/intent/like?tweet_id=463440424141459456"
 														onClick={() => handleOpenLink("like")}
 													>
-														<p className=" font-bold">
+														<p className="">
 															3.{" "}
 															<span className="underline">
 																Like @Flappyblast's post on X
@@ -564,20 +589,10 @@ export default function AirdropPage() {
 														<Button
 															type="primary"
 															onClick={() => handleVerification("like")}
-															style={{
-																border: "2px solid #000",
-																borderRadius: "0px",
-																backgroundColor: "#fff",
-																color: "#000",
-															}}
-															loading={
-																verificationStatus.like === "verifying" ? true : false
-															}
+															style={getSocialActionButtonStyles("like")}
 															icon={
 																verificationStatus.like === "unverified" ? (
 																	<CaretRightOutlined style={{ color: "#000" }} />
-																) : verificationStatus.like === "verified" ? (
-																	<CheckOutlined style={{ color: "#000" }} />
 																) : (
 																	false
 																)
@@ -587,7 +602,7 @@ export default function AirdropPage() {
 															{verificationStatus.like === "verifying"
 																? "Verifying..."
 																: verificationStatus.like === "verified"
-																? "Verified"
+																? "Done"
 																: "Verify"}
 														</Button>
 													)}
@@ -597,7 +612,7 @@ export default function AirdropPage() {
 														href="https://twitter.com/intent/tweet?text=Hello%20world&hashtags=yrdy"
 														onClick={() => handleOpenLink("tweet")}
 													>
-														<p className=" font-bold">
+														<p className="">
 															4.{" "}
 															<span className="underline">
 																Tweet about @Flappyblast on X
@@ -625,20 +640,10 @@ export default function AirdropPage() {
 														<Button
 															type="primary"
 															onClick={() => handleVerification("tweet")}
-															style={{
-																border: "2px solid #000",
-																borderRadius: "0px",
-																backgroundColor: "#fff",
-																color: "#000",
-															}}
-															loading={
-																verificationStatus.tweet === "verifying" ? true : false
-															}
+															style={getSocialActionButtonStyles("tweet")}
 															icon={
 																verificationStatus.tweet === "unverified" ? (
 																	<CaretRightOutlined style={{ color: "#000" }} />
-																) : verificationStatus.tweet === "verified" ? (
-																	<CheckOutlined style={{ color: "#000" }} />
 																) : (
 																	false
 																)
@@ -648,7 +653,7 @@ export default function AirdropPage() {
 															{verificationStatus.tweet === "verifying"
 																? "Verifying..."
 																: verificationStatus.tweet === "verified"
-																? "Verified"
+																? "Done"
 																: "Verify"}
 														</Button>
 													)}
@@ -678,7 +683,7 @@ export default function AirdropPage() {
 												<p>
 													Congrats! Just play Flappyblast and share your scores with us! Join
 													our fun Discord community to share and compare. &nbsp;
-													<span className="underline">Join here!</span>
+													<span className="underline font-bold">Join here!</span>
 												</p>
 
 												<div className="flex justify-center w-full">
@@ -725,7 +730,9 @@ export default function AirdropPage() {
 									) : (modalStep > 0 && modalStep < 3) || modalStep == 10 ? (
 										<p className="text-center">Complete tasks to play FlappyBlast</p>
 									) : (
-										<FlappyBird />
+										<>
+											<FlappyBird />
+										</>
 									)}
 								</div>
 							</div>
@@ -734,7 +741,7 @@ export default function AirdropPage() {
 					{currentState === "leaderboard" && (
 						<>
 							<div className="flex flex-col gap-4 md:gap-0 md:flex-row items-center justify-between w-full">
-								<div className="pixel-caps text-md md:text-2xl font-bold">LEADERBOARDS</div>
+								<div className="pixel-caps text-md md:text-2xl">LEADERBOARDS</div>
 								<Button
 									type="primary"
 									onClick={() => setCurrentState("flap")}
@@ -755,10 +762,12 @@ export default function AirdropPage() {
 								<table className="w-full">
 									<thead className="pixel-caps bg-white sticky top-0 z-20">
 										<tr className="table-header">
-											<th className="py-2 px-4 text-xs md:text-base">RANK</th>
-											<th className="py-2 px-4 text-xs md:text-base hidden md:table-cell">PP</th>
-											<th className="py-2 px-4 text-xs md:text-base">USERNAME</th>
-											<th className="py-2 px-4 text-xs md:text-base">POINTS</th>
+											<th className="py-2 md:px-4 text-xs md:text-base">RANK</th>
+											<th className="py-2 md:px-4 text-xs md:text-base hidden md:table-cell">
+												PP
+											</th>
+											<th className="py-2 md:px-4 text-xs md:text-base">USERNAME</th>
+											<th className="py-2 md:px-4 text-xs md:text-base">POINTS</th>
 										</tr>
 									</thead>
 									<tbody className="overflow-x-auto">
