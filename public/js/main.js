@@ -8,6 +8,9 @@ var states = Object.freeze({
 
 var currentstate;
 
+var pipeSpeed = 2; // Speed of pipe movement in pixels per frame
+var pipeWidth = 52; // Width of the pipes
+var pipeHeight = 90; // Height of the pipes
 var gravity = 0.25;
 var velocity = 0;
 var position = 180;
@@ -121,7 +124,7 @@ function startGame() {
 	//start up our loops
 	var updaterate = 1000.0 / 60.0; //60 times a second
 	loopGameloop = setInterval(gameloop, updaterate);
-	loopPipeloop = setInterval(updatePipes, 1400);
+	loopPipeloop = setInterval(createPipe, 1400);
 
 	//jump from the start!
 	playerJump();
@@ -138,6 +141,9 @@ function updatePlayer(player) {
 function gameloop() {
 	try {
 		var player = $("#player");
+
+		//move the pipes
+		movePipes();
 
 		//update the player speed/position
 		velocity += gravity;
@@ -209,13 +215,12 @@ function gameloop() {
 			}
 		}
 
-		//have we passed the imminent danger?
+		// Have we passed the imminent danger?
 		if (boxleft > piperight) {
-			//yes, remove it
-			pipes.splice(0, 1);
-
-			//and score a point
-			playerScore();
+			if (!nextpipe.scored) {
+				playerScore();
+				nextpipe.scored = true; // Mark this pipe as scored
+			}
 		}
 	} catch (e) {
 		clearInterval(loopGameloop);
@@ -486,28 +491,40 @@ function playerScore() {
 	setBigScore();
 }
 
-function updatePipes() {
-	//Do any pipes need removal?
-	$(".pipe")
-		.filter(function () {
-			return $(this).position().left <= -100;
-		})
-		.remove();
-
-	//add a new pipe (top height + bottom height  + pipeheight == flyArea) and put it in our tracker
+function createPipe() {
 	var padding = 80;
-	var constraint = flyArea - pipeheight - padding * 2; //double padding (for top and bottom)
-	var topheight = Math.floor(Math.random() * constraint + padding); //add lower padding
-	var bottomheight = flyArea - pipeheight - topheight;
-	var newpipe = $(
-		'<div class="pipe animated"><div class="pipe_upper" style="height: ' +
-			topheight +
+	var constraint = flyArea - pipeHeight - padding * 2; // double padding (for top and bottom)
+	var topHeight = Math.floor(Math.random() * constraint + padding); // add lower padding
+	var bottomHeight = flyArea - pipeHeight - topHeight;
+
+	var newPipe = $(
+		'<div class="pipe"><div class="pipe_upper" style="height: ' +
+			topHeight +
 			'px;"></div><div class="pipe_lower" style="height: ' +
-			bottomheight +
+			bottomHeight +
 			'px;"></div></div>'
 	);
-	$("#flyarea").append(newpipe);
-	pipes.push(newpipe);
+	newPipe.css("left", $("#flyarea").width() + "px");
+
+	$("#flyarea").append(newPipe);
+	pipes.push(newPipe);
+}
+
+function movePipes() {
+	for (var i = pipes.length - 1; i >= 0; i--) {
+		var pipe = pipes[i];
+		var pipePosition = parseInt($(pipe).css("left")); // Get the current position
+
+		// Move the pipe
+		pipePosition -= pipeSpeed;
+		$(pipe).css("left", pipePosition + "px");
+
+		// Remove pipe if it goes off screen
+		if (pipePosition < -pipeWidth) {
+			pipes.splice(i, 1);
+			$(pipe).remove();
+		}
+	}
 }
 
 var isIncompatible = {
