@@ -50,8 +50,8 @@ function MyApp({ Component, pageProps }: AppProps) {
 								},
 								components: {
 									Button: {
-										defaultHoverColor: "#343434",
-										defaultHoverBorderColor: "#343434",
+										defaultHoverColor: "#8c8c8c",
+										defaultHoverBorderColor: "#8c8c8c",
 										defaultBorderColor: "#000",
 									},
 								},

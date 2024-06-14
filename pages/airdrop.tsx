@@ -344,14 +344,25 @@ export default function AirdropPage() {
 													<p>@{session.username}</p>
 												</Button>
 											</Popover>
-											<Button
-												style={{
-													border: "2px solid",
-												}}
-												onClick={() => setCurrentState("leaderboard")}
-											>
-												Leaderboards
-											</Button>
+											<div className="flex gap-2">
+												<Button
+													style={{
+														border: "2px solid",
+													}}
+													onClick={() => setCurrentState("leaderboard")}
+												>
+													Leaderboards
+												</Button>
+												<Button
+													danger
+													style={{
+														border: "2px solid ",
+													}}
+													onClick={() => setCurrentState("index")}
+												>
+													Exit game
+												</Button>
+											</div>
 										</div>
 
 										<Modal
