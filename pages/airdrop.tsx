@@ -253,25 +253,31 @@ export default function AirdropPage() {
 							<div className="flex flex-col items-center md:items-start gap-y-[20px]">
 								<div className="flex gap-x-[10px] items-center">
 									<p className="font-bold text-black md:text-[16px] text-[12px]">
-										1. <span className="underline">complete zealy quests</span>
+										1.{" "}
+										<span>
+											login via twitter and complete the one time verification of wallet and
+										</span>
+										<br></br>
+										<span>
+											&nbsp;&nbsp;&nbsp;
+											<span>social tasks to play flappyblast. </span>
+											<span className="text-red-500">*required</span>
+										</span>
 									</p>
-									<div className="p-[5px] rounded-[6px] bg-[#FF6666]">
+									{/* <div className="p-[5px] rounded-[6px] bg-[#FF6666]">
 										<p className="text-[#560000] md:text-[12px] text-[10px]">REQUIRED</p>
-									</div>
+									</div> */}
 								</div>
 								<div className="flex gap-x-[10px] items-center">
 									<p className="font-bold md:text-left text-center md:text-[16px] text-[12px]">
-										2. connect wallet and play flappyblast
+										2. claim free $FLAP for extra allocation only for partnered projects
 									</p>
-									<div className="p-[5px] rounded-[6px] bg-[#FF6666]">
-										<p className="text-[#560000] md:text-[12px] text-[10px]">REQUIRED</p>
-									</div>
 								</div>
 								<p className="md:text-left text-center font-bold md:text-[16px] text-[12px]">
-									3. top 100 players will get extra allocation
+									3. top 100 players on flappyblast will get extra allocation
 								</p>
 								<p className="md:text-left text-center font-bold md:text-[16px] text-[12px]">
-									4. good luck and $FLAP up ;)
+									4. goodluck and $FLAP up ;)
 								</p>
 							</div>
 							<div className="flex md:flex-row flex-col gap-x-[40px] justify-center items-center">
@@ -336,31 +342,33 @@ export default function AirdropPage() {
 												trigger="click"
 											>
 												<Button
-													type="primary"
 													style={{
-														border: "2px solid #000",
-														borderRadius: "0px",
-														backgroundColor: "#fff",
-														color: "#000",
-														fontWeight: "bold",
+														border: "2px solid",
 													}}
 												>
 													<img alt="X" className="w-4 h-4" src="/assets/x-logo-black.png" />
 													<p>@{session.username}</p>
 												</Button>
 											</Popover>
-											<Button
-												type="primary"
-												onClick={() => setCurrentState("leaderboard")}
-												style={{
-													border: "1px solid #BDBDBD",
-													borderRadius: "6px",
-													backgroundColor: "#fff",
-													color: "#000",
-												}}
-											>
-												Leaderboards
-											</Button>
+											<div className="flex gap-2">
+												<Button
+													style={{
+														border: "2px solid",
+													}}
+													onClick={() => setCurrentState("leaderboard")}
+												>
+													Leaderboards
+												</Button>
+												<Button
+													danger
+													style={{
+														border: "2px solid ",
+													}}
+													onClick={() => setCurrentState("index")}
+												>
+													Exit game
+												</Button>
+											</div>
 										</div>
 
 										<Modal
@@ -743,13 +751,9 @@ export default function AirdropPage() {
 							<div className="flex flex-col gap-4 md:gap-0 md:flex-row items-center justify-between w-full">
 								<div className="pixel-caps text-md md:text-2xl">LEADERBOARDS</div>
 								<Button
-									type="primary"
 									onClick={() => setCurrentState("flap")}
 									style={{
-										border: "2px solid #000",
-										borderRadius: "0px",
-										backgroundColor: "#fff",
-										color: "#000",
+										border: "2px solid",
 									}}
 									icon={<LeftOutlined style={{ color: "#000" }} />}
 									iconPosition={"start"}

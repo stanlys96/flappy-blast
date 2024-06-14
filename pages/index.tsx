@@ -116,7 +116,7 @@ export default function HomePage() {
 	const maxWidth = useScreenWidth();
 
 	return (
-		<div className="w-[100vw] overflow-hidden">
+		<div className="w-full overflow-hidden">
 			<HeroLayout>
 				<div className="flex flex-col h-[100vh] md:h-[80vh] desktop:h-[100vh] large-desktop:h-[80vh] justify-center items-center">
 					<p className="text-[24px] md:text-left text-center md:text-[2rem] desktop:text-[4rem] large-desktop:text-[5rem] mb-[20px]  text-white">
@@ -361,14 +361,14 @@ export default function HomePage() {
 								<div className="w-[50px] h-[50px] bg-[#FCFC03] rounded-full" />
 							</div>
 							<div className="flex items-center gap-x-[30px]">
-								<p className="pixel-caps text-[#39FF70] desktop:text-[1.5rem] large-desktop:text-[2rem]">
+								<p className="text-nowrap pixel-caps text-[#39FF70] desktop:text-[1.5rem] large-desktop:text-[2rem]">
 									70 % Fair Launch
 								</p>
 								<div className="w-[50px] h-[50px] bg-[#39FF70] rounded-full" />
 							</div>
 						</div>
 						<FlappyCoinSvg className="md:block hidden h-[250px] w-[250px]" />
-						<div className="flex md:hidden block flex-col gap-y-[40px]">
+						<div className="w-full flex md:hidden block flex-col gap-y-[40px]">
 							<div className="flex justify-start items-center gap-x-[30px]">
 								<div className="w-[30px] h-[30px] bg-[#FCFC03] rounded-full" />
 								<p className="pixel-caps text-[#FCFC03] desktop:text-[1.5rem] large-desktop:text-[2rem]">
@@ -391,7 +391,7 @@ export default function HomePage() {
 							</div>
 							<div className="md:hidden flex justify-start items-center gap-x-[30px]">
 								<div className="w-[30px] h-[30px] bg-[#39FF70] rounded-full" />
-								<p className="pixel-caps text-[#39FF70] desktop:text-[1.5rem] large-desktop:text-[2rem]">
+								<p className="text-nowrap pixel-caps text-[#39FF70] desktop:text-[1.5rem] large-desktop:text-[2rem]">
 									70 % Fair Launch
 								</p>
 							</div>

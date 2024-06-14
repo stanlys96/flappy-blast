@@ -7,6 +7,7 @@ import { createWeb3Modal } from "@web3modal/wagmi/react";
 import { defaultWagmiConfig } from "@web3modal/wagmi";
 
 import { SessionProvider } from "next-auth/react";
+import { Button, ConfigProvider } from "antd";
 
 const queryClient = new QueryClient();
 const PROJECT_ID = process.env.NEXT_PUBLIC_PROJECT_ID ?? "";
@@ -40,7 +41,24 @@ function MyApp({ Component, pageProps }: AppProps) {
 			<SessionProvider session={pageProps.session}>
 				<WagmiProvider config={config}>
 					<QueryClientProvider client={queryClient}>
-						<Component {...pageProps} />
+						<ConfigProvider
+							theme={{
+								token: {
+									colorPrimary: "#000",
+									colorPrimaryHover: "#343434",
+									borderRadius: 0,
+								},
+								components: {
+									Button: {
+										defaultHoverColor: "#8c8c8c",
+										defaultHoverBorderColor: "#8c8c8c",
+										defaultBorderColor: "#000",
+									},
+								},
+							}}
+						>
+							<Component {...pageProps} />
+						</ConfigProvider>
 					</QueryClientProvider>
 				</WagmiProvider>
 			</SessionProvider>
