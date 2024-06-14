@@ -253,7 +253,11 @@ export default function AirdropPage() {
 							<div className="flex flex-col items-center md:items-start gap-y-[20px]">
 								<div className="flex gap-x-[10px] items-center">
 									<p className="font-bold text-black md:text-[16px] text-[12px]">
-										1. <span className="underline">complete zealy quests</span>
+										1.{" "}
+										<span className="underline">
+											login via twitter and complete the one time verification of wallet and
+											social tasks to play flappyblast.
+										</span>
 									</p>
 									<div className="p-[5px] rounded-[6px] bg-[#FF6666]">
 										<p className="text-[#560000] md:text-[12px] text-[10px]">REQUIRED</p>
@@ -261,17 +265,14 @@ export default function AirdropPage() {
 								</div>
 								<div className="flex gap-x-[10px] items-center">
 									<p className="font-bold md:text-left text-center md:text-[16px] text-[12px]">
-										2. connect wallet and play flappyblast
+										2. claim free $FLAP for extra allocation only for partnered projects
 									</p>
-									<div className="p-[5px] rounded-[6px] bg-[#FF6666]">
-										<p className="text-[#560000] md:text-[12px] text-[10px]">REQUIRED</p>
-									</div>
 								</div>
 								<p className="md:text-left text-center font-bold md:text-[16px] text-[12px]">
-									3. top 100 players will get extra allocation
+									3. top 100 players on flappyblast will get extra allocation
 								</p>
 								<p className="md:text-left text-center font-bold md:text-[16px] text-[12px]">
-									4. good luck and $FLAP up ;)
+									4. goodluck and $FLAP up ;)
 								</p>
 							</div>
 							<div className="flex md:flex-row flex-col gap-x-[40px] justify-center items-center">
