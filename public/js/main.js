@@ -215,12 +215,13 @@ function gameloop() {
 			}
 		}
 
-		// Have we passed the imminent danger?
+		//have we passed the imminent danger?
 		if (boxleft > piperight) {
-			if (!nextpipe.scored) {
-				playerScore();
-				nextpipe.scored = true; // Mark this pipe as scored
-			}
+			//yes, remove it
+			pipes.splice(0, 1);
+
+			//and score a point
+			playerScore();
 		}
 	} catch (e) {
 		clearInterval(loopGameloop);
@@ -520,7 +521,7 @@ function movePipes() {
 		$(pipe).css("left", pipePosition + "px");
 
 		// Remove pipe if it goes off screen
-		if (pipePosition < -pipeWidth) {
+		if (pipePosition <= 20) {
 			pipes.splice(i, 1);
 			$(pipe).remove();
 		}
