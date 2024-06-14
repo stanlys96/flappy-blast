@@ -254,13 +254,13 @@ export default function AirdropPage() {
 								<div className="flex gap-x-[10px] items-center">
 									<p className="font-bold text-black md:text-[16px] text-[12px]">
 										1.{" "}
-										<span className="underline">
+										<span>
 											login via twitter and complete the one time verification of wallet and
 										</span>
 										<br></br>
 										<span>
 											&nbsp;&nbsp;&nbsp;
-											<span className="underline">social tasks to play flappyblast. </span>
+											<span>social tasks to play flappyblast. </span>
 											<span className="text-red-500">*required</span>
 										</span>
 									</p>
