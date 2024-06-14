@@ -187,7 +187,7 @@ function gameloop() {
 		if (pipes[0] == null) return;
 
 		//determine the bounding box of the next pipes inner area
-		var nextpipe = pipes[0];
+		var nextpipe = pipes.find((pipe) => !$(pipe).hasClass("scored"));
 		var nextpipeupper = nextpipe.children(".pipe_upper");
 
 		var pipetop = nextpipeupper.offset().top + nextpipeupper.height();
@@ -215,12 +215,14 @@ function gameloop() {
 			}
 		}
 
-		//have we passed the imminent danger?
+		console.log(boxleft, piperight);
+		// Have we passed the imminent danger?
 		if (boxleft > piperight) {
-			//yes, remove it
-			pipes.splice(0, 1);
-
-			//and score a point
+			$(nextpipe).addClass("scored");
+			var index = pipes.indexOf(nextpipe);
+			if (index !== -1) {
+				pipes.splice(index, 1);
+			}
 			playerScore();
 		}
 	} catch (e) {
@@ -512,8 +514,7 @@ function createPipe() {
 }
 
 function movePipes() {
-	for (var i = pipes.length - 1; i >= 0; i--) {
-		var pipe = pipes[i];
+	$(".pipe").each(function (index, pipe) {
 		var pipePosition = parseInt($(pipe).css("left")); // Get the current position
 
 		// Move the pipe
@@ -521,11 +522,10 @@ function movePipes() {
 		$(pipe).css("left", pipePosition + "px");
 
 		// Remove pipe if it goes off screen
-		if (pipePosition <= 20) {
-			pipes.splice(i, 1);
-			$(pipe).remove();
+		if (pipePosition < -pipeWidth) {
+			$(pipe).remove(); // Remove the pipe element from the DOM
 		}
-	}
+	});
 }
 
 var isIncompatible = {
