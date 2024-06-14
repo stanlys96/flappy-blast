@@ -256,12 +256,17 @@ export default function AirdropPage() {
 										1.{" "}
 										<span className="underline">
 											login via twitter and complete the one time verification of wallet and
-											social tasks to play flappyblast.
+										</span>
+										<br></br>
+										<span>
+											&nbsp;&nbsp;&nbsp;
+											<span className="underline">social tasks to play flappyblast. </span>
+											<span className="text-red-500">*required</span>
 										</span>
 									</p>
-									<div className="p-[5px] rounded-[6px] bg-[#FF6666]">
+									{/* <div className="p-[5px] rounded-[6px] bg-[#FF6666]">
 										<p className="text-[#560000] md:text-[12px] text-[10px]">REQUIRED</p>
-									</div>
+									</div> */}
 								</div>
 								<div className="flex gap-x-[10px] items-center">
 									<p className="font-bold md:text-left text-center md:text-[16px] text-[12px]">
