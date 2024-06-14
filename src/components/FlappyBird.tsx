@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Head from "next/head";
 import html2canvas from "html2canvas";
 import { Modal, Button } from "antd";
+import { DownloadOutlined, CloseOutlined } from "@ant-design/icons";
 import TwitterIntentHandler from "@/src/components/TwitterIntentHandler";
 
 export default function FlappyBird(this: any) {
@@ -167,7 +168,7 @@ export default function FlappyBird(this: any) {
 							style={{
 								textAlign: "center",
 								fontSize: "24px",
-								fontWeight: "bold",
+								fontWeight: 600,
 							}}
 						>
 							Share your score
@@ -177,8 +178,9 @@ export default function FlappyBird(this: any) {
 					onCancel={() => setIsModalOpen(false)}
 					footer={null}
 					closable={true}
+					closeIcon={<CloseOutlined style={{ color: "#000" }} />}
 				>
-					<div className="text-center my-6 gap-3 flex flex-col">
+					<div className="text-center my-6 gap-12 flex flex-col">
 						<div id="share-image-container" className="relative inline-block">
 							<img src="/assets/share-score-template.png" alt="my score" />
 							<span
@@ -220,29 +222,25 @@ export default function FlappyBird(this: any) {
 							<Button
 								type="primary"
 								style={{
-									border: "1px solid #BDBDBD",
-									borderRadius: "6px",
-									backgroundColor: "#fff",
-									color: "#000",
+									border: "0px solid",
 								}}
+								icon={<DownloadOutlined />}
+								iconPosition="start"
 								className="w-fit"
 								onClick={downloadShareImage}
 							>
-								Download
+								Save Image
 							</Button>
 
 							<a href="https://twitter.com/intent/tweet?text=Hello%20world&hashtags=yrdy">
 								<Button
-									type="primary"
 									style={{
-										border: "1px solid #BDBDBD",
-										borderRadius: "6px",
-										backgroundColor: "#fff",
-										color: "#000",
+										border: "2px solid",
 									}}
-									iconPosition={"end"}
+									iconPosition={"start"}
 								>
-									Tweet
+									<img alt="X" className="w-4 h-4" src="/assets/x-logo-black.png" />
+									<p>Share to X</p>
 								</Button>
 							</a>
 						</div>
