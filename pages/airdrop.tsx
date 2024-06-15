@@ -8,7 +8,7 @@ import TwitterIntentHandler from "@/src/components/TwitterIntentHandler";
 import useSWR from "swr";
 import Cookie from "js-cookie";
 import { signIn, signOut, useSession } from "next-auth/react";
-import { Button, Modal, Avatar, Icon, Popover } from "antd";
+import { Button, Modal, Avatar, Popover } from "antd";
 import {
     ExportOutlined,
     CaretRightOutlined,
