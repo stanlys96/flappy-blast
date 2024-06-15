@@ -87,7 +87,7 @@ export default function AirdropPage() {
     const [isBlast, setIsBlast] = useState(true);
     const [checkingSocialAction, setCheckingSocialAction] = useState(false);
 
-    const [verificationStatus, setVerificationStatus] = useState({
+    const [verificationStatus, setVerificationStatus] = useState<any>({
         follow: "unopened",
         retweet: "unopened",
         like: "unopened",
@@ -103,7 +103,7 @@ export default function AirdropPage() {
 
     const handleOpenLink = (button: string) => {
         setTimeout(() => {
-            setVerificationStatus((prevStatus) => ({
+            setVerificationStatus((prevStatus: any) => ({
                 ...prevStatus,
                 [button]: "unverified",
             }));
@@ -111,13 +111,13 @@ export default function AirdropPage() {
     };
 
     const handleVerification = (button: string) => {
-        setVerificationStatus((prevStatus) => ({
+        setVerificationStatus((prevStatus: any) => ({
             ...prevStatus,
             [button]: "verifying",
         }));
         const randomDelay = Math.floor(Math.random() * 3000) + 1000; // Random delay between 1 to 4 seconds
         setTimeout(() => {
-            setVerificationStatus((prevStatus) => ({
+            setVerificationStatus((prevStatus: any) => ({
                 ...prevStatus,
                 [button]: "verified",
             }));
@@ -147,6 +147,7 @@ export default function AirdropPage() {
             // Get Twitter data
             axiosApi
                 .get(
+                    // @ts-ignore
                     `/api/twitter-accounts?filters[twitter_id][$eq]=${session?.user.id}`
                 )
                 .then((response) => {
@@ -163,6 +164,7 @@ export default function AirdropPage() {
                 // Get Wallet data
                 axiosApi
                     .get(
+                        // @ts-ignore
                         `/api/wallet-accounts?filters[twitter_account][twitter_id][$eq]=${session?.user.id}`
                     )
                     .then((response) => {
@@ -185,6 +187,7 @@ export default function AirdropPage() {
                                     .then((response) => {
                                         if (response.status == 200) {
                                             const updatedUserData = {
+                                                // @ts-ignore
                                                 ...userData,
                                                 is_wallet: true,
                                             };
@@ -214,6 +217,7 @@ export default function AirdropPage() {
                 }
             }
         }
+        // @ts-ignore
     }, [session?.user.id, userData, modalStep, walletPopup]);
 
     useEffect(() => {
@@ -236,6 +240,7 @@ export default function AirdropPage() {
                         if (response.status == 200) {
                             setCheckingSocialAction(false);
                             const updatedUserData = {
+                                // @ts-ignore
                                 ...userData,
                                 is_socialaction: true,
                             };
@@ -434,6 +439,7 @@ export default function AirdropPage() {
                                                         className="w-4 h-4"
                                                         src="/assets/x-logo-black.png"
                                                     />
+                                                    {/* @ts-ignore */}
                                                     <p>@{session.username}</p>
                                                 </Button>
                                             </Popover>
@@ -1092,7 +1098,8 @@ export default function AirdropPage() {
                                                         </div>
                                                     </td>
                                                     <td className="py-4 px-2 whitespace-nowrap text-sm md:text-base">
-                                                        @{session?.username}
+                                                        {/* @ts-ignore */}@
+                                                        {session?.username}
                                                     </td>
                                                     <td className="py-4 px-2 whitespace-nowrap text-sm md:text-base">
                                                         Data 4
