@@ -2,14 +2,14 @@ import { AbsoluteImagesComponent } from "@/src/components/AbsoluteImagesComponen
 import React, { ReactNode } from "react";
 
 interface Props {
-    children: ReactNode;
+	children: ReactNode;
 }
 
 export const HeroLayout = ({ children }: Props) => {
-    return (
-        <div className="h-[120vh] md:h-[100vh] hero-section overflow-hidden w-[100vw] relative">
-            <AbsoluteImagesComponent />
-            {children}
-        </div>
-    );
+	return (
+		<div className="h-[120vh] md:h-[110vh] hero-section overflow-hidden w-[100vw] relative">
+			<AbsoluteImagesComponent />
+			{children}
+		</div>
+	);
 };
