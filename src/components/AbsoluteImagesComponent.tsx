@@ -64,7 +64,7 @@ export const AbsoluteImagesComponent = () => {
                 >
                     <a
                         onClick={() => router.push("/")}
-                        className={`text-[20px] font-bold p-0 flex items-center text-center justify-center transition duration-500 hover:text-[#B0CD80] md:text-[2rem] desktop:text-[2.5rem] large-desktop:text-[3.5rem] cursor-pointer ${
+                        className={`text-[20px] font-bold p-0 flex items-center text-center justify-center transition duration-500 hover:text-[#B0CD80] md:text-[1.5rem] desktop:text-[2.5rem] large-desktop:text-[3.5rem] cursor-pointer ${
                             router.pathname === "/"
                                 ? "text-[#FCFC03] hover:text-[#FCFC03]"
                                 : "text-white"
@@ -74,7 +74,7 @@ export const AbsoluteImagesComponent = () => {
                     </a>
                     <a
                         onClick={() => router.push("/airdrop")}
-                        className={`text-[20px] font-bold p-0 flex items-center text-center justify-center transition duration-500 hover:text-[#B0CD80] md:text-[2rem] desktop:text-[2.5rem] large-desktop:text-[3.5rem] cursor-pointer ${
+                        className={`text-[20px] font-bold p-0 flex items-center text-center justify-center transition duration-500 hover:text-[#B0CD80] md:text-[1.5rem] desktop:text-[2.5rem] large-desktop:text-[3.5rem] cursor-pointer ${
                             router.pathname === "/airdrop"
                                 ? "text-[#FCFC03] hover:text-[#FCFC03]"
                                 : "text-white"
@@ -84,7 +84,7 @@ export const AbsoluteImagesComponent = () => {
                     </a>
                     <a
                         onClick={() => router.push("/referral")}
-                        className={`text-[20px] font-bold p-0 text-center flex items-center justify-center transition duration-500 hover:text-[#B0CD80] md:text-[2rem] desktop:text-[2.5rem] large-desktop:text-[3.5rem] cursor-pointer ${
+                        className={`text-[20px] font-bold p-0 text-center flex items-center justify-center transition duration-500 hover:text-[#B0CD80] md:text-[1.5rem] desktop:text-[2.5rem] large-desktop:text-[3.5rem] cursor-pointer ${
                             router.pathname === "/referral"
                                 ? "text-[#FCFC03] hover:text-[#FCFC03]"
                                 : "text-white"

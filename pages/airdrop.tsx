@@ -59,6 +59,7 @@ export default function AirdropPage() {
     );
 
     const { data: twitterData, mutate: twitterMutate } = useSWR(
+        // @ts-ignore
         `/api/twitter-accounts?filters[twitter_id][$eq]=${session?.user.id}`,
         fetcherStrapi
     );
@@ -122,6 +123,7 @@ export default function AirdropPage() {
 
     const currentSelectedContract = useReadContract({
         abi: currentSelectedProject?.abi ?? [],
+        // @ts-ignore
         address: "0x" + currentSelectedProject?.contractAddress ?? "0x000",
         functionName: "balanceOf",
         args: [address],
@@ -129,12 +131,14 @@ export default function AirdropPage() {
 
     const currentSelectedDecimals = useReadContract({
         abi: currentSelectedProject?.abi ?? [],
+        // @ts-ignore
         address: "0x" + currentSelectedProject?.contractAddress ?? "0x000",
         functionName: "decimals",
     });
 
     const currentSelectedSymbol = useReadContract({
         abi: currentSelectedProject?.abi ?? [],
+        // @ts-ignore
         address: "0x" + currentSelectedProject?.contractAddress ?? "0x000",
         functionName: "symbol",
     });
@@ -1398,6 +1402,7 @@ export default function AirdropPage() {
                                               currentSelectedContract?.data
                                                   ? ethers
                                                         .formatUnits(
+                                                            // @ts-ignore
                                                             currentSelectedContract?.data,
                                                             currentSelectedDecimals?.data
                                                         )
@@ -1409,6 +1414,7 @@ export default function AirdropPage() {
                                     className={`${
                                         currentSelectedProject?.isNft
                                             ? parseInt(
+                                                  // @ts-ignore
                                                   currentSelectedContract?.data?.toString()
                                               ) > 0
                                                 ? "bg-[#4FB768]"
@@ -1417,6 +1423,7 @@ export default function AirdropPage() {
                                                   currentSelectedContract?.data
                                                       ? ethers
                                                             .formatUnits(
+                                                                // @ts-ignore
                                                                 currentSelectedContract?.data,
                                                                 currentSelectedDecimals?.data
                                                             )
@@ -1430,6 +1437,7 @@ export default function AirdropPage() {
                                     <p className="text-white">
                                         {currentSelectedProject?.isNft
                                             ? parseInt(
+                                                  // @ts-ignore
                                                   currentSelectedContract?.data?.toString()
                                               ) > 0
                                                 ? "Eligible"
@@ -1438,6 +1446,7 @@ export default function AirdropPage() {
                                                   currentSelectedContract?.data
                                                       ? ethers
                                                             .formatUnits(
+                                                                // @ts-ignore
                                                                 currentSelectedContract?.data,
                                                                 currentSelectedDecimals?.data
                                                             )
