@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { PresaleTitle } from "@/src/components/PresaleTitle";
 import { FlappyCoinSvg } from "@/src/components/FlappyCoinSvg";
 import { BladeSvg } from "@/src/components/BladeSvg";
 import { HeroLayout } from "@/src/layouts/HeroLayout";
@@ -10,14 +9,10 @@ import { GroundLargeSvg } from "@/src/components/GroundLargeSvg";
 import { GroundSvg } from "@/src/components/GroundSvg";
 import { GroundMobileSvg } from "@/src/components/GroundMobileSvg";
 import { GroundCarouselSvg } from "@/src/components/GroundCarouselSvg";
-import { Radio, Button, Divider } from "antd";
-import type { RadioChangeEvent } from "antd";
-import { zIndex } from "html2canvas/dist/types/css/property-descriptors/z-index";
-import { relative } from "path";
+import { useRouter } from "next/router";
 
 export default function HomePage() {
-    const [time, setTime] = useState({ hours: 0, minutes: 0, seconds: 0 });
-
+    const router = useRouter();
     const [text, setText] = useState("Guaranteed Floor Price");
     const [text2, setText2] = useState(
         <div className="flex flex-col gap-1">
@@ -34,6 +29,7 @@ export default function HomePage() {
     const [isHovered4, setIsHovered4] = useState(false);
     const [totalCarouselData, setTotalCarouselData] = useState(CarouselData);
     const [totalCarousel, setTotalCarousel] = useState([0, 1, 2, 3]);
+    const [domLoaded, setDomLoaded] = useState(false);
 
     const handleMouseEnter = () => {
         setText(
@@ -90,31 +86,33 @@ export default function HomePage() {
         setIsHovered4(false);
     };
 
+    const endTime = new Date("2024-06-21T13:00:00Z"); // Set your fixed end time here
+
+    const calculateTimeLeft = () => {
+        const now = new Date();
+        const difference = (endTime as any) - (now as any);
+
+        let timeLeft = {};
+
+        if (difference > 0) {
+            timeLeft = {
+                hours: Math.floor(difference / (1000 * 60 * 60)), // Total hours
+                minutes: Math.floor((difference / 1000 / 60) % 60),
+                seconds: Math.floor((difference / 1000) % 60),
+            };
+        }
+
+        return timeLeft;
+    };
+
+    const [timeLeft, setTimeLeft] = useState<any>(calculateTimeLeft());
+
     useEffect(() => {
-        const countdownDate: any = new Date(); // Use current date/time as the countdown starting point
-        countdownDate.setHours(countdownDate.getHours() + 13); // Example: Countdown for 1 hour from now
-
-        const interval = setInterval(() => {
-            const now = new Date().getTime();
-            const distance = countdownDate - now;
-
-            if (distance <= 0) {
-                clearInterval(interval);
-                setTime({ hours: 0, minutes: 0, seconds: 0 });
-            } else {
-                const hours = Math.floor(
-                    (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-                );
-                const minutes = Math.floor(
-                    (distance % (1000 * 60 * 60)) / (1000 * 60)
-                );
-                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-                setTime({ hours, minutes, seconds });
-            }
+        const timer = setInterval(() => {
+            setTimeLeft(calculateTimeLeft());
         }, 1000);
 
-        return () => clearInterval(interval);
+        return () => clearInterval(timer);
     }, []);
 
     const useScreenWidth = () => {
@@ -133,10 +131,14 @@ export default function HomePage() {
     };
     const maxWidth = useScreenWidth();
 
+    useEffect(() => {
+        setDomLoaded(true);
+    }, []);
+    if (!domLoaded) return <div></div>;
     return (
         <div className="w-full overflow-hidden">
             <HeroLayout>
-                <div className="flex flex-col h-[100vh] md:h-[80vh] desktop:h-[100vh] large-desktop:h-[80vh] justify-center items-center">
+                <div className="flex flex-col h-[100vh] md:h-[95vh] desktop:h-[100vh] large-desktop:h-[80vh] justify-center items-center">
                     <p className="text-[24px] md:text-left text-center md:text-[2rem] desktop:text-[4rem] large-desktop:text-[5rem] mb-[20px]  text-white">
                         unruggable meme & infinite
                     </p>
@@ -157,7 +159,10 @@ export default function HomePage() {
                             src="/images/flappy-blast.png"
                         />
                     </div>
-                    <div className="md:block hidden relative mt-[25px] cursor-pointer">
+                    <div
+                        onClick={() => router.push("/airdrop")}
+                        className="md:block hidden relative mt-[25px] cursor-pointer"
+                    >
                         <Image
                             width={300}
                             height={100}
@@ -165,7 +170,10 @@ export default function HomePage() {
                             src="/images/button.png"
                         />
                     </div>
-                    <div className="block md:hidden relative mt-[25px] cursor-pointer">
+                    <div
+                        onClick={() => router.push("/airdrop")}
+                        className="block md:hidden relative mt-[25px] cursor-pointer"
+                    >
                         <Image
                             width={150}
                             height={100}
@@ -176,9 +184,9 @@ export default function HomePage() {
                     <div className="bg-[#FFFFFF] flex justify-center items-center mt-[30px] px-[20px] py-[12px]">
                         <p className="text-black md:text-[16px] text-[12px]">
                             airdrop campaign ends in:{" "}
-                            {time.hours.toString().padStart(2, "0")}:
-                            {time.minutes.toString().padStart(2, "0")}:
-                            {time.seconds.toString().padStart(2, "0")}
+                            {timeLeft?.hours?.toString().padStart(2, "0")}:
+                            {timeLeft?.minutes?.toString().padStart(2, "0")}:
+                            {timeLeft?.seconds?.toString().padStart(2, "0")}
                         </p>
                     </div>
                 </div>

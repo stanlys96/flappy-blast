@@ -8,6 +8,7 @@ import { useRouter } from "next/router";
 import { GroundSvg } from "./GroundSvg";
 import { GroundLargeSvg } from "./GroundLargeSvg";
 import { GroundMobileSvg } from "./GroundMobileSvg";
+import { GitHubSvg } from "./GitHubSvg";
 
 export const AbsoluteImagesComponent = () => {
     const router = useRouter();
@@ -198,6 +199,12 @@ export const AbsoluteImagesComponent = () => {
                 <a href="https://t.me/+esBMo_0AwCcwZWZl" target="_blank">
                     <TelegramSvg className="cursor-pointer large-desktop:h-[60px] large-desktop:w-[60px]" />
                 </a>
+                <a
+                    href="https://flappy-blast.gitbook.io/flappyblast-docs"
+                    target="_blank"
+                >
+                    <GitHubSvg className="cursor-pointer large-desktop:h-[60px] large-desktop:w-[60px]" />
+                </a>
             </div>
             <div
                 style={{ zIndex: 200 }}
@@ -211,6 +218,12 @@ export const AbsoluteImagesComponent = () => {
                 </a>
                 <a href="https://t.me/+esBMo_0AwCcwZWZl" target="_blank">
                     <TelegramSvg className="cursor-pointer h-[20px] w-[20px]" />
+                </a>
+                <a
+                    href="https://flappy-blast.gitbook.io/flappyblast-docs"
+                    target="_blank"
+                >
+                    <GitHubSvg className="cursor-pointer h-[20px] w-[20px]" />
                 </a>
             </div>
         </div>
