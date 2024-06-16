@@ -92,43 +92,43 @@ export const authOptions = {
             }
             return token;
         },
-        async session({ session, token }: SessionProps) {
-            try {
-                console.log("Token received:", token); // Debug log to check token structure
+        // async session({ session, token }: SessionProps) {
+        //     try {
+        //         console.log("Token received:", token); // Debug log to check token structure
 
-                // Ensure token contains id before assigning it
-                if (token?.id) {
-                    session.user.id = token.id;
-                } else {
-                    console.warn("Token id is missing");
-                }
+        //         // Ensure token contains id before assigning it
+        //         if (token?.id) {
+        //             session.user.id = token.id;
+        //         } else {
+        //             console.warn("Token id is missing");
+        //         }
 
-                // Ensure token contains username before assigning it
-                if (token?.username) {
-                    session.username = token.username;
-                } else {
-                    console.warn("Token username is missing");
-                }
+        //         // Ensure token contains username before assigning it
+        //         if (token?.username) {
+        //             session.username = token.username;
+        //         } else {
+        //             console.warn("Token username is missing");
+        //         }
 
-                // Example of adding additional tokens, ensure to uncomment and use if necessary
-                // if (token.accessToken) {
-                //     session.accessToken = token.accessToken;
-                // }
-                // if (token.refresh_token) {
-                //     session.refresh_token = token.refresh_token;
-                // }
+        //         // Example of adding additional tokens, ensure to uncomment and use if necessary
+        //         // if (token.accessToken) {
+        //         //     session.accessToken = token.accessToken;
+        //         // }
+        //         // if (token.refresh_token) {
+        //         //     session.refresh_token = token.refresh_token;
+        //         // }
 
-                console.log("Session object after processing:", session); // Debug log to check session structure
-                return session;
-            } catch (e) {
-                console.error("Error in session handler:", e);
-                // Return a valid session object in case of an error
-                return {
-                    ...session,
-                    error: "Session error",
-                };
-            }
-        },
+        //         console.log("Session object after processing:", session); // Debug log to check session structure
+        //         return session;
+        //     } catch (e) {
+        //         console.error("Error in session handler:", e);
+        //         // Return a valid session object in case of an error
+        //         return {
+        //             ...session,
+        //             error: "Session error",
+        //         };
+        //     }
+        // },
     },
 };
 
