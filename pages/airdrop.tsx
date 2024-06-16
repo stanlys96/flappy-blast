@@ -1255,7 +1255,7 @@ export default function AirdropPage() {
                                 <p>
                                     Select the project you belong to, but
                                     remember, you can only link with one
-                                    project. Ensure you've met all the
+                                    project. Ensure you&apos;ve met all the
                                     requirements to successfully claim your
                                     rewards.
                                 </p>
