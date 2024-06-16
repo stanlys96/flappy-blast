@@ -93,20 +93,24 @@ export const authOptions = {
             return token;
         },
         async session({ session, token }: SessionProps) {
-            if (token.id) {
-                session.user.id = token.id;
+            try {
+                if (token.id) {
+                    session.user.id = token.id;
+                }
+                if (token?.username) {
+                    session.username = token.username;
+                }
+                // Add access token to the session object
+                // if (token.accessToken) {
+                // 	session.accessToken = token.accessToken;
+                // }
+                // if (token.refresh_token) {
+                // 	session.refresh_token = token.refresh_token;
+                // }
+                return session;
+            } catch (e) {
+                console.log(e, "<<< ERROR");
             }
-            if (token?.username) {
-                session.username = token.username;
-            }
-            // Add access token to the session object
-            // if (token.accessToken) {
-            // 	session.accessToken = token.accessToken;
-            // }
-            // if (token.refresh_token) {
-            // 	session.refresh_token = token.refresh_token;
-            // }
-            return session;
         },
     },
 };
