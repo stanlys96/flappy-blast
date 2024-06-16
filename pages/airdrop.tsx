@@ -1,21 +1,41 @@
 import { HeroLayout } from "@/src/layouts/HeroLayout";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { useAccount, useDisconnect, useEnsAvatar, useEnsName } from "wagmi";
+import {
+    useAccount,
+    useDisconnect,
+    useEnsAvatar,
+    useEnsName,
+    useReadContract,
+    useSwitchChain,
+} from "wagmi";
 import { useWeb3Modal, useWeb3ModalState } from "@web3modal/wagmi/react";
 import FlappyBird from "@/src/components/FlappyBird";
 import TwitterIntentHandler from "@/src/components/TwitterIntentHandler";
 import useSWR from "swr";
 import Cookie from "js-cookie";
 import { signIn, signOut, useSession } from "next-auth/react";
-import { Button, Modal, Avatar, Popover } from "antd";
+import {
+    Button,
+    Modal,
+    Avatar,
+    Popover,
+    Menu,
+    Dropdown,
+    Space,
+    Progress,
+} from "antd";
 import {
     ExportOutlined,
     CaretRightOutlined,
     CheckOutlined,
     LeftOutlined,
+    CaretDownOutlined,
 } from "@ant-design/icons";
 import { axiosApi, fetcherStrapi } from "@/utils/axios";
+import { partnershipData } from "@/utils/helper";
+import { ethers } from "ethers";
+import { blast } from "viem/chains";
 
 export default function AirdropPage() {
     const { data: session, status } = useSession();
@@ -23,8 +43,9 @@ export default function AirdropPage() {
     const { address, chain } = useAccount();
     const [isClientMobile, setIsClientMobile] = useState(false);
     const [currentState, setCurrentState] = useState<
-        "index" | "flap" | "leaderboard"
+        "index" | "flap" | "leaderboard" | "partnership"
     >("index");
+    const { chains, switchChain } = useSwitchChain();
     const { disconnect } = useDisconnect();
     const { data: ensName } = useEnsName({ address });
     const [domLoaded, setDomLoaded] = useState(false);
@@ -86,6 +107,30 @@ export default function AirdropPage() {
     const [checkingWallet, setCheckingWallet] = useState(false);
     const [isBlast, setIsBlast] = useState(true);
     const [checkingSocialAction, setCheckingSocialAction] = useState(false);
+    const [dropdownValue, setDropdownValue] = useState("Choose Project");
+    const [partnershipModal, setPartnershipModal] = useState(false);
+    const currentSelectedProject = partnershipData.find(
+        (data) => data.name.toLowerCase() === dropdownValue.toLowerCase()
+    );
+
+    const currentSelectedContract = useReadContract({
+        abi: currentSelectedProject?.abi ?? [],
+        address: "0x" + currentSelectedProject?.contractAddress ?? "0x000",
+        functionName: "balanceOf",
+        args: [address],
+    });
+
+    const currentSelectedDecimals = useReadContract({
+        abi: currentSelectedProject?.abi ?? [],
+        address: "0x" + currentSelectedProject?.contractAddress ?? "0x000",
+        functionName: "decimals",
+    });
+
+    const currentSelectedSymbol = useReadContract({
+        abi: currentSelectedProject?.abi ?? [],
+        address: "0x" + currentSelectedProject?.contractAddress ?? "0x000",
+        functionName: "symbol",
+    });
 
     const [verificationStatus, setVerificationStatus] = useState<any>({
         follow: "unopened",
@@ -123,6 +168,35 @@ export default function AirdropPage() {
             }));
         }, randomDelay);
     };
+
+    const handleMenuClick = (e: any) => {
+        setDropdownValue(e.key);
+    };
+
+    const enableCheckBtn = address && chain?.name === "Blast";
+
+    const menu = (
+        <Menu onClick={handleMenuClick}>
+            <Menu.Item key="Goldmilio">
+                <span>Goldmilio</span>
+            </Menu.Item>
+            <Menu.Item key="Blast Birbs">
+                <span>Blast Birbs</span>
+            </Menu.Item>
+            <Menu.Item key="Blastr">
+                <span>Blastr</span>
+            </Menu.Item>
+            <Menu.Item key="Blast Hoges">
+                <span>Blast Hoges</span>
+            </Menu.Item>
+            <Menu.Item key="Blast Wolves">
+                <span>Blast Wolves</span>
+            </Menu.Item>
+            <Menu.Item key="Blade">
+                <span>Blade</span>
+            </Menu.Item>
+        </Menu>
+    );
 
     useEffect(() => {
         if (walletPopup === true && web3ModalOpen === false) {
@@ -359,29 +433,25 @@ export default function AirdropPage() {
                                     />
                                 </div>
                                 <div
-                                    onClick={() =>
-                                        setCurrentState("leaderboard")
-                                    }
+                                    onClick={() => setPartnershipModal(true)}
                                     className="md:block hidden relative mt-[25px] cursor-pointer"
                                 >
                                     <Image
                                         width={300}
                                         height={100}
                                         alt="button"
-                                        src="/images/leaderbord_button.png"
+                                        src="/images/Partnership_Checker_Btn.png"
                                     />
                                 </div>
                                 <div
-                                    onClick={() =>
-                                        setCurrentState("leaderboard")
-                                    }
+                                    onClick={() => setPartnershipModal(true)}
                                     className="block md:hidden relative mt-[25px] cursor-pointer"
                                 >
                                     <Image
                                         width={150}
                                         height={100}
                                         alt="button"
-                                        src="/images/leaderbord_button.png"
+                                        src="/images/Partnership_Checker_Btn.png"
                                     />
                                 </div>
                             </div>
@@ -1113,6 +1183,250 @@ export default function AirdropPage() {
                         </>
                     )}
                 </div>
+                <Modal
+                    className="z-[50]"
+                    centered
+                    title={
+                        <div
+                            style={{
+                                textAlign: "center",
+                                fontSize: "24px",
+                                fontWeight: "bold",
+                            }}
+                        >
+                            Partnership Checker
+                        </div>
+                    }
+                    open={partnershipModal}
+                    footer={null}
+                    onClose={() => setPartnershipModal(false)}
+                    onCancel={() => setPartnershipModal(false)}
+                    closable // Remove the "X" button
+                    maskClosable={false} // Prevent closing by clicking outside
+                >
+                    <div className="flex flex-col gap-2">
+                        <div className="text-center flex flex-col gap-6">
+                            <div>
+                                <p>
+                                    Select the project you belong to, but
+                                    remember, you can only link with one
+                                    project. Ensure you've met all the
+                                    requirements to successfully claim your
+                                    rewards.
+                                </p>
+                            </div>
+                        </div>
+                        {!address ? (
+                            <div className="flex flex-col justify-center items-center w-full gap-2">
+                                <div className="w-fit">
+                                    <Button
+                                        type="primary"
+                                        onClick={() => {
+                                            setPartnershipModal(false);
+                                            open();
+                                        }}
+                                        style={{
+                                            border: "2px solid #000",
+                                            borderRadius: "0px",
+                                            backgroundColor: "#fff",
+                                            color: "#000",
+                                        }}
+                                        icon={
+                                            <ExportOutlined
+                                                style={{
+                                                    color: "#000",
+                                                }}
+                                            />
+                                        }
+                                        iconPosition={"end"}
+                                        className="font-bold"
+                                    >
+                                        Connect Wallet
+                                    </Button>
+                                </div>
+                                {chain?.name !== "Blast" && (
+                                    <div>
+                                        <p className="text-red-500">
+                                            *Please switch your network to Blast
+                                            and try again.
+                                        </p>
+                                        {/* <Button
+                                            type="primary"
+                                            onClick={() => {}}
+                                            style={{
+                                                border: "2px solid #000",
+                                                borderRadius: "0px",
+                                                backgroundColor: "#fff",
+                                                color: "#000",
+                                            }}
+                                            icon={
+                                                <ExportOutlined
+                                                    style={{
+                                                        color: "#000",
+                                                    }}
+                                                />
+                                            }
+                                            iconPosition={"end"}
+                                            className="font-bold"
+                                        >
+                                            Switch to Blast
+                                        </Button> */}
+                                    </div>
+                                )}
+                            </div>
+                        ) : (
+                            <div>
+                                <div
+                                    onClick={() => disconnect()}
+                                    className="p-[12px] border-[3px] border-[#000] flex gap-x-[10px] cursor-pointer items-center w-fit mx-auto"
+                                >
+                                    {ensAvatar?.data && (
+                                        <img
+                                            className="w-[30px] h-[30px] hidden md:block rounded-full"
+                                            src={ensAvatar?.data ?? ""}
+                                        />
+                                    )}
+                                    <p className="font-bold md:text-[16px] text-[12px]">
+                                        {address.slice(0, 10) +
+                                            "..." +
+                                            address.slice(address.length - 10)}
+                                    </p>
+                                    {ensName && (
+                                        <p className="font-bold md:text-[16px] text-[12px]">
+                                            {ensName}
+                                        </p>
+                                    )}
+                                </div>
+                                {chain?.name !== "Blast" && (
+                                    <div className="mt-2 mx-auto">
+                                        <p className="text-red-500 text-center">
+                                            *Please switch your network to Blast
+                                            and try again.
+                                        </p>
+                                        <div className="w-full flex justify-center my-3">
+                                            <Button
+                                                type="primary"
+                                                onClick={() => {
+                                                    switchChain({
+                                                        chainId: blast.id,
+                                                    });
+                                                }}
+                                                style={{
+                                                    border: "2px solid #000",
+                                                    borderRadius: "0px",
+                                                    backgroundColor: "#fff",
+                                                    color: "#000",
+                                                }}
+                                                icon={
+                                                    <ExportOutlined
+                                                        style={{
+                                                            color: "#000",
+                                                        }}
+                                                    />
+                                                }
+                                                iconPosition={"end"}
+                                                className="font-bold mx-auto"
+                                            >
+                                                Switch to Blast
+                                            </Button>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                        <Dropdown
+                            className="border border-[#BDBDBD] py-[11px] px-[19px] rounded-[10px] flex gap-x-[10px] cursor-pointer items-center"
+                            overlay={menu}
+                            trigger={["click"]}
+                        >
+                            <a
+                                className={`${
+                                    dropdownValue === "Choose Project"
+                                        ? "text-[#878787]"
+                                        : "text-[#000000]"
+                                } flex justify-between`}
+                            >
+                                <Space>{dropdownValue}</Space>
+                                <CaretDownOutlined style={{ color: "black" }} />
+                            </a>
+                        </Dropdown>
+                        {dropdownValue !== "Choose Project" && (
+                            <p className="text-center">
+                                You currently own{" "}
+                                {currentSelectedProject?.isNft
+                                    ? `${currentSelectedContract?.data?.toString()} ${dropdownValue} NFT`
+                                    : `${
+                                          currentSelectedContract?.data
+                                              ? ethers
+                                                    .formatUnits(
+                                                        currentSelectedContract?.data,
+                                                        currentSelectedDecimals?.data
+                                                    )
+                                                    .toString()
+                                              : "0"
+                                      } ${currentSelectedSymbol?.data}`}
+                            </p>
+                        )}
+                        <Progress
+                            size={{
+                                height: 20,
+                            }}
+                            strokeColor="#4FB768"
+                            status="success"
+                            percent={75}
+                            showInfo={false}
+                        />
+                        <p className="font-bold text-center">
+                            500,000 / 1,500,000 Claimed
+                        </p>
+                        <div className="flex justify-center w-full mt-[10px]">
+                            <div
+                                onClick={() => {}}
+                                className={`md:block hidden relative ${
+                                    enableCheckBtn
+                                        ? "cursor-pointer"
+                                        : "cursor-not-allowed"
+                                }`}
+                            >
+                                <Image
+                                    width={300}
+                                    height={100}
+                                    alt="button"
+                                    src={`/images/${
+                                        enableCheckBtn
+                                            ? "Check_Btn.png"
+                                            : "Check_Now_Disabled.png"
+                                    }`}
+                                />
+                            </div>
+                            <div
+                                onClick={() => {}}
+                                className={`block md:hidden relative ${
+                                    enableCheckBtn
+                                        ? "cursor-pointer"
+                                        : "cursor-not-allowed"
+                                }`}
+                            >
+                                <Image
+                                    width={150}
+                                    height={100}
+                                    alt="button"
+                                    src={`/images/${
+                                        enableCheckBtn
+                                            ? "Check_Btn.png"
+                                            : "Check_Now_Disabled.png"
+                                    }`}
+                                />
+                            </div>
+                        </div>
+                        <a
+                            onClick={() => setPartnershipModal(false)}
+                            className="underline text-center cursor-pointer hover:underline text-[#1A202C] mt-2"
+                        >
+                            Return to previous page
+                        </a>
+                    </div>
+                </Modal>
             </div>
         </HeroLayout>
     );

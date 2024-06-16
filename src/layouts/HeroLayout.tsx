@@ -1,18 +1,11 @@
 import { AbsoluteImagesComponent } from "@/src/components/AbsoluteImagesComponent";
-import React, { ReactNode, useEffect } from "react";
-import { useRouter } from "next/router";
+import React, { ReactNode } from "react";
 
 interface Props {
     children: ReactNode;
 }
 
 export const HeroLayout = ({ children }: Props) => {
-    const router = useRouter();
-    useEffect(() => {
-        if (router.pathname === "/airdrop") {
-            router.push("/");
-        }
-    }, []);
     return (
         <div className="h-[120vh] md:h-[100vh] hero-section overflow-hidden w-[100vw] relative">
             <AbsoluteImagesComponent />

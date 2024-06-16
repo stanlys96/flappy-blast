@@ -73,7 +73,7 @@ export const AbsoluteImagesComponent = () => {
                         HOME
                     </a>
                     <a
-                        onClick={() => {}}
+                        onClick={() => router.push("/airdrop")}
                         className={`text-[20px] font-bold p-0 flex items-center text-center justify-center transition duration-500 hover:text-[#B0CD80] md:text-[2rem] desktop:text-[2.5rem] large-desktop:text-[3.5rem] cursor-pointer ${
                             router.pathname === "/airdrop"
                                 ? "text-[#FCFC03] hover:text-[#FCFC03]"
