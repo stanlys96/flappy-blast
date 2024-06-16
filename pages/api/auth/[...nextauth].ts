@@ -1,7 +1,7 @@
 import NextAuth from "next-auth";
 import TwitterProvider, { TwitterProfile } from "next-auth/providers/twitter";
 import { axiosApi } from "@/utils/axios";
-
+// nextauth
 interface SignInProps {
     user: any;
     account: any;
