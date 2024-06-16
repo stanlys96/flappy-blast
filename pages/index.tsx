@@ -159,7 +159,7 @@ export default function HomePage() {
                             src="/images/flappy-blast.png"
                         />
                     </div>
-                    <div
+                    {/* <div
                         onClick={() => router.push("/airdrop")}
                         className="md:block hidden relative mt-[25px] cursor-pointer"
                     >
@@ -180,7 +180,7 @@ export default function HomePage() {
                             alt="button"
                             src="/images/button.png"
                         />
-                    </div>
+                    </div> */}
                     <div className="bg-[#FFFFFF] flex justify-center items-center mt-[30px] px-[20px] py-[12px]">
                         <p className="text-black md:text-[16px] text-[12px]">
                             airdrop campaign starts in:{" "}
