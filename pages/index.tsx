@@ -183,7 +183,7 @@ export default function HomePage() {
                     </div>
                     <div className="bg-[#FFFFFF] flex justify-center items-center mt-[30px] px-[20px] py-[12px]">
                         <p className="text-black md:text-[16px] text-[12px]">
-                            airdrop campaign ends in:{" "}
+                            airdrop campaign starts in:{" "}
                             {timeLeft?.hours?.toString().padStart(2, "0")}:
                             {timeLeft?.minutes?.toString().padStart(2, "0")}:
                             {timeLeft?.seconds?.toString().padStart(2, "0")}
