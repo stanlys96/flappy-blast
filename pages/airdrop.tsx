@@ -36,7 +36,7 @@ import { axiosApi, fetcherStrapi } from "@/utils/axios";
 import { partnershipData } from "@/utils/helper";
 import { ethers } from "ethers";
 import { blast } from "viem/chains";
-
+// AirdropPage
 export default function AirdropPage() {
     const { data: session, status } = useSession();
     const [userData, setUserData] = useState(null);
