@@ -86,7 +86,7 @@ export default function HomePage() {
         setIsHovered4(false);
     };
 
-    const endTime = new Date("2024-06-21T13:00:00Z"); // Set your fixed end time here
+    const endTime = new Date("2024-06-18T13:00:00Z"); // Set your fixed end time here
 
     const calculateTimeLeft = () => {
         const now = new Date();
