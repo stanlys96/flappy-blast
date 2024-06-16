@@ -180,7 +180,12 @@ export default function AirdropPage() {
         setDropdownValue(e.key);
     };
 
-    const enableCheckBtn = address && chain?.name === "Blast";
+    const enableCheckBtn =
+        address &&
+        chain?.name === "Blast" &&
+        address === currentTwitterData?.attributes?.wallet_address;
+    const addressNotMatch =
+        address !== currentTwitterData?.attributes?.wallet_address;
 
     const menu = (
         <Menu onClick={handleMenuClick}>
@@ -461,11 +466,20 @@ export default function AirdropPage() {
                                 </div>
                                 <div
                                     onClick={() => {
-                                        if (!session) return;
+                                        if (
+                                            !session &&
+                                            !currentTwitterData?.attributes?.[
+                                                "is_socialaction"
+                                            ]
+                                        )
+                                            return;
                                         setPartnershipModal(true);
                                     }}
                                     className={`md:block hidden relative mt-[25px] ${
-                                        session
+                                        session &&
+                                        currentTwitterData?.attributes?.[
+                                            "is_socialaction"
+                                        ]
                                             ? "cursor-pointer"
                                             : "cursor-not-allowed"
                                     }`}
@@ -475,7 +489,10 @@ export default function AirdropPage() {
                                         height={100}
                                         alt="button"
                                         src={`/images/${
-                                            session
+                                            session &&
+                                            currentTwitterData?.attributes?.[
+                                                "is_socialaction"
+                                            ]
                                                 ? "Partnership_Claim.png"
                                                 : "Partnership_Claim_Disabled.png"
                                         }`}
@@ -483,11 +500,20 @@ export default function AirdropPage() {
                                 </div>
                                 <div
                                     onClick={() => {
-                                        if (!session) return;
+                                        if (
+                                            !session &&
+                                            !currentTwitterData?.attributes?.[
+                                                "is_socialaction"
+                                            ]
+                                        )
+                                            return;
                                         setPartnershipModal(true);
                                     }}
                                     className={`block md:hidden relative mt-[25px] ${
-                                        session
+                                        session &&
+                                        currentTwitterData?.attributes?.[
+                                            "is_socialaction"
+                                        ]
                                             ? "cursor-pointer"
                                             : "cursor-not-allowed"
                                     }`}
@@ -497,7 +523,10 @@ export default function AirdropPage() {
                                         height={100}
                                         alt="button"
                                         src={`/images/${
-                                            session
+                                            session &&
+                                            currentTwitterData?.attributes?.[
+                                                "is_socialaction"
+                                            ]
                                                 ? "Partnership_Claim.png"
                                                 : "Partnership_Claim_Disabled.png"
                                         }`}
@@ -1346,6 +1375,81 @@ export default function AirdropPage() {
                                 )}
                             </div>
                         )}
+                        {addressNotMatch && (
+                            <p className="text-red-500 text-center roboto">
+                                *wrong wallet connected: connect to{" "}
+                                <span className="font-bold">
+                                    ...
+                                    {currentTwitterData?.attributes?.wallet_address?.slice(
+                                        33,
+                                        currentTwitterData?.attributes
+                                            ?.wallet_address?.length
+                                    )}
+                                </span>
+                            </p>
+                        )}
+                        {dropdownValue !== "Choose Project" && (
+                            <div className="flex gap-x-[10px] items-center justify-center roboto">
+                                <p className="text-center">
+                                    You have:{" "}
+                                    {currentSelectedProject?.isNft
+                                        ? `${currentSelectedContract?.data?.toString()} ${dropdownValue} NFT`
+                                        : `${
+                                              currentSelectedContract?.data
+                                                  ? ethers
+                                                        .formatUnits(
+                                                            currentSelectedContract?.data,
+                                                            currentSelectedDecimals?.data
+                                                        )
+                                                        .toString()
+                                                  : "0"
+                                          } ${currentSelectedSymbol?.data}`}
+                                </p>
+                                <div
+                                    className={`${
+                                        currentSelectedProject?.isNft
+                                            ? parseInt(
+                                                  currentSelectedContract?.data?.toString()
+                                              ) > 0
+                                                ? "bg-[#4FB768]"
+                                                : "bg-[#B74F4F]"
+                                            : parseFloat(
+                                                  currentSelectedContract?.data
+                                                      ? ethers
+                                                            .formatUnits(
+                                                                currentSelectedContract?.data,
+                                                                currentSelectedDecimals?.data
+                                                            )
+                                                            .toString()
+                                                      : "0"
+                                              ) > 100
+                                            ? "bg-[#4FB768]"
+                                            : "bg-[#B74F4F]"
+                                    } rounded-[3px] p-[8px]`}
+                                >
+                                    <p className="text-white">
+                                        {currentSelectedProject?.isNft
+                                            ? parseInt(
+                                                  currentSelectedContract?.data?.toString()
+                                              ) > 0
+                                                ? "Eligible"
+                                                : "Ineligible"
+                                            : parseFloat(
+                                                  currentSelectedContract?.data
+                                                      ? ethers
+                                                            .formatUnits(
+                                                                currentSelectedContract?.data,
+                                                                currentSelectedDecimals?.data
+                                                            )
+                                                            .toString()
+                                                      : "0"
+                                              ) > 100.0
+                                            ? "Eligible"
+                                            : "Ineligible"}
+                                    </p>
+                                </div>
+                            </div>
+                        )}
                         <Dropdown
                             className="border border-[#BDBDBD] py-[11px] px-[19px] rounded-[10px] flex gap-x-[10px] cursor-pointer items-center"
                             overlay={menu}
@@ -1362,30 +1466,14 @@ export default function AirdropPage() {
                                 <CaretDownOutlined style={{ color: "black" }} />
                             </a>
                         </Dropdown>
-                        {dropdownValue !== "Choose Project" && (
-                            <p className="text-center">
-                                You currently own{" "}
-                                {currentSelectedProject?.isNft
-                                    ? `${currentSelectedContract?.data?.toString()} ${dropdownValue} NFT`
-                                    : `${
-                                          currentSelectedContract?.data
-                                              ? ethers
-                                                    .formatUnits(
-                                                        currentSelectedContract?.data,
-                                                        currentSelectedDecimals?.data
-                                                    )
-                                                    .toString()
-                                              : "0"
-                                      } ${currentSelectedSymbol?.data}`}
-                            </p>
-                        )}
+
                         <Progress
                             size={{
                                 height: 20,
                             }}
                             strokeColor="#4FB768"
                             status="success"
-                            percent={75}
+                            percent={(500000 / 1500000) * 100}
                             showInfo={false}
                         />
                         <p className="font-bold text-center">
