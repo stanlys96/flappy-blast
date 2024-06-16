@@ -40,7 +40,7 @@ import { blast } from "viem/chains";
 export default function AirdropPage() {
     const { data: session, status } = useSession();
     const [userData, setUserData] = useState(null);
-    const { address, chain } = useAccount();
+    const { address, chain, isConnected } = useAccount();
     const [isClientMobile, setIsClientMobile] = useState(false);
     const [currentState, setCurrentState] = useState<
         "index" | "flap" | "leaderboard" | "partnership"
@@ -57,6 +57,13 @@ export default function AirdropPage() {
         `/api/wallet-accounts?filters[wallet_address][$eq]=${address}`,
         fetcherStrapi
     );
+
+    const { data: twitterData, mutate: twitterMutate } = useSWR(
+        `/api/twitter-accounts?filters[twitter_id][$eq]=${session?.user.id}`,
+        fetcherStrapi
+    );
+
+    const currentTwitterData = twitterData?.data?.data?.[0];
 
     useEffect(() => {
         setDomLoaded(true);
@@ -106,9 +113,9 @@ export default function AirdropPage() {
     const [walletPopup, setIsWalletPopup] = useState(false);
     const [checkingWallet, setCheckingWallet] = useState(false);
     const [isBlast, setIsBlast] = useState(true);
-    const [checkingSocialAction, setCheckingSocialAction] = useState(false);
     const [dropdownValue, setDropdownValue] = useState("Choose Project");
     const [partnershipModal, setPartnershipModal] = useState(false);
+    const [playGameReady, setPlayGameReady] = useState(false);
     const currentSelectedProject = partnershipData.find(
         (data) => data.name.toLowerCase() === dropdownValue.toLowerCase()
     );
@@ -173,7 +180,12 @@ export default function AirdropPage() {
         setDropdownValue(e.key);
     };
 
-    const enableCheckBtn = address && chain?.name === "Blast";
+    const enableCheckBtn =
+        address &&
+        chain?.name === "Blast" &&
+        address === currentTwitterData?.attributes?.wallet_address;
+    const addressNotMatch =
+        address !== currentTwitterData?.attributes?.wallet_address;
 
     const menu = (
         <Menu onClick={handleMenuClick}>
@@ -201,7 +213,7 @@ export default function AirdropPage() {
     useEffect(() => {
         if (walletPopup === true && web3ModalOpen === false) {
             // Change this to blast
-            if (chain?.name === "Ethereum") {
+            if (chain?.name === "Blast") {
                 setIsWalletPopup(false);
             } else {
                 setIsBlast(false);
@@ -211,88 +223,64 @@ export default function AirdropPage() {
     }, [web3ModalOpen]);
 
     useEffect(() => {
-        if (!isBlast) {
-            setModalStep(0);
-        }
-    }, [isBlast]);
-
-    useEffect(() => {
         if (!walletPopup) {
-            // Get Twitter data
-            axiosApi
-                .get(
-                    // @ts-ignore
-                    `/api/twitter-accounts?filters[twitter_id][$eq]=${session?.user.id}`
-                )
-                .then((response) => {
-                    if (response.data.data.length != 0 && userData === null) {
-                        const accountData = response.data.data[0];
-                        const { id, attributes } = accountData;
-                        // Merge id into attributes
-                        const userDataWithId = { ...attributes, id };
-                        setUserData(userDataWithId);
-                    }
+            if (address) {
+                Cookie.set("wallet_address", address as string, {
+                    expires: 1,
                 });
-
-            if (userData) {
+            } else if (
+                !address &&
+                !currentTwitterData?.attributes?.wallet_address
+            ) {
+                setModalStep(0);
+            }
+            if (currentTwitterData && address) {
                 // Get Wallet data
-                axiosApi
-                    .get(
-                        // @ts-ignore
-                        `/api/wallet-accounts?filters[twitter_account][twitter_id][$eq]=${session?.user.id}`
-                    )
-                    .then((response) => {
-                        if (response.data.data.length != 0) {
-                            const wallet_address =
-                                response.data.data[0].attributes.wallet_address;
-                            Cookie.set(wallet_address, address as string, {
-                                expires: 1,
-                            });
-                            if (userData!["is_wallet"] != true) {
-                                axiosApi
-                                    .put(
-                                        `/api/twitter-accounts/${userData["id"]}`,
-                                        {
-                                            data: {
-                                                is_wallet: true,
-                                            },
-                                        }
-                                    )
-                                    .then((response) => {
-                                        if (response.status == 200) {
-                                            const updatedUserData = {
-                                                // @ts-ignore
-                                                ...userData,
-                                                is_wallet: true,
-                                            };
-                                            setUserData(updatedUserData);
-                                        }
-                                    })
-                                    .catch((err) => {
-                                        console.log(err);
-                                    });
+                if (!currentTwitterData?.attributes?.wallet_address) {
+                    axiosApi
+                        .put(
+                            `/api/twitter-accounts/${currentTwitterData?.id}`,
+                            {
+                                data: {
+                                    is_wallet: true,
+                                    wallet_address: address,
+                                },
                             }
-                        }
-                    });
+                        )
+                        .then((response) => twitterMutate())
+                        .catch((err) => {
+                            console.log(err);
+                        });
+                }
 
-                if (userData["is_wallet"] != true) {
+                if (!currentTwitterData?.attributes?.wallet_address) {
                     setModalStep(0);
                 } else if (
-                    userData["is_socialaction"] != true &&
-                    !checkingSocialAction
+                    currentTwitterData?.attributes?.wallet_address &&
+                    !playGameReady &&
+                    !currentTwitterData?.attributes?.["is_socialaction"]
                 ) {
                     setModalStep(1);
                 } else if (
-                    userData["is_wallet"] === true &&
-                    userData["is_socialaction"] === true &&
-                    modalStep != 2
+                    currentTwitterData?.attributes?.wallet_address &&
+                    currentTwitterData?.attributes?.["is_socialaction"] &&
+                    !playGameReady
                 ) {
-                    setModalStep(3);
+                    setModalStep(2);
+                    setPlayGameReady(true);
                 }
             }
         }
+    }, [
         // @ts-ignore
-    }, [session?.user.id, userData, modalStep, walletPopup]);
+        session?.user?.id,
+        userData,
+        modalStep,
+        walletPopup,
+        address,
+        currentTwitterData,
+        playGameReady,
+    ]);
 
     useEffect(() => {
         if (
@@ -301,24 +289,26 @@ export default function AirdropPage() {
             verificationStatus.like === "verified" &&
             verificationStatus.tweet === "verified"
         ) {
-            setCheckingSocialAction(true);
             setModalStep(2);
-            if (userData!["is_socialaction"] != true) {
+            if (currentTwitterData?.attributes?.["is_socialaction"] !== true) {
                 axiosApi
-                    .put(`/api/twitter-accounts/${userData!["id"]}`, {
-                        data: {
-                            is_socialaction: true,
-                        },
-                    })
+                    .put(
+                        `/api/twitter-accounts/${currentTwitterData?.["id"]}`,
+                        {
+                            data: {
+                                is_socialaction: true,
+                            },
+                        }
+                    )
                     .then((response) => {
                         if (response.status == 200) {
-                            setCheckingSocialAction(false);
                             const updatedUserData = {
                                 // @ts-ignore
                                 ...userData,
                                 is_socialaction: true,
                             };
                             setUserData(updatedUserData);
+                            twitterMutate();
                         }
                     })
                     .catch((err) => {
@@ -327,37 +317,6 @@ export default function AirdropPage() {
             }
         }
     }, [verificationStatus]);
-
-    useEffect(() => {
-        // Change this to blast
-        if (address && chain?.name === "Ethereum" && userData) {
-            axiosApi
-                .get(
-                    `/api/wallet-accounts?filters[wallet_address][$eq]=${address}`
-                )
-                .then((response) => {
-                    if (response?.data?.data.length === 0) {
-                        axiosApi
-                            .post("/api/wallet-accounts", {
-                                data: {
-                                    wallet_address: address,
-                                    twitter_account: userData!["id"],
-                                },
-                            })
-                            .then((response) => {
-                                walletMutate();
-                                setCheckingWallet(false);
-                            })
-                            .catch((err) => {
-                                console.log(err);
-                            });
-                    }
-                });
-            Cookie.set("wallet_address", address as string, {
-                expires: 1,
-            });
-        }
-    }, [address, walletData]);
 
     if (!domLoaded) return <div></div>;
 
@@ -372,6 +331,57 @@ export default function AirdropPage() {
                     {currentState === "index" && (
                         <div>
                             <div className="flex flex-col items-center md:items-start gap-y-[20px]">
+                                <div className="flex justify-center w-full">
+                                    {!session ? (
+                                        <>
+                                            <Button
+                                                type="primary"
+                                                style={{
+                                                    border: "2px solid #000",
+                                                    borderRadius: "0px",
+                                                    backgroundColor: "#fff",
+                                                    color: "#000",
+                                                    fontWeight: "bold",
+                                                }}
+                                                onClick={() => signIn()}
+                                            >
+                                                <img
+                                                    alt="X"
+                                                    className="w-4 h-4"
+                                                    src="/assets/x-logo-black.png"
+                                                />
+                                                <p>Login to X</p>
+                                            </Button>
+                                        </>
+                                    ) : (
+                                        <Popover
+                                            content={
+                                                <a
+                                                    className="text-red-500 font-bold"
+                                                    onClick={() => signOut()}
+                                                >
+                                                    Logout
+                                                </a>
+                                            }
+                                            placement="bottomLeft"
+                                            trigger="click"
+                                        >
+                                            <Button
+                                                style={{
+                                                    border: "2px solid",
+                                                }}
+                                            >
+                                                <img
+                                                    alt="X"
+                                                    className="w-4 h-4"
+                                                    src="/assets/x-logo-black.png"
+                                                />
+                                                {/* @ts-ignore */}
+                                                <p>@{session.username}</p>
+                                            </Button>
+                                        </Popover>
+                                    )}
+                                </div>
                                 <div className="flex gap-x-[10px] items-center">
                                     <p className="font-bold text-black md:text-[16px] text-[12px]">
                                         1.{" "}
@@ -411,47 +421,115 @@ export default function AirdropPage() {
                             </div>
                             <div className="flex md:flex-row flex-col gap-x-[40px] justify-center items-center">
                                 <div
-                                    onClick={() => setCurrentState("flap")}
-                                    className="md:block hidden relative mt-[25px] cursor-pointer"
+                                    onClick={() => {
+                                        if (!session) return;
+                                        setCurrentState("flap");
+                                    }}
+                                    className={`md:block hidden relative mt-[25px] ${
+                                        session
+                                            ? "cursor-pointer"
+                                            : "cursor-not-allowed"
+                                    }`}
                                 >
                                     <Image
                                         width={300}
                                         height={100}
                                         alt="button"
-                                        src="/images/flap_button.png"
+                                        src={`/images/${
+                                            session
+                                                ? "flap_button.png"
+                                                : "Flap_Disabled.png"
+                                        }`}
                                     />
                                 </div>
                                 <div
-                                    onClick={() => setCurrentState("flap")}
-                                    className="block md:hidden relative mt-[25px] cursor-pointer"
+                                    onClick={() => {
+                                        if (!session) return;
+                                        setCurrentState("flap");
+                                    }}
+                                    className={`block md:hidden relative mt-[25px] ${
+                                        session
+                                            ? "cursor-pointer"
+                                            : "cursor-not-allowed"
+                                    }`}
                                 >
                                     <Image
                                         width={150}
                                         height={100}
                                         alt="button"
-                                        src="/images/flap_button.png"
+                                        src={`/images/${
+                                            session
+                                                ? "flap_button.png"
+                                                : "Flap_Disabled.png"
+                                        }`}
                                     />
                                 </div>
                                 <div
-                                    onClick={() => setPartnershipModal(true)}
-                                    className="md:block hidden relative mt-[25px] cursor-pointer"
+                                    onClick={() => {
+                                        if (
+                                            !session &&
+                                            !currentTwitterData?.attributes?.[
+                                                "is_socialaction"
+                                            ]
+                                        )
+                                            return;
+                                        setPartnershipModal(true);
+                                    }}
+                                    className={`md:block hidden relative mt-[25px] ${
+                                        session &&
+                                        currentTwitterData?.attributes?.[
+                                            "is_socialaction"
+                                        ]
+                                            ? "cursor-pointer"
+                                            : "cursor-not-allowed"
+                                    }`}
                                 >
                                     <Image
                                         width={300}
                                         height={100}
                                         alt="button"
-                                        src="/images/Partnership_Checker_Btn.png"
+                                        src={`/images/${
+                                            session &&
+                                            currentTwitterData?.attributes?.[
+                                                "is_socialaction"
+                                            ]
+                                                ? "Partnership_Claim.png"
+                                                : "Partnership_Claim_Disabled.png"
+                                        }`}
                                     />
                                 </div>
                                 <div
-                                    onClick={() => setPartnershipModal(true)}
-                                    className="block md:hidden relative mt-[25px] cursor-pointer"
+                                    onClick={() => {
+                                        if (
+                                            !session &&
+                                            !currentTwitterData?.attributes?.[
+                                                "is_socialaction"
+                                            ]
+                                        )
+                                            return;
+                                        setPartnershipModal(true);
+                                    }}
+                                    className={`block md:hidden relative mt-[25px] ${
+                                        session &&
+                                        currentTwitterData?.attributes?.[
+                                            "is_socialaction"
+                                        ]
+                                            ? "cursor-pointer"
+                                            : "cursor-not-allowed"
+                                    }`}
                                 >
                                     <Image
                                         width={150}
                                         height={100}
                                         alt="button"
-                                        src="/images/Partnership_Checker_Btn.png"
+                                        src={`/images/${
+                                            session &&
+                                            currentTwitterData?.attributes?.[
+                                                "is_socialaction"
+                                            ]
+                                                ? "Partnership_Claim.png"
+                                                : "Partnership_Claim_Disabled.png"
+                                        }`}
                                     />
                                 </div>
                             </div>
@@ -460,59 +538,22 @@ export default function AirdropPage() {
                     {currentState === "flap" && (
                         <div className="flex flex-col gap-y-[20px] w-full">
                             <div className="flex justify-start">
-                                {!session && (
-                                    <>
-                                        <Button
-                                            type="primary"
-                                            style={{
-                                                border: "2px solid #000",
-                                                borderRadius: "0px",
-                                                backgroundColor: "#fff",
-                                                color: "#000",
-                                                fontWeight: "bold",
-                                            }}
-                                            onClick={() => signIn()}
-                                        >
-                                            <img
-                                                alt="X"
-                                                className="w-4 h-4"
-                                                src="/assets/x-logo-black.png"
-                                            />
-                                            <p>Login to X</p>
-                                        </Button>
-                                    </>
-                                )}
                                 {session && (
                                     <>
                                         <div className="flex flex-wrap gap-4 justify-between w-full">
-                                            <Popover
-                                                content={
-                                                    <a
-                                                        className="text-red-500 font-bold"
-                                                        onClick={() =>
-                                                            signOut()
-                                                        }
-                                                    >
-                                                        Logout
-                                                    </a>
-                                                }
-                                                placement="bottomLeft"
-                                                trigger="click"
+                                            <Button
+                                                style={{
+                                                    border: "2px solid",
+                                                }}
                                             >
-                                                <Button
-                                                    style={{
-                                                        border: "2px solid",
-                                                    }}
-                                                >
-                                                    <img
-                                                        alt="X"
-                                                        className="w-4 h-4"
-                                                        src="/assets/x-logo-black.png"
-                                                    />
-                                                    {/* @ts-ignore */}
-                                                    <p>@{session.username}</p>
-                                                </Button>
-                                            </Popover>
+                                                <img
+                                                    alt="X"
+                                                    className="w-4 h-4"
+                                                    src="/assets/x-logo-black.png"
+                                                />
+                                                {/* @ts-ignore */}
+                                                <p>@{session.username}</p>
+                                            </Button>
                                             <div className="flex gap-2">
                                                 <Button
                                                     style={{
@@ -1334,6 +1375,81 @@ export default function AirdropPage() {
                                 )}
                             </div>
                         )}
+                        {addressNotMatch && (
+                            <p className="text-red-500 text-center roboto">
+                                *wrong wallet connected: connect to{" "}
+                                <span className="font-bold">
+                                    ...
+                                    {currentTwitterData?.attributes?.wallet_address?.slice(
+                                        33,
+                                        currentTwitterData?.attributes
+                                            ?.wallet_address?.length
+                                    )}
+                                </span>
+                            </p>
+                        )}
+                        {dropdownValue !== "Choose Project" && (
+                            <div className="flex gap-x-[10px] items-center justify-center roboto">
+                                <p className="text-center">
+                                    You have:{" "}
+                                    {currentSelectedProject?.isNft
+                                        ? `${currentSelectedContract?.data?.toString()} ${dropdownValue} NFT`
+                                        : `${
+                                              currentSelectedContract?.data
+                                                  ? ethers
+                                                        .formatUnits(
+                                                            currentSelectedContract?.data,
+                                                            currentSelectedDecimals?.data
+                                                        )
+                                                        .toString()
+                                                  : "0"
+                                          } ${currentSelectedSymbol?.data}`}
+                                </p>
+                                <div
+                                    className={`${
+                                        currentSelectedProject?.isNft
+                                            ? parseInt(
+                                                  currentSelectedContract?.data?.toString()
+                                              ) > 0
+                                                ? "bg-[#4FB768]"
+                                                : "bg-[#B74F4F]"
+                                            : parseFloat(
+                                                  currentSelectedContract?.data
+                                                      ? ethers
+                                                            .formatUnits(
+                                                                currentSelectedContract?.data,
+                                                                currentSelectedDecimals?.data
+                                                            )
+                                                            .toString()
+                                                      : "0"
+                                              ) > 100
+                                            ? "bg-[#4FB768]"
+                                            : "bg-[#B74F4F]"
+                                    } rounded-[3px] p-[8px]`}
+                                >
+                                    <p className="text-white">
+                                        {currentSelectedProject?.isNft
+                                            ? parseInt(
+                                                  currentSelectedContract?.data?.toString()
+                                              ) > 0
+                                                ? "Eligible"
+                                                : "Ineligible"
+                                            : parseFloat(
+                                                  currentSelectedContract?.data
+                                                      ? ethers
+                                                            .formatUnits(
+                                                                currentSelectedContract?.data,
+                                                                currentSelectedDecimals?.data
+                                                            )
+                                                            .toString()
+                                                      : "0"
+                                              ) > 100.0
+                                            ? "Eligible"
+                                            : "Ineligible"}
+                                    </p>
+                                </div>
+                            </div>
+                        )}
                         <Dropdown
                             className="border border-[#BDBDBD] py-[11px] px-[19px] rounded-[10px] flex gap-x-[10px] cursor-pointer items-center"
                             overlay={menu}
@@ -1350,30 +1466,14 @@ export default function AirdropPage() {
                                 <CaretDownOutlined style={{ color: "black" }} />
                             </a>
                         </Dropdown>
-                        {dropdownValue !== "Choose Project" && (
-                            <p className="text-center">
-                                You currently own{" "}
-                                {currentSelectedProject?.isNft
-                                    ? `${currentSelectedContract?.data?.toString()} ${dropdownValue} NFT`
-                                    : `${
-                                          currentSelectedContract?.data
-                                              ? ethers
-                                                    .formatUnits(
-                                                        currentSelectedContract?.data,
-                                                        currentSelectedDecimals?.data
-                                                    )
-                                                    .toString()
-                                              : "0"
-                                      } ${currentSelectedSymbol?.data}`}
-                            </p>
-                        )}
+
                         <Progress
                             size={{
                                 height: 20,
                             }}
                             strokeColor="#4FB768"
                             status="success"
-                            percent={75}
+                            percent={(500000 / 1500000) * 100}
                             showInfo={false}
                         />
                         <p className="font-bold text-center">
