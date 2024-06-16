@@ -45,33 +45,38 @@ export const authOptions = {
     ],
     callbacks: {
         async signIn({ user, account }: SignInProps) {
-            if (account.provider === "twitter") {
-                try {
-                    const response = await axiosApi.get(
-                        `/api/twitter-accounts?filters[twitter_id][$eq]=${user.id}`
-                    );
+            try {
+                if (account.provider === "twitter") {
+                    try {
+                        const response = await axiosApi.get(
+                            `/api/twitter-accounts?filters[twitter_id][$eq]=${user.id}`
+                        );
 
-                    if (response.data.data.length === 0) {
-                        await axiosApi.post("/api/twitter-accounts", {
-                            data: {
-                                twitter_id: user.id,
-                                twitter_name: user.name,
-                                twitter_username: user.username,
-                                twitter_pic: user.image,
-                                is_wallet: false,
-                                is_socialaction: false,
-                            },
-                        });
+                        if (response.data.data.length === 0) {
+                            await axiosApi.post("/api/twitter-accounts", {
+                                data: {
+                                    twitter_id: user.id,
+                                    twitter_name: user.name,
+                                    twitter_username: user.username,
+                                    twitter_pic: user.image,
+                                    is_wallet: false,
+                                    is_socialaction: false,
+                                },
+                            });
+                        }
+                    } catch (error) {
+                        console.error(
+                            "Error inserting data on first login:",
+                            error
+                        );
+                        return false; // Return false to deny access if there's an error
                     }
-                } catch (error) {
-                    console.error(
-                        "Error inserting data on first login:",
-                        error
-                    );
-                    return false; // Return false to deny access if there's an error
                 }
+                return true; // Return true to proceed with the login
+            } catch (e) {
+                console.log(e, "<<< ERROR");
+                return false;
             }
-            return true; // Return true to proceed with the login
         },
         async jwt({ token, user, account }: JwtProps) {
             // Persist the OAuth access token to the token right after signin
