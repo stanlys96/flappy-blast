@@ -8,11 +8,11 @@ interface Props {
 
 export const HeroLayout = ({ children }: Props) => {
     const router = useRouter();
-    useEffect(() => {
-        if (router.pathname === "/airdrop") {
-            router.push("/");
-        }
-    }, []);
+    // useEffect(() => {
+    //     if (router.pathname === "/airdrop") {
+    //         router.push("/");
+    //     }
+    // }, []);
     return (
         <div className="h-[120vh] md:h-[110vh] hero-section overflow-hidden w-[100vw] relative">
             <AbsoluteImagesComponent />
