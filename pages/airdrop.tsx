@@ -275,7 +275,8 @@ export default function AirdropPage() {
     const enableCheckBtn =
         address &&
         chain?.name === "Blast" &&
-        address === currentTwitterData?.attributes?.wallet_address;
+        address === currentTwitterData?.attributes?.wallet_address &&
+        dropdownValue !== "Choose Project";
 
     const addressNotMatch =
         address !== currentTwitterData?.attributes?.wallet_address;
@@ -307,7 +308,7 @@ export default function AirdropPage() {
     );
 
     const handleCheckPartnership = () => {
-        if (!enableCheckBtn && !isEligible) return;
+        if (!enableCheckBtn || !isEligible) return;
         setPartnershipLoading(true);
         axiosApi
             .post("/api/partnerships", {
@@ -589,10 +590,24 @@ export default function AirdropPage() {
                                         only for partnered projects
                                     </p>
                                 </div>
-                                <p className="md:text-left text-center font-bold md:text-[16px] text-[12px]">
-                                    3. top 100 players on flappyblast will get
-                                    extra allocation
-                                </p>
+                                <div className="md:text-left text-center font-bold md:text-[16px] text-[12px]">
+                                    <p>
+                                        3. top 100 players on flappyblast will
+                                        get extra allocation
+                                    </p>
+                                    <p className="ml-8">
+                                        -Tier 1 alloc: Top 1 Player
+                                    </p>
+                                    <p className="ml-8">
+                                        -Tier 2 alloc: Top 10 Player
+                                    </p>
+                                    <p className="ml-8">
+                                        -Tier 3 alloc: Top 100 Player
+                                    </p>
+                                    <p className="ml-8">
+                                        -Tier 4 alloc: Top 1000 Player
+                                    </p>
+                                </div>
                                 <p className="md:text-left text-center font-bold md:text-[16px] text-[12px]">
                                     4. goodluck and $FLAP up ;)
                                 </p>
@@ -1622,7 +1637,7 @@ export default function AirdropPage() {
                             </div>
                         )}
                         <Dropdown
-                            className="border overflow-scroll border-[#BDBDBD] py-[11px] px-[19px] rounded-[10px] flex gap-x-[10px] cursor-pointer items-center"
+                            className="border border-[#BDBDBD] py-[11px] px-[19px] rounded-[10px] flex gap-x-[10px] cursor-pointer items-center"
                             overlay={menu}
                             trigger={["click"]}
                         >
