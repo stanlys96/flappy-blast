@@ -33,7 +33,11 @@ import {
     CaretDownOutlined,
 } from "@ant-design/icons";
 import { axiosApi, fetcherStrapi } from "@/utils/axios";
-import { filterAndSortByHighScore, partnershipData } from "@/utils/helper";
+import {
+    DataObject,
+    filterAndSortByHighScore,
+    partnershipData,
+} from "@/utils/helper";
 import { ethers } from "ethers";
 import { blast } from "viem/chains";
 // AirdropPage
@@ -61,14 +65,12 @@ export default function AirdropPage() {
     );
 
     const { data: leaderboardsData, mutate: leaderboardsMutate } = useSWR(
-        `/api/twitter-accounts?filters[high_score][$notNull]=true&filters[high_score][$gt]=0`,
+        `/api/twitter-accounts?filters[high_score][$notNull]=true&filters[high_score][$gt]=0&sort=high_score:desc`,
         fetcherStrapi
     );
 
     const currentTwitterData = twitterData?.data?.data?.[0];
     const leaderboardsResult = leaderboardsData?.data?.data;
-    const sortedLeaderboardsResult =
-        filterAndSortByHighScore(leaderboardsResult);
 
     useEffect(() => {
         setDomLoaded(true);
@@ -1234,11 +1236,11 @@ export default function AirdropPage() {
                                         </tr>
                                     </thead>
                                     <tbody className="overflow-x-auto">
-                                        {sortedLeaderboardsResult &&
-                                            sortedLeaderboardsResult?.map(
+                                        {leaderboardsResult &&
+                                            leaderboardsResult?.map(
                                                 (
-                                                    sortedLeaderboardData,
-                                                    index
+                                                    sortedLeaderboardData: DataObject,
+                                                    index: number
                                                 ) => (
                                                     <tr
                                                         key={index}

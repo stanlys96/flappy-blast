@@ -4,7 +4,7 @@ import BlastrAbi from "./Blastr.json";
 import BlastWolvesAbi from "./BlastWolves.json";
 import ERC20Abi from "./ERC20.json";
 
-type Attributes = {
+export type Attributes = {
     createdAt: string;
     updatedAt: string;
     is_wallet: boolean;
@@ -18,7 +18,7 @@ type Attributes = {
     referral_code: string;
 };
 
-type DataObject = {
+export type DataObject = {
     id: number;
     attributes: Attributes;
 };
