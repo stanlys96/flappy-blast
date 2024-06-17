@@ -182,7 +182,7 @@ export default function HomePage() {
                         />
                     </div>
                     <div className="bg-[#FFFFFF] flex justify-center items-center mt-[30px] px-[20px] py-[12px]">
-                        <p className="text-black md:text-[16px] text-[12px]">
+                        <p className="text-black md:text-[16px] text-[12px] large-desktop:text-[2rem]">
                             airdrop campaign ends in:{" "}
                             {timeLeft?.hours?.toString().padStart(2, "0")}:
                             {timeLeft?.minutes?.toString().padStart(2, "0")}:
@@ -397,7 +397,7 @@ export default function HomePage() {
                     )}
                 </div>
             </div>
-            <div className="h-[140vh] md:h-[120vh] desktop:h-[120vh] large-desktop:h-[90vh] flex flex-col justify-center items-center px-[150px] bg-black">
+            <div className="h-[140vh] md:h-[120vh] desktop:h-[120vh] large-desktop:h-[115vh] flex flex-col justify-center items-center px-[150px] bg-black">
                 <div className="flex flex-col justify-center items-center">
                     <p className="pixel-caps md:mt-[50px] desktop:mt-[50px] large-desktop:mt-[70px] text-[#FCFC03] text-[1.5rem] md:text-[48px] desktop:text-[4rem] large-desktop:text-[5rem] text-center mb-[30px]">
                         $FLAP TOKENOMICS

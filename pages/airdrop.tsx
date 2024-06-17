@@ -69,7 +69,7 @@ export default function AirdropPage() {
     );
 
     const { data: partnersData } = useSWR(
-        `/api/partner-lists?sort=id:asc`,
+        `/api/partner-lists?sort=order:asc`,
         fetcherStrapi
     );
 
@@ -315,7 +315,8 @@ export default function AirdropPage() {
                 data: {
                     twitter_account: currentTwitterData?.id,
                     partner_list: currentSelectedProject?.id,
-                    allocation: 500,
+                    allocation:
+                        currentSelectedProject?.attributes?.allocation ?? 0,
                     value1: currentSelectedProject?.attributes?.isNft
                         ? parseInt(
                               currentSelectedContract?.data?.toString() ?? "0"
