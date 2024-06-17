@@ -17,7 +17,7 @@ export default function HomePage() {
     const [text2, setText2] = useState(
         <div className="flex flex-col gap-1">
             <div>Fairlaunch</div>
-            <div className="text-sm">HC: 200ETH</div>
+            <div className="text-sm">HC: 150ETH</div>
             <div className="text-sm">IC: 0,03-3 ETH</div>
         </div>
     );
