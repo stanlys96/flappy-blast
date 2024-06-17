@@ -78,10 +78,14 @@ export default function AirdropPage() {
         fetcherStrapi
     );
 
+    const { data: totalPartnershipData, mutate: totalPartnershipMutate } =
+        useSWR(`/api/partnerships`, fetcherStrapi);
+
     const partnersResult = partnersData?.data?.data;
     const currentTwitterData = twitterData?.data?.data?.[0];
     const leaderboardsResult = leaderboardsData?.data?.data;
     const partnershipResult = partnershipData?.data?.data?.[0];
+    const totalPartnershipResult = totalPartnershipData?.data?.data;
 
     useEffect(() => {
         setDomLoaded(true);
@@ -327,6 +331,7 @@ export default function AirdropPage() {
                 setPartnershipModal(false);
                 setAllocationModal(true);
                 setPartnershipLoading(false);
+                totalPartnershipMutate();
             })
             .catch((err) => {
                 setPartnershipModal(false);
@@ -1230,9 +1235,13 @@ export default function AirdropPage() {
                                                     scores with us! Join our fun
                                                     Discord community to share
                                                     and compare. &nbsp;
-                                                    <span className="underline font-bold">
+                                                    <a
+                                                        href="https://discord.gg/qNcNxfVmVA"
+                                                        target="_blank"
+                                                        className="underline cursor-pointer font-bold"
+                                                    >
                                                         Join here!
-                                                    </span>
+                                                    </a>
                                                 </p>
 
                                                 <div className="flex justify-center w-full">
@@ -1634,11 +1643,18 @@ export default function AirdropPage() {
                             }}
                             strokeColor="#4FB768"
                             status="success"
-                            percent={(500000 / 1500000) * 100}
+                            percent={
+                                ((totalPartnershipResult?.length * 500) /
+                                    1500000) *
+                                100
+                            }
                             showInfo={false}
                         />
                         <p className="font-bold text-center">
-                            500,000 / 1,500,000 Claimed
+                            {(
+                                totalPartnershipResult?.length * 500
+                            ).toLocaleString("en-US")}{" "}
+                            / 1,500,000 Claimed
                         </p>
                         <div className="flex justify-center w-full mt-[10px]">
                             {partnershipLoading ? (
