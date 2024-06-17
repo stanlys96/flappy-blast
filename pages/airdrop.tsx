@@ -33,7 +33,7 @@ import {
     CaretDownOutlined,
 } from "@ant-design/icons";
 import { axiosApi, fetcherStrapi } from "@/utils/axios";
-import { partnershipData } from "@/utils/helper";
+import { filterAndSortByHighScore, partnershipData } from "@/utils/helper";
 import { ethers } from "ethers";
 import { blast } from "viem/chains";
 // AirdropPage
@@ -53,10 +53,6 @@ export default function AirdropPage() {
     const { open } = useWeb3Modal();
     const { open: web3ModalOpen, selectedNetworkId } = useWeb3ModalState();
     const [data, setData] = useState(null);
-    const { data: walletData, mutate: walletMutate } = useSWR(
-        `/api/wallet-accounts?filters[wallet_address][$eq]=${address}`,
-        fetcherStrapi
-    );
 
     const { data: twitterData, mutate: twitterMutate } = useSWR(
         // @ts-ignore
@@ -64,7 +60,15 @@ export default function AirdropPage() {
         fetcherStrapi
     );
 
+    const { data: leaderboardsData, mutate: leaderboardsMutate } = useSWR(
+        `/api/twitter-accounts?filters[high_score][$notNull]=true&filters[high_score][$gt]=0`,
+        fetcherStrapi
+    );
+
     const currentTwitterData = twitterData?.data?.data?.[0];
+    const leaderboardsResult = leaderboardsData?.data?.data;
+    const sortedLeaderboardsResult =
+        filterAndSortByHighScore(leaderboardsResult);
 
     useEffect(() => {
         setDomLoaded(true);
@@ -239,6 +243,16 @@ export default function AirdropPage() {
                 setModalStep(0);
             }
             if (currentTwitterData && address) {
+                Cookie.set(
+                    "twitter_id",
+                    currentTwitterData?.attributes?.twitter_id,
+                    {
+                        expires: 1,
+                    }
+                );
+                Cookie.set("strapi_twitter_id", currentTwitterData?.id, {
+                    expires: 1,
+                });
                 // Get Wallet data
                 if (!currentTwitterData?.attributes?.wallet_address) {
                     axiosApi
@@ -1193,35 +1207,51 @@ export default function AirdropPage() {
                                         </tr>
                                     </thead>
                                     <tbody className="overflow-x-auto">
-                                        {Array.from(
-                                            { length: 50 },
-                                            (_, index) => (
-                                                <tr
-                                                    key={index}
-                                                    className="table-row text-center border-black border-b-2 border-dashed"
-                                                >
-                                                    <td className="py-4 px-2 whitespace-nowrap text-sm md:text-base">
-                                                        {index + 1}
-                                                    </td>
-                                                    <td className="py-4 px-2 whitespace-nowrap hidden md:table-cell">
-                                                        <div className="flex justify-center">
-                                                            <img
-                                                                className="w-8 h-8 md:w-12 md:h-12 rounded-full"
-                                                                src="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg"
-                                                                alt="avatar"
-                                                            />
-                                                        </div>
-                                                    </td>
-                                                    <td className="py-4 px-2 whitespace-nowrap text-sm md:text-base">
-                                                        {/* @ts-ignore */}@
-                                                        {session?.username}
-                                                    </td>
-                                                    <td className="py-4 px-2 whitespace-nowrap text-sm md:text-base">
-                                                        Data 4
-                                                    </td>
-                                                </tr>
-                                            )
-                                        )}
+                                        {sortedLeaderboardsResult &&
+                                            sortedLeaderboardsResult?.map(
+                                                (
+                                                    sortedLeaderboardData,
+                                                    index
+                                                ) => (
+                                                    <tr
+                                                        key={index}
+                                                        className="table-row text-center border-black border-b-2 border-dashed"
+                                                    >
+                                                        <td className="py-4 px-2 whitespace-nowrap text-sm md:text-base">
+                                                            {index + 1}
+                                                        </td>
+                                                        <td className="py-4 px-2 whitespace-nowrap hidden md:table-cell">
+                                                            <div className="flex justify-center">
+                                                                <img
+                                                                    className="w-8 h-8 md:w-12 md:h-12 rounded-full"
+                                                                    src={
+                                                                        sortedLeaderboardData
+                                                                            ?.attributes
+                                                                            ?.twitter_pic ??
+                                                                        ""
+                                                                    }
+                                                                    alt="avatar"
+                                                                />
+                                                            </div>
+                                                        </td>
+                                                        <td className="py-4 px-2 whitespace-nowrap text-sm md:text-base">
+                                                            {/* @ts-ignore */}@
+                                                            {
+                                                                sortedLeaderboardData
+                                                                    ?.attributes
+                                                                    ?.twitter_username
+                                                            }
+                                                        </td>
+                                                        <td className="py-4 px-2 whitespace-nowrap text-sm md:text-base">
+                                                            {
+                                                                sortedLeaderboardData
+                                                                    ?.attributes
+                                                                    ?.high_score
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                )
+                                            )}
                                     </tbody>
                                 </table>
                             </div>

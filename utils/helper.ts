@@ -4,6 +4,25 @@ import BlastrAbi from "./Blastr.json";
 import BlastWolvesAbi from "./BlastWolves.json";
 import ERC20Abi from "./ERC20.json";
 
+type Attributes = {
+    createdAt: string;
+    updatedAt: string;
+    is_wallet: boolean;
+    is_socialaction: boolean;
+    twitter_name: string;
+    twitter_pic: string;
+    twitter_id: string;
+    twitter_username: string;
+    wallet_address: string;
+    high_score: number;
+    referral_code: string;
+};
+
+type DataObject = {
+    id: number;
+    attributes: Attributes;
+};
+
 export const partnershipData = [
     {
         id: 1,
@@ -48,3 +67,15 @@ export const partnershipData = [
         abi: ERC20Abi,
     },
 ];
+
+export const filterAndSortByHighScore = (data: DataObject[]): DataObject[] => {
+    // Filter data to include only those with a high_score greater than 0
+    const filteredData = data?.filter((item) => item.attributes.high_score > 0);
+
+    // Sort the filtered data by high_score in descending order
+    const sortedData = filteredData?.sort(
+        (a, b) => b.attributes.high_score - a.attributes.high_score
+    );
+
+    return sortedData;
+};
