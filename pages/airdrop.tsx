@@ -218,6 +218,20 @@ export default function AirdropPage() {
         </Menu>
     );
 
+    const handleSuccessButton = async () => {
+        setModalStep(3);
+        axiosApi
+            .put(`/api/twitter-accounts/${currentTwitterData?.id}`, {
+                data: {
+                    show_success_modal: false,
+                },
+            })
+            .then((response) => twitterMutate())
+            .catch((err) => {
+                console.log(err);
+            });
+    };
+
     useEffect(() => {
         if (walletPopup === true && web3ModalOpen === false) {
             // Change this to blast
@@ -279,6 +293,10 @@ export default function AirdropPage() {
                     !currentTwitterData?.attributes?.["is_socialaction"]
                 ) {
                     setModalStep(1);
+                } else if (
+                    !currentTwitterData?.attributes?.show_success_modal
+                ) {
+                    setModalStep(3);
                 } else if (
                     currentTwitterData?.attributes?.wallet_address &&
                     currentTwitterData?.attributes?.["is_socialaction"] &&
@@ -1083,7 +1101,7 @@ export default function AirdropPage() {
                                                 </div>
                                             }
                                             open={modalStep == 2}
-                                            onCancel={() => setModalStep(3)}
+                                            onCancel={handleSuccessButton}
                                             footer={null}
                                             closable={false}
                                         >

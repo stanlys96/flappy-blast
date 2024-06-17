@@ -61,6 +61,7 @@ export const authOptions = {
                                     twitter_pic: user.image,
                                     is_wallet: false,
                                     is_socialaction: false,
+                                    show_success_modal: true,
                                 },
                             });
                         }
