@@ -250,12 +250,8 @@ export default function AirdropPage() {
                 Cookie.set("wallet_address", address as string, {
                     expires: 1,
                 });
-            } else if (
-                !address ||
-                !currentTwitterData?.attributes?.wallet_address
-            ) {
-                setModalStep(0);
             }
+
             if (currentTwitterData && address) {
                 Cookie.set(
                     "twitter_id",
