@@ -14,7 +14,7 @@ export const HeroLayout = ({ children }: Props) => {
 	//     }
 	// }, []);
 	return (
-		<div className="h-[135vh] md:h-[110vh] hero-section overflow-hidden w-[100vw] relative">
+		<div className="h-[180vh] md:h-[110vh] hero-section overflow-hidden w-[100vw] relative">
 			<AbsoluteImagesComponent />
 			{children}
 		</div>
