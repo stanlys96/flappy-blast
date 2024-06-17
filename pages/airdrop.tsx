@@ -281,7 +281,9 @@ export default function AirdropPage() {
     const addressNotMatch =
         address !== currentTwitterData?.attributes?.wallet_address;
 
-    const isEligible = currentSelectedProject?.attributes?.isNft
+    const isEligible = !address
+        ? false
+        : currentSelectedProject?.attributes?.isNft
         ? parseInt(
               // @ts-ignore
               currentSelectedContract?.data?.toString()
@@ -1592,7 +1594,10 @@ export default function AirdropPage() {
                                         <span>
                                             {currentSelectedProject?.attributes
                                                 ?.isNft
-                                                ? `${currentSelectedContract?.data?.toString()} ${
+                                                ? `${
+                                                      currentSelectedContract?.data?.toString() ??
+                                                      "0"
+                                                  } ${
                                                       currentSelectedName?.data
                                                   } NFT`
                                                 : `${tokenData1} ${

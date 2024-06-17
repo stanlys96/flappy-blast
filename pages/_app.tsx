@@ -14,9 +14,9 @@ const queryClient = new QueryClient();
 const PROJECT_ID = process.env.NEXT_PUBLIC_PROJECT_ID ?? "";
 
 const metadata = {
-    name: "Hyfen",
-    description: "Hyfen",
-    url: "https://hyfen.gg", // origin must match your domain & subdomain
+    name: "Flappy Blast",
+    description: "Flappy Blast",
+    url: "https://flappy-blast-dev.vercel.app/", // origin must match your domain & subdomain
     icons: ["/favicon.ico"],
 };
 
