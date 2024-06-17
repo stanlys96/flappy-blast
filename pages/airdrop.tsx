@@ -54,6 +54,7 @@ export default function AirdropPage() {
     const { open: web3ModalOpen, selectedNetworkId } = useWeb3ModalState();
     const [data, setData] = useState(null);
     const [allocationModal, setAllocationModal] = useState(false);
+    const [allocationDoneModal, setAllocationDoneModal] = useState(false);
     const [partnershipLoading, setPartnershipLoading] = useState(false);
 
     const { data: twitterData, mutate: twitterMutate } = useSWR(
@@ -344,7 +345,7 @@ export default function AirdropPage() {
         if (!session && !currentTwitterData?.attributes?.["is_socialaction"])
             return;
         if (partnershipResult) {
-            setAllocationModal(true);
+            setAllocationDoneModal(true);
         } else {
             setPartnershipModal(true);
         }
@@ -1755,6 +1756,44 @@ export default function AirdropPage() {
                         </div>
                         <a
                             onClick={() => setAllocationModal(false)}
+                            className="underline text-center cursor-pointer hover:underline text-[#1A202C] mt-2"
+                        >
+                            Return to previous page
+                        </a>
+                    </div>
+                </Modal>
+                <Modal
+                    centered
+                    title={
+                        <div
+                            style={{
+                                textAlign: "center",
+                                fontSize: "24px",
+                                fontWeight: "bold",
+                            }}
+                        >
+                            You have claimed this already
+                        </div>
+                    }
+                    open={allocationDoneModal}
+                    footer={null}
+                    closable={false} // Remove the "X" button
+                    // maskClosable={false} // Prevent closing by clicking outside
+                >
+                    <div className="flex flex-col gap-2">
+                        <div className="text-center flex flex-col gap-6">
+                            <p>
+                                Your wallet has been linked to the{" "}
+                                {partnershipResult?.attributes?.partner_list
+                                    ?.data?.attributes?.project_name ??
+                                    currentSelectedProject?.attributes
+                                        ?.project_name}{" "}
+                                project. Remember, you can only connect with one
+                                project at a time.
+                            </p>
+                        </div>
+                        <a
+                            onClick={() => setAllocationDoneModal(false)}
                             className="underline text-center cursor-pointer hover:underline text-[#1A202C] mt-2"
                         >
                             Return to previous page
