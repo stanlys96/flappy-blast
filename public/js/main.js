@@ -339,12 +339,10 @@ function setMedal() {
 }
 
 function playerDead() {
-    var wallet_address = getCookie("wallet_address");
     var twitter_id = getCookie("twitter_id");
     var strapi_twitter_id = getCookie("strapi_twitter_id");
     const result = {
         data: {
-            wallet_address: wallet_address,
             score: score,
             twitter_account: strapi_twitter_id,
         },
