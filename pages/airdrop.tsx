@@ -24,20 +24,16 @@ import {
     Dropdown,
     Space,
     Progress,
+    Spin,
 } from "antd";
 import {
     ExportOutlined,
     CaretRightOutlined,
-    CheckOutlined,
     LeftOutlined,
     CaretDownOutlined,
 } from "@ant-design/icons";
 import { axiosApi, fetcherStrapi } from "@/utils/axios";
-import {
-    DataObject,
-    filterAndSortByHighScore,
-    partnershipData,
-} from "@/utils/helper";
+import { DataObject } from "@/utils/helper";
 import { ethers } from "ethers";
 import { blast } from "viem/chains";
 // AirdropPage
@@ -57,6 +53,8 @@ export default function AirdropPage() {
     const { open } = useWeb3Modal();
     const { open: web3ModalOpen, selectedNetworkId } = useWeb3ModalState();
     const [data, setData] = useState(null);
+    const [allocationModal, setAllocationModal] = useState(false);
+    const [partnershipLoading, setPartnershipLoading] = useState(false);
 
     const { data: twitterData, mutate: twitterMutate } = useSWR(
         // @ts-ignore
@@ -64,13 +62,26 @@ export default function AirdropPage() {
         fetcherStrapi
     );
 
-    const { data: leaderboardsData, mutate: leaderboardsMutate } = useSWR(
+    const { data: leaderboardsData } = useSWR(
         `/api/twitter-accounts?filters[high_score][$notNull]=true&filters[high_score][$gt]=0&sort=high_score:desc`,
         fetcherStrapi
     );
 
+    const { data: partnersData } = useSWR(
+        `/api/partner-lists?sort=id:asc`,
+        fetcherStrapi
+    );
+
+    const { data: partnershipData, mutate: partnershipMutate } = useSWR(
+        // @ts-ignore
+        `/api/partnerships?filters[twitter_account][twitter_id][$eq]=${session?.user.id}&populate=*`,
+        fetcherStrapi
+    );
+
+    const partnersResult = partnersData?.data?.data;
     const currentTwitterData = twitterData?.data?.data?.[0];
     const leaderboardsResult = leaderboardsData?.data?.data;
+    const partnershipResult = partnershipData?.data?.data?.[0];
 
     useEffect(() => {
         setDomLoaded(true);
@@ -123,31 +134,97 @@ export default function AirdropPage() {
     const [dropdownValue, setDropdownValue] = useState("Choose Project");
     const [partnershipModal, setPartnershipModal] = useState(false);
     const [playGameReady, setPlayGameReady] = useState(false);
-    const currentSelectedProject = partnershipData.find(
-        (data) => data.name.toLowerCase() === dropdownValue.toLowerCase()
+    const currentSelectedProject = partnersResult?.find(
+        (data: any) =>
+            data?.attributes?.project_name?.toLowerCase() ===
+            dropdownValue.toLowerCase()
     );
 
     const currentSelectedContract = useReadContract({
-        abi: currentSelectedProject?.abi ?? [],
+        abi: currentSelectedProject?.attributes?.abi ?? [],
         // @ts-ignore
-        address: "0x" + currentSelectedProject?.contractAddress ?? "0x000",
+        address:
+            currentSelectedProject?.attributes?.contract_address ?? "0x000",
         functionName: "balanceOf",
-        args: [address],
+        args: [address ?? ""],
     });
 
     const currentSelectedDecimals = useReadContract({
-        abi: currentSelectedProject?.abi ?? [],
+        abi: currentSelectedProject?.attributes?.abi ?? [],
         // @ts-ignore
-        address: "0x" + currentSelectedProject?.contractAddress ?? "0x000",
+        address:
+            currentSelectedProject?.attributes?.contract_address ?? "0x000",
         functionName: "decimals",
     });
 
     const currentSelectedSymbol = useReadContract({
-        abi: currentSelectedProject?.abi ?? [],
+        abi: currentSelectedProject?.attributes?.abi ?? [],
         // @ts-ignore
-        address: "0x" + currentSelectedProject?.contractAddress ?? "0x000",
+        address:
+            currentSelectedProject?.attributes?.contract_address ?? "0x000",
         functionName: "symbol",
     });
+
+    const currentSelectedName = useReadContract({
+        abi: currentSelectedProject?.attributes?.abi ?? [],
+        // @ts-ignore
+        address:
+            currentSelectedProject?.attributes?.contract_address ?? "0x000",
+        functionName: "name",
+    });
+
+    const currentSelectedContract2 = useReadContract({
+        abi: currentSelectedProject?.attributes?.abi2 ?? [],
+        // @ts-ignore
+        address:
+            currentSelectedProject?.attributes?.contract_address2 ?? "0x000",
+        functionName: "balanceOf",
+        args: [address ?? ""],
+    });
+
+    const currentSelectedDecimals2 = useReadContract({
+        abi: currentSelectedProject?.attributes?.abi2 ?? [],
+        // @ts-ignore
+        address:
+            currentSelectedProject?.attributes?.contract_address2 ?? "0x000",
+        functionName: "decimals",
+    });
+
+    const currentSelectedSymbol2 = useReadContract({
+        abi: currentSelectedProject?.attributes?.abi2 ?? [],
+        // @ts-ignore
+        address:
+            currentSelectedProject?.attributes?.contract_address2 ?? "0x000",
+        functionName: "symbol",
+    });
+
+    const currentSelectedName2 = useReadContract({
+        abi: currentSelectedProject?.attributes?.abi2 ?? [],
+        // @ts-ignore
+        address:
+            currentSelectedProject?.attributes?.contract_address2 ?? "0x000",
+        functionName: "name",
+    });
+
+    const tokenData1 = currentSelectedContract?.data
+        ? ethers
+              .formatUnits(
+                  // @ts-ignore
+                  currentSelectedContract?.data,
+                  currentSelectedDecimals?.data
+              )
+              .toString()
+        : "0";
+
+    const tokenData2 = currentSelectedContract2?.data
+        ? ethers
+              .formatUnits(
+                  // @ts-ignore
+                  currentSelectedContract2?.data,
+                  currentSelectedDecimals2?.data
+              )
+              .toString()
+        : "0";
 
     const [verificationStatus, setVerificationStatus] = useState<any>({
         follow: "unopened",
@@ -194,31 +271,79 @@ export default function AirdropPage() {
         address &&
         chain?.name === "Blast" &&
         address === currentTwitterData?.attributes?.wallet_address;
+
     const addressNotMatch =
         address !== currentTwitterData?.attributes?.wallet_address;
 
+    const isEligible = currentSelectedProject?.attributes?.isNft
+        ? parseInt(
+              // @ts-ignore
+              currentSelectedContract?.data?.toString()
+          ) >= currentSelectedProject?.attributes?.min_value ||
+          parseInt(
+              // @ts-ignore
+              currentSelectedContract2?.data?.toString()
+          ) >= currentSelectedProject?.attributes?.min_value2
+        : currentSelectedContract?.data?.toString() === "0"
+        ? false
+        : parseFloat(tokenData1) >=
+              (currentSelectedProject?.attributes?.min_value ?? 0) ||
+          parseFloat(tokenData2) >=
+              (currentSelectedProject?.attributes?.min_value2 ?? 0);
+
     const menu = (
-        <Menu onClick={handleMenuClick}>
-            <Menu.Item key="Goldmilio">
-                <span>Goldmilio</span>
-            </Menu.Item>
-            <Menu.Item key="Blast Birbs">
-                <span>Blast Birbs</span>
-            </Menu.Item>
-            <Menu.Item key="Blastr">
-                <span>Blastr</span>
-            </Menu.Item>
-            <Menu.Item key="Blast Hoges">
-                <span>Blast Hoges</span>
-            </Menu.Item>
-            <Menu.Item key="Blast Wolves">
-                <span>Blast Wolves</span>
-            </Menu.Item>
-            <Menu.Item key="Blade">
-                <span>Blade</span>
-            </Menu.Item>
+        <Menu className="scrollable-menu" onClick={handleMenuClick}>
+            {partnersResult?.map((partnership: any) => (
+                <Menu.Item key={partnership?.attributes?.project_name}>
+                    <span>{partnership?.attributes?.project_name}</span>
+                </Menu.Item>
+            ))}
         </Menu>
     );
+
+    const handleCheckPartnership = () => {
+        if (!enableCheckBtn && !isEligible) return;
+        setPartnershipLoading(true);
+        axiosApi
+            .post("/api/partnerships", {
+                data: {
+                    twitter_account: currentTwitterData?.id,
+                    partner_list: currentSelectedProject?.id,
+                    allocation: 500,
+                    value1: currentSelectedProject?.attributes?.isNft
+                        ? parseInt(
+                              currentSelectedContract?.data?.toString() ?? "0"
+                          )
+                        : parseFloat(tokenData1 ?? "0"),
+                    value2: currentSelectedProject?.attributes?.isNft
+                        ? parseInt(
+                              currentSelectedContract2?.data?.toString() ?? "0"
+                          )
+                        : parseFloat(tokenData2 ?? "0"),
+                },
+            })
+            .then((response) => {
+                partnershipMutate();
+                setPartnershipModal(false);
+                setAllocationModal(true);
+                setPartnershipLoading(false);
+            })
+            .catch((err) => {
+                setPartnershipModal(false);
+                setAllocationModal(true);
+                setPartnershipLoading(false);
+            });
+    };
+
+    const handlePartnershipButton = () => {
+        if (!session && !currentTwitterData?.attributes?.["is_socialaction"])
+            return;
+        if (partnershipResult) {
+            setAllocationModal(true);
+        } else {
+            setPartnershipModal(true);
+        }
+    };
 
     const handleSuccessButton = async () => {
         setModalStep(3);
@@ -512,16 +637,7 @@ export default function AirdropPage() {
                                     />
                                 </div>
                                 <div
-                                    onClick={() => {
-                                        if (
-                                            !session &&
-                                            !currentTwitterData?.attributes?.[
-                                                "is_socialaction"
-                                            ]
-                                        )
-                                            return;
-                                        setPartnershipModal(true);
-                                    }}
+                                    onClick={handlePartnershipButton}
                                     className={`md:block hidden relative mt-[25px] ${
                                         session &&
                                         currentTwitterData?.attributes?.[
@@ -546,16 +662,7 @@ export default function AirdropPage() {
                                     />
                                 </div>
                                 <div
-                                    onClick={() => {
-                                        if (
-                                            !session &&
-                                            !currentTwitterData?.attributes?.[
-                                                "is_socialaction"
-                                            ]
-                                        )
-                                            return;
-                                        setPartnershipModal(true);
-                                    }}
+                                    onClick={handlePartnershipButton}
                                     className={`block md:hidden relative mt-[25px] ${
                                         session &&
                                         currentTwitterData?.attributes?.[
@@ -1453,73 +1560,59 @@ export default function AirdropPage() {
                         )}
                         {dropdownValue !== "Choose Project" && (
                             <div className="flex gap-x-[10px] items-center justify-center roboto">
-                                <p className="text-center">
-                                    You have:{" "}
-                                    {currentSelectedProject?.isNft
-                                        ? `${currentSelectedContract?.data?.toString()} ${dropdownValue} NFT`
-                                        : `${
-                                              currentSelectedContract?.data
-                                                  ? ethers
-                                                        .formatUnits(
-                                                            // @ts-ignore
-                                                            currentSelectedContract?.data,
-                                                            currentSelectedDecimals?.data
-                                                        )
-                                                        .toString()
-                                                  : "0"
-                                          } ${currentSelectedSymbol?.data}`}
-                                </p>
+                                <div className="text-center flex flex-row gap-x-2 items-center">
+                                    <p>You have: </p>
+                                    <div className="flex flex-col gap-y-2 items-end">
+                                        <span>
+                                            {currentSelectedProject?.attributes
+                                                ?.isNft
+                                                ? `${currentSelectedContract?.data?.toString()} ${
+                                                      currentSelectedName?.data
+                                                  } NFT`
+                                                : `${tokenData1} ${
+                                                      currentSelectedSymbol?.data?.toString()?.[0] ===
+                                                      "$"
+                                                          ? currentSelectedSymbol?.data
+                                                          : "$" +
+                                                            currentSelectedSymbol?.data
+                                                  }`}
+                                        </span>
+                                        {currentSelectedProject?.attributes
+                                            ?.is_multiple && (
+                                            <span>
+                                                {currentSelectedProject
+                                                    ?.attributes?.isNft
+                                                    ? `${currentSelectedContract2?.data?.toString()} ${
+                                                          currentSelectedName2?.data
+                                                      } NFT`
+                                                    : `${tokenData2} ${
+                                                          currentSelectedSymbol2?.data?.toString()?.[0] ===
+                                                          "$"
+                                                              ? currentSelectedSymbol2?.data
+                                                              : "$" +
+                                                                currentSelectedSymbol2?.data
+                                                      }`}
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
                                 <div
                                     className={`${
-                                        currentSelectedProject?.isNft
-                                            ? parseInt(
-                                                  // @ts-ignore
-                                                  currentSelectedContract?.data?.toString()
-                                              ) > 0
-                                                ? "bg-[#4FB768]"
-                                                : "bg-[#B74F4F]"
-                                            : parseFloat(
-                                                  currentSelectedContract?.data
-                                                      ? ethers
-                                                            .formatUnits(
-                                                                // @ts-ignore
-                                                                currentSelectedContract?.data,
-                                                                currentSelectedDecimals?.data
-                                                            )
-                                                            .toString()
-                                                      : "0"
-                                              ) > 100
+                                        isEligible
                                             ? "bg-[#4FB768]"
                                             : "bg-[#B74F4F]"
                                     } rounded-[3px] p-[8px]`}
                                 >
                                     <p className="text-white">
-                                        {currentSelectedProject?.isNft
-                                            ? parseInt(
-                                                  // @ts-ignore
-                                                  currentSelectedContract?.data?.toString()
-                                              ) > 0
-                                                ? "Eligible"
-                                                : "Ineligible"
-                                            : parseFloat(
-                                                  currentSelectedContract?.data
-                                                      ? ethers
-                                                            .formatUnits(
-                                                                // @ts-ignore
-                                                                currentSelectedContract?.data,
-                                                                currentSelectedDecimals?.data
-                                                            )
-                                                            .toString()
-                                                      : "0"
-                                              ) > 100.0
+                                        {isEligible
                                             ? "Eligible"
-                                            : "Ineligible"}
+                                            : "Not eligible"}
                                     </p>
                                 </div>
                             </div>
                         )}
                         <Dropdown
-                            className="border border-[#BDBDBD] py-[11px] px-[19px] rounded-[10px] flex gap-x-[10px] cursor-pointer items-center"
+                            className="border overflow-scroll border-[#BDBDBD] py-[11px] px-[19px] rounded-[10px] flex gap-x-[10px] cursor-pointer items-center"
                             overlay={menu}
                             trigger={["click"]}
                         >
@@ -1548,47 +1641,104 @@ export default function AirdropPage() {
                             500,000 / 1,500,000 Claimed
                         </p>
                         <div className="flex justify-center w-full mt-[10px]">
-                            <div
-                                onClick={() => {}}
-                                className={`md:block hidden relative ${
-                                    enableCheckBtn
-                                        ? "cursor-pointer"
-                                        : "cursor-not-allowed"
-                                }`}
-                            >
-                                <Image
-                                    width={300}
-                                    height={100}
-                                    alt="button"
-                                    src={`/images/${
-                                        enableCheckBtn
-                                            ? "Check_Btn.png"
-                                            : "Check_Now_Disabled.png"
-                                    }`}
+                            {partnershipLoading ? (
+                                <Spin
+                                    className="md:block hidden"
+                                    size="large"
                                 />
-                            </div>
-                            <div
-                                onClick={() => {}}
-                                className={`block md:hidden relative ${
-                                    enableCheckBtn
-                                        ? "cursor-pointer"
-                                        : "cursor-not-allowed"
-                                }`}
-                            >
-                                <Image
-                                    width={150}
-                                    height={100}
-                                    alt="button"
-                                    src={`/images/${
-                                        enableCheckBtn
-                                            ? "Check_Btn.png"
-                                            : "Check_Now_Disabled.png"
+                            ) : (
+                                <div
+                                    onClick={handleCheckPartnership}
+                                    className={`md:block hidden relative ${
+                                        enableCheckBtn && isEligible
+                                            ? "cursor-pointer"
+                                            : "cursor-not-allowed"
                                     }`}
+                                >
+                                    <Image
+                                        width={300}
+                                        height={100}
+                                        alt="button"
+                                        src={`/images/${
+                                            enableCheckBtn && isEligible
+                                                ? "Check_Btn.png"
+                                                : "Check_Now_Disabled.png"
+                                        }`}
+                                    />
+                                </div>
+                            )}
+
+                            {partnershipLoading ? (
+                                <Spin
+                                    className="block md:hidden"
+                                    size="large"
                                 />
-                            </div>
+                            ) : (
+                                <div
+                                    onClick={handleCheckPartnership}
+                                    className={`block md:hidden relative ${
+                                        enableCheckBtn && isEligible
+                                            ? "cursor-pointer"
+                                            : "cursor-not-allowed"
+                                    }`}
+                                >
+                                    <Image
+                                        width={150}
+                                        height={100}
+                                        alt="button"
+                                        src={`/images/${
+                                            enableCheckBtn && isEligible
+                                                ? "Check_Btn.png"
+                                                : "Check_Now_Disabled.png"
+                                        }`}
+                                    />
+                                </div>
+                            )}
                         </div>
                         <a
-                            onClick={() => setPartnershipModal(false)}
+                            onClick={() => {
+                                if (partnershipLoading) return;
+                                setPartnershipModal(false);
+                            }}
+                            className="underline text-center cursor-pointer hover:underline text-[#1A202C] mt-2"
+                        >
+                            Return to previous page
+                        </a>
+                    </div>
+                </Modal>
+                <Modal
+                    centered
+                    title={
+                        <div
+                            style={{
+                                textAlign: "center",
+                                fontSize: "24px",
+                                fontWeight: "bold",
+                            }}
+                        >
+                            Extra allocation claimed 🎉
+                        </div>
+                    }
+                    open={allocationModal}
+                    footer={null}
+                    closable={false} // Remove the "X" button
+                    // maskClosable={false} // Prevent closing by clicking outside
+                >
+                    <div className="flex flex-col gap-2">
+                        <div className="text-center flex flex-col gap-6">
+                            <p>
+                                Congratulations! Your wallet is now successfully
+                                connected to the{" "}
+                                {partnershipResult?.attributes?.partner_list
+                                    ?.data?.attributes?.project_name ??
+                                    currentSelectedProject?.attributes
+                                        ?.project_name}{" "}
+                                project. Just a heads up, you can only claim the
+                                extra allocation once !
+                            </p>
+                        </div>
+                        <a
+                            onClick={() => setAllocationModal(false)}
                             className="underline text-center cursor-pointer hover:underline text-[#1A202C] mt-2"
                         >
                             Return to previous page
