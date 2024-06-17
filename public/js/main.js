@@ -357,7 +357,7 @@ function playerDead() {
     })
         .then(async (response) => {
             const result = await response.json();
-            if (score > 3) {
+            if (score >= 100) {
                 fetch(`${publicAxiosApi}/api/one-hundred-points`, {
                     method: "POST",
                     headers: {
