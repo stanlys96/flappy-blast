@@ -595,16 +595,16 @@ export default function AirdropPage() {
                                         3. top 100 players on flappyblast will
                                         get extra allocation
                                     </p>
-                                    <p className="ml-8">
+                                    <p className="md:ml-8 ml-4 text-left">
                                         -Tier 1 alloc: Top 1 Player
                                     </p>
-                                    <p className="ml-8">
+                                    <p className="md:ml-8 ml-4 text-left">
                                         -Tier 2 alloc: Top 10 Player
                                     </p>
-                                    <p className="ml-8">
+                                    <p className="md:ml-8 ml-4 text-left">
                                         -Tier 3 alloc: Top 100 Player
                                     </p>
-                                    <p className="ml-8">
+                                    <p className="md:ml-8 ml-4 text-left">
                                         -Tier 4 alloc: Top 1000 Player
                                     </p>
                                 </div>
