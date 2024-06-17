@@ -246,13 +246,7 @@ export default function AirdropPage() {
 
     useEffect(() => {
         if (!walletPopup) {
-            if (address) {
-                Cookie.set("wallet_address", address as string, {
-                    expires: 1,
-                });
-            }
-
-            if (currentTwitterData && address) {
+            if (currentTwitterData) {
                 Cookie.set(
                     "twitter_id",
                     currentTwitterData?.attributes?.twitter_id,
@@ -263,8 +257,11 @@ export default function AirdropPage() {
                 Cookie.set("strapi_twitter_id", currentTwitterData?.id, {
                     expires: 1,
                 });
-                // Get Wallet data
-                if (!currentTwitterData?.attributes?.wallet_address) {
+                if (
+                    !currentTwitterData?.attributes?.wallet_address &&
+                    address
+                ) {
+                    // Get Wallet data
                     axiosApi
                         .put(
                             `/api/twitter-accounts/${currentTwitterData?.id}`,
@@ -349,6 +346,22 @@ export default function AirdropPage() {
             }
         }
     }, [verificationStatus]);
+
+    useEffect(() => {
+        if (currentTwitterData?.attributes?.wallet_address) {
+            Cookie.set(
+                "wallet_address",
+                currentTwitterData?.attributes?.wallet_address as string,
+                {
+                    expires: 1,
+                }
+            );
+        } else if (address) {
+            Cookie.set("wallet_address", address as string, {
+                expires: 1,
+            });
+        }
+    }, [address, currentTwitterData]);
 
     if (!domLoaded) return <div></div>;
 
