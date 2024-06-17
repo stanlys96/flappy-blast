@@ -251,7 +251,7 @@ export default function AirdropPage() {
                     expires: 1,
                 });
             } else if (
-                !address &&
+                !address ||
                 !currentTwitterData?.attributes?.wallet_address
             ) {
                 setModalStep(0);
