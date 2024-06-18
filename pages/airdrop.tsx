@@ -101,7 +101,7 @@ export default function AirdropPage() {
     const leaderboardsResult = leaderboardsData?.data;
     const partnershipResult = partnershipData?.data?.data?.[0];
     const allocationsResult = allocationsData?.data;
-
+    console.log(allocationsResult, "<<< !!");
     const router = useRouter();
 
     useEffect(() => {

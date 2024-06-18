@@ -24,6 +24,7 @@ var highscore = 0;
 var pipeheight = 90;
 var pipewidth = 52;
 var pipes = new Array();
+var game_id;
 
 var replayclickable = false;
 var shareclickable = false;
@@ -121,6 +122,28 @@ function showSplash() {
 }
 
 function startGame() {
+    var strapi_twitter_id = getCookie("strapi_twitter_id");
+    const result = {
+        data: {
+            score: 0,
+            twitter_account: strapi_twitter_id,
+        },
+    };
+    fetch(`${publicAxiosApi}/api/flappy-games`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: publicToken,
+        },
+        body: JSON.stringify(result),
+    })
+        .then(async (res) => {
+            const result = await res.json();
+            game_id = result.data.id;
+        })
+        .catch((err) => {
+            console.log(err);
+        });
     currentstate = states.GameScreen;
 
     //fade out the splash
@@ -360,11 +383,10 @@ function playerDead() {
     const result = {
         data: {
             score: score,
-            twitter_account: strapi_twitter_id,
         },
     };
-    fetch(`${publicAxiosApi}/api/flappy-games?populate=*`, {
-        method: "POST",
+    fetch(`${publicAxiosApi}/api/flappy-games/${game_id}?populate=*`, {
+        method: "PUT",
         headers: {
             "Content-Type": "application/json",
             Authorization: publicToken,
