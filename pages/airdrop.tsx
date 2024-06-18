@@ -439,6 +439,7 @@ export default function AirdropPage() {
                         )
                         .then((response) => {
                             setConfirmLoading(false);
+                            setConfirmAddress(false);
                             twitterMutate();
                         })
                         .catch((err) => {
