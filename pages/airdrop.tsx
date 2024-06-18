@@ -48,6 +48,7 @@ export default function AirdropPage() {
     const encodedTweet = encodeURIComponent(tweetText);
     const { data: session, status } = useSession();
     const [userData, setUserData] = useState(null);
+    const [confirmLoading, setConfirmLoading] = useState(false);
     const { address, chain, isConnected } = useAccount();
     const [isClientMobile, setIsClientMobile] = useState(false);
     const [currentState, setCurrentState] = useState<
@@ -154,6 +155,7 @@ export default function AirdropPage() {
     const [dropdownValue, setDropdownValue] = useState("Choose Project");
     const [partnershipModal, setPartnershipModal] = useState(false);
     const [playGameReady, setPlayGameReady] = useState(false);
+    const [confirmAddress, setConfirmAddress] = useState(false);
     const currentSelectedProject = partnersResult?.find(
         (data: any) =>
             data?.attributes?.project_name?.toLowerCase() ===
@@ -418,9 +420,11 @@ export default function AirdropPage() {
                 Cookie.set("strapi_twitter_id", currentTwitterData?.id, {
                     expires: 1,
                 });
+
                 if (
                     !currentTwitterData?.attributes?.wallet_address &&
-                    address
+                    address &&
+                    confirmAddress
                 ) {
                     // Get Wallet data
                     axiosApi
@@ -433,16 +437,16 @@ export default function AirdropPage() {
                                 },
                             }
                         )
-                        .then((response) => twitterMutate())
+                        .then((response) => {
+                            setConfirmLoading(false);
+                            twitterMutate();
+                        })
                         .catch((err) => {
                             console.log(err);
                         });
                 }
 
-                if (
-                    !currentTwitterData?.attributes?.wallet_address &&
-                    !address
-                ) {
+                if (!currentTwitterData?.attributes?.wallet_address) {
                     setModalStep(0);
                 } else if (
                     currentTwitterData?.attributes?.wallet_address &&
@@ -473,6 +477,7 @@ export default function AirdropPage() {
         address,
         currentTwitterData,
         playGameReady,
+        confirmAddress,
     ]);
 
     useEffect(() => {
@@ -840,48 +845,187 @@ export default function AirdropPage() {
                                                         </p>
                                                     </div>
                                                 </div>
-                                                <div className="flex flex-col justify-center items-center w-full gap-2">
-                                                    <div className="w-fit">
-                                                        <Button
-                                                            type="primary"
-                                                            onClick={() =>
-                                                                handleConnectWallet()
-                                                            }
-                                                            style={{
-                                                                border: "2px solid #000",
-                                                                borderRadius:
-                                                                    "0px",
-                                                                backgroundColor:
-                                                                    "#fff",
-                                                                color: "#000",
-                                                            }}
-                                                            icon={
-                                                                <ExportOutlined
-                                                                    style={{
-                                                                        color: "#000",
-                                                                    }}
-                                                                />
-                                                            }
-                                                            iconPosition={"end"}
-                                                            className="font-bold"
-                                                        >
-                                                            Connect Wallet
-                                                        </Button>
+                                                {!address ? (
+                                                    <div className="flex flex-col justify-center items-center w-full gap-2">
+                                                        <div className="w-fit">
+                                                            <Button
+                                                                type="primary"
+                                                                onClick={() =>
+                                                                    handleConnectWallet()
+                                                                }
+                                                                style={{
+                                                                    border: "2px solid #000",
+                                                                    borderRadius:
+                                                                        "0px",
+                                                                    backgroundColor:
+                                                                        "#fff",
+                                                                    color: "#000",
+                                                                }}
+                                                                icon={
+                                                                    <ExportOutlined
+                                                                        style={{
+                                                                            color: "#000",
+                                                                        }}
+                                                                    />
+                                                                }
+                                                                iconPosition={
+                                                                    "end"
+                                                                }
+                                                                className="font-bold"
+                                                            >
+                                                                Connect Wallet
+                                                            </Button>
+                                                        </div>
+                                                        {!isBlast && (
+                                                            <p className="text-red-500">
+                                                                *Please switch
+                                                                your network to
+                                                                Blast and try
+                                                                again.
+                                                            </p>
+                                                        )}
                                                     </div>
-                                                    {!isBlast && (
-                                                        <p className="text-red-500">
-                                                            *Please switch your
-                                                            network to Blast and
-                                                            try again.
-                                                        </p>
-                                                    )}
-                                                </div>
+                                                ) : (
+                                                    <div>
+                                                        <div
+                                                            onClick={() =>
+                                                                disconnect()
+                                                            }
+                                                            className="p-[12px] border-[3px] border-[#000] flex gap-x-[10px] cursor-pointer items-center w-fit mx-auto"
+                                                        >
+                                                            {ensAvatar?.data && (
+                                                                <img
+                                                                    className="w-[30px] h-[30px] hidden md:block rounded-full"
+                                                                    src={
+                                                                        ensAvatar?.data ??
+                                                                        ""
+                                                                    }
+                                                                />
+                                                            )}
+                                                            <p className="font-bold md:text-[16px] text-[12px]">
+                                                                {address.slice(
+                                                                    0,
+                                                                    10
+                                                                ) +
+                                                                    "..." +
+                                                                    address.slice(
+                                                                        address.length -
+                                                                            10
+                                                                    )}
+                                                            </p>
+                                                            {ensName && (
+                                                                <p className="font-bold md:text-[16px] text-[12px]">
+                                                                    {ensName}
+                                                                </p>
+                                                            )}
+                                                        </div>
+                                                        {chain?.name !==
+                                                            "Blast" && (
+                                                            <div className="mt-2 mx-auto">
+                                                                <p className="text-red-500 text-center">
+                                                                    *Please
+                                                                    switch your
+                                                                    network to
+                                                                    Blast and
+                                                                    try again.
+                                                                </p>
+                                                                <div className="w-full flex justify-center my-3">
+                                                                    <Button
+                                                                        type="primary"
+                                                                        onClick={() => {
+                                                                            switchChain(
+                                                                                {
+                                                                                    chainId:
+                                                                                        blast.id,
+                                                                                }
+                                                                            );
+                                                                        }}
+                                                                        style={{
+                                                                            border: "2px solid #000",
+                                                                            borderRadius:
+                                                                                "0px",
+                                                                            backgroundColor:
+                                                                                "#fff",
+                                                                            color: "#000",
+                                                                        }}
+                                                                        icon={
+                                                                            <ExportOutlined
+                                                                                style={{
+                                                                                    color: "#000",
+                                                                                }}
+                                                                            />
+                                                                        }
+                                                                        iconPosition={
+                                                                            "end"
+                                                                        }
+                                                                        className="font-bold mx-auto"
+                                                                    >
+                                                                        Switch
+                                                                        to Blast
+                                                                    </Button>
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                )}
                                                 <div className="text-center bg-[#F0F0F0] p-4 font-bold mx-6 mt-4">
                                                     NOTICE: This action can only
                                                     be done once, you will not
                                                     able to change your wallet
                                                     address connected with you X
                                                     account with us
+                                                </div>
+                                                <div className="flex justify-center w-full">
+                                                    {confirmLoading ? (
+                                                        <Spin
+                                                            className="md:block hidden"
+                                                            size="large"
+                                                        />
+                                                    ) : (
+                                                        <div
+                                                            onClick={() => {
+                                                                setConfirmLoading(
+                                                                    true
+                                                                );
+                                                                setConfirmAddress(
+                                                                    true
+                                                                );
+                                                            }}
+                                                            className="md:block hidden relative mt-[25px] cursor-pointer"
+                                                        >
+                                                            <Image
+                                                                width={250}
+                                                                height={100}
+                                                                alt="button"
+                                                                src="/images/Confirm_Btn.svg"
+                                                            />
+                                                        </div>
+                                                    )}
+                                                    {confirmLoading ? (
+                                                        <Spin
+                                                            className="block md:hidden"
+                                                            size="large"
+                                                        />
+                                                    ) : (
+                                                        <div
+                                                            onClick={() => {
+                                                                setConfirmLoading(
+                                                                    true
+                                                                );
+                                                                setConfirmAddress(
+                                                                    true
+                                                                );
+                                                            }}
+                                                            className="block md:hidden relative mt-[25px] cursor-pointer"
+                                                        >
+                                                            <Image
+                                                                width={150}
+                                                                height={100}
+                                                                alt="button"
+                                                                src="/images/Confirm_Btn.svg"
+                                                            />
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
                                         </Modal>
