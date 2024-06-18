@@ -362,7 +362,7 @@ export default function AirdropPage() {
     };
 
     const handlePartnershipButton = () => {
-        if (!session && !currentTwitterData?.attributes?.["is_socialaction"])
+        if (!session || !currentTwitterData?.attributes?.["is_socialaction"])
             return;
         if (partnershipResult) {
             setAllocationDoneModal(true);
