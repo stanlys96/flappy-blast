@@ -1,9 +1,9 @@
 var debugmode = false;
 
 var states = Object.freeze({
-    SplashScreen: 0,
-    GameScreen: 1,
-    ScoreScreen: 2,
+	SplashScreen: 0,
+	GameScreen: 1,
+	ScoreScreen: 2,
 });
 
 var currentstate;
@@ -45,593 +45,544 @@ var publicToken;
 var publicAxiosApi;
 
 function getCookie(cname) {
-    var name = cname + "=";
-    var ca = document.cookie.split(";");
-    for (var i = 0; i < ca.length; i++) {
-        var c = ca[i].trim();
-        if (c.indexOf(name) == 0) return c.substring(name.length, c.length);
-    }
-    return "";
+	var name = cname + "=";
+	var ca = document.cookie.split(";");
+	for (var i = 0; i < ca.length; i++) {
+		var c = ca[i].trim();
+		if (c.indexOf(name) == 0) return c.substring(name.length, c.length);
+	}
+	return "";
 }
 
 $(document).ready(function () {
-    if (window.location.search == "?debug") debugmode = true;
-    if (window.location.search == "?easy") pipeheight = 200;
+	if (window.location.search == "?debug") debugmode = true;
+	if (window.location.search == "?easy") pipeheight = 200;
 
-    publicToken = window.NEXT_PUBLIC_TOKEN;
-    publicAxiosApi = window.NEXT_PUBLIC_AXIOS_API;
-    var twitter_id = getCookie("twitter_id");
-    //get the highscore
-    fetch(
-        `${publicAxiosApi}/api/twitter-accounts?filters[twitter_id][$eq]=${twitter_id}`,
-        {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: publicToken,
-            },
-        }
-    )
-        .then(async (response) => {
-            const result = await response.json();
-            const theData = result?.data?.[0];
-            highscore = theData?.attributes?.high_score ?? 0;
-        })
-        .catch((err) => {
-            console.log(err, "<<< err");
-        });
+	publicToken = window.NEXT_PUBLIC_TOKEN;
+	publicAxiosApi = window.NEXT_PUBLIC_AXIOS_API;
+	var twitter_id = getCookie("twitter_id");
+	//get the highscore
+	fetch(`${publicAxiosApi}/api/twitter-accounts?filters[twitter_id][$eq]=${twitter_id}`, {
+		method: "GET",
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: publicToken,
+		},
+	})
+		.then(async (response) => {
+			const result = await response.json();
+			const theData = result?.data?.[0];
+			highscore = theData?.attributes?.high_score ?? 0;
+		})
+		.catch((err) => {
+			console.log(err, "<<< err");
+		});
 
-    //start with the splash screen
-    showSplash();
+	//start with the splash screen
+	showSplash();
 });
 
 function setCookie(cname, cvalue, exdays) {
-    var d = new Date();
-    d.setTime(d.getTime() + exdays * 24 * 60 * 60 * 1000);
-    var expires = "expires=" + d.toGMTString();
-    document.cookie = cname + "=" + cvalue + "; " + expires;
+	var d = new Date();
+	d.setTime(d.getTime() + exdays * 24 * 60 * 60 * 1000);
+	var expires = "expires=" + d.toGMTString();
+	document.cookie = cname + "=" + cvalue + "; " + expires;
 }
 
 function showSplash() {
-    currentstate = states.SplashScreen;
+	currentstate = states.SplashScreen;
 
-    //set the defaults (again)
-    velocity = 0;
-    position = 180;
-    rotation = 0;
-    score = 0;
+	//set the defaults (again)
+	velocity = 0;
+	position = 180;
+	rotation = 0;
+	score = 0;
 
-    //update the player in preparation for the next game
-    $("#player").css({ y: 0, x: 0 });
-    updatePlayer($("#player"));
+	//update the player in preparation for the next game
+	$("#player").css({ y: 0, x: 0 });
+	updatePlayer($("#player"));
 
-    soundSwoosh.stop();
-    soundSwoosh.play();
+	soundSwoosh.stop();
+	soundSwoosh.play();
 
-    //clear out all the pipes if there are any
-    $(".pipe").remove();
-    pipes = new Array();
+	//clear out all the pipes if there are any
+	$(".pipe").remove();
+	pipes = new Array();
 
-    //make everything animated again
-    $(".animated").css("animation-play-state", "running");
-    $(".animated").css("-webkit-animation-play-state", "running");
+	//make everything animated again
+	$(".animated").css("animation-play-state", "running");
+	$(".animated").css("-webkit-animation-play-state", "running");
 
-    //fade in the splash
-    $("#splash").transition({ opacity: 1 }, 2000, "ease");
+	//fade in the splash
+	$("#splash").transition({ opacity: 1 }, 2000, "ease");
 }
 
 function startGame() {
-    currentstate = states.GameScreen;
+	currentstate = states.GameScreen;
 
-    //fade out the splash
-    $("#splash").stop();
-    $("#splash").transition({ opacity: 0 }, 500, "ease");
+	//fade out the splash
+	$("#splash").stop();
+	$("#splash").transition({ opacity: 0 }, 500, "ease");
 
-    //update the big score
-    setBigScore();
+	//update the big score
+	setBigScore();
 
-    //debug mode?
-    if (debugmode) {
-        //show the bounding boxes
-        $(".boundingbox").show();
-    }
+	//debug mode?
+	if (debugmode) {
+		//show the bounding boxes
+		$(".boundingbox").show();
+	}
 
-    //start up our loops
-    var updaterate = 1000.0 / 60.0; //60 times a second
-    loopGameloop = setInterval(gameloop, updaterate);
-    loopPipeloop = setInterval(createPipe, 1400);
+	//start up our loops
+	var updaterate = 1000.0 / 60.0; //60 times a second
+	loopGameloop = setInterval(gameloop, updaterate);
+	loopPipeloop = setInterval(createPipe, 1400);
 
-    //jump from the start!
-    playerJump();
+	//jump from the start!
+	playerJump();
 }
 
 function updatePlayer(player) {
-    //rotation
-    rotation = Math.min((velocity / 10) * 90, 90);
+	//rotation
+	rotation = Math.min((velocity / 10) * 90, 90);
 
-    //apply rotation and position
-    $(player).css({ rotate: rotation, top: position });
+	//apply rotation and position
+	$(player).css({ rotate: rotation, top: position });
 }
 
 function gameloop() {
-    try {
-        var player = $("#player");
+	try {
+		var player = $("#player");
 
-        //move the pipes
-        movePipes();
+		//move the pipes
+		movePipes();
 
-        //update the player speed/position
-        velocity += gravity;
-        position += velocity;
+		//update the player speed/position
+		velocity += gravity;
+		position += velocity;
 
-        //update the player
-        updatePlayer(player);
+		//update the player
+		updatePlayer(player);
 
-        //create the bounding box
-        var box = document.getElementById("player").getBoundingClientRect();
-        var origwidth = 34.0;
-        var origheight = 24.0;
+		//create the bounding box
+		var box = document.getElementById("player").getBoundingClientRect();
+		var origwidth = 34.0;
+		var origheight = 24.0;
 
-        var boxwidth = origwidth - Math.sin(Math.abs(rotation) / 90) * 8;
-        var boxheight = (origheight + box.height) / 2;
-        var boxleft = (box.width - boxwidth) / 2 + box.left;
-        var boxtop = (box.height - boxheight) / 2 + box.top;
-        var boxright = boxleft + boxwidth;
-        var boxbottom = boxtop + boxheight;
+		var boxwidth = origwidth - Math.sin(Math.abs(rotation) / 90) * 8;
+		var boxheight = (origheight + box.height) / 2;
+		var boxleft = (box.width - boxwidth) / 2 + box.left;
+		var boxtop = (box.height - boxheight) / 2 + box.top;
+		var boxright = boxleft + boxwidth;
+		var boxbottom = boxtop + boxheight;
 
-        //if we're in debug mode, draw the bounding box
-        if (debugmode) {
-            var boundingbox = $("#playerbox");
-            boundingbox.css("left", boxleft);
-            boundingbox.css("top", boxtop);
-            boundingbox.css("height", boxheight);
-            boundingbox.css("width", boxwidth);
-        }
+		//if we're in debug mode, draw the bounding box
+		if (debugmode) {
+			var boundingbox = $("#playerbox");
+			boundingbox.css("left", boxleft);
+			boundingbox.css("top", boxtop);
+			boundingbox.css("height", boxheight);
+			boundingbox.css("width", boxwidth);
+		}
 
-        //did we hit the ground?
-        if (box.bottom >= $("#land").offset().top) {
-            playerDead();
-            return;
-        }
+		//did we hit the ground?
+		if (box.bottom >= $("#land").offset().top) {
+			playerDead();
+			return;
+		}
 
-        //have they tried to escape through the ceiling? :o
-        var ceiling = $("#ceiling");
-        if (boxtop <= ceiling.offset().top + ceiling.height()) position = 0;
+		//have they tried to escape through the ceiling? :o
+		var ceiling = $("#ceiling");
+		if (boxtop <= ceiling.offset().top + ceiling.height()) position = 0;
 
-        //we can't go any further without a pipe
-        if (pipes[0] == null) return;
+		//we can't go any further without a pipe
+		if (pipes[0] == null) return;
 
-        //determine the bounding box of the next pipes inner area
-        var nextpipe = pipes.find((pipe) => !$(pipe).hasClass("scored"));
-        var nextpipeupper = nextpipe.children(".pipe_upper");
+		//determine the bounding box of the next pipes inner area
+		var nextpipe = pipes.find((pipe) => !$(pipe).hasClass("scored"));
+		var nextpipeupper = nextpipe.children(".pipe_upper");
 
-        var pipetop = nextpipeupper.offset().top + nextpipeupper.height();
-        var pipeleft = nextpipeupper.offset().left - 2; // for some reason it starts at the inner pipes offset, not the outer pipes.
-        var piperight = pipeleft + pipewidth;
-        var pipebottom = pipetop + pipeheight;
+		var pipetop = nextpipeupper.offset().top + nextpipeupper.height();
+		var pipeleft = nextpipeupper.offset().left - 2; // for some reason it starts at the inner pipes offset, not the outer pipes.
+		var piperight = pipeleft + pipewidth;
+		var pipebottom = pipetop + pipeheight;
 
-        if (debugmode) {
-            var boundingbox = $("#pipebox");
-            boundingbox.css("left", pipeleft);
-            boundingbox.css("top", pipetop);
-            boundingbox.css("height", pipeheight);
-            boundingbox.css("width", pipewidth);
-        }
+		if (debugmode) {
+			var boundingbox = $("#pipebox");
+			boundingbox.css("left", pipeleft);
+			boundingbox.css("top", pipetop);
+			boundingbox.css("height", pipeheight);
+			boundingbox.css("width", pipewidth);
+		}
 
-        //have we gotten inside the pipe yet?
-        if (boxright > pipeleft) {
-            //we're within the pipe, have we passed between upper and lower pipes?
-            if (boxtop > pipetop && boxbottom < pipebottom) {
-                //yeah! we're within bounds
-            } else {
-                //no! we touched the pipe
-                playerDead();
-                return;
-            }
-        }
+		//have we gotten inside the pipe yet?
+		if (boxright > pipeleft) {
+			//we're within the pipe, have we passed between upper and lower pipes?
+			if (boxtop > pipetop && boxbottom < pipebottom) {
+				//yeah! we're within bounds
+			} else {
+				//no! we touched the pipe
+				playerDead();
+				return;
+			}
+		}
 
-        // Have we passed the imminent danger?
-        if (boxleft > piperight) {
-            $(nextpipe).addClass("scored");
-            var index = pipes.indexOf(nextpipe);
-            if (index !== -1) {
-                pipes.splice(index, 1);
-            }
-            playerScore();
-        }
-    } catch (e) {
-        clearInterval(loopGameloop);
-        clearInterval(loopPipeloop);
-        loopGameloop = null;
-        loopPipeloop = null;
-        buzz.all().setVolume(0);
-        console.log(e);
-    }
+		// Have we passed the imminent danger?
+		if (boxleft > piperight) {
+			$(nextpipe).addClass("scored");
+			var index = pipes.indexOf(nextpipe);
+			if (index !== -1) {
+				pipes.splice(index, 1);
+			}
+			playerScore();
+		}
+	} catch (e) {
+		clearInterval(loopGameloop);
+		clearInterval(loopPipeloop);
+		loopGameloop = null;
+		loopPipeloop = null;
+		buzz.all().setVolume(0);
+		console.log(e);
+	}
 }
 
 //Handle space bar
 $(document).keydown(function (e) {
-    //space bar!
-    if (e.keyCode == 32) {
-        //in ScoreScreen, hitting space should click the "replay" button. else it's just a regular spacebar hit
-        if (currentstate == states.ScoreScreen) $("#replay").click();
-        else screenClick();
-    }
+	//space bar!
+	if (e.keyCode == 32) {
+		//in ScoreScreen, hitting space should click the "replay" button. else it's just a regular spacebar hit
+		if (currentstate == states.ScoreScreen) $("#replay").click();
+		else screenClick();
+	}
 });
 
 //Handle mouse down OR touch start
 $(document).ready(function () {
-    // Check if touch events are supported
-    if ("ontouchstart" in window) {
-        // Add touchstart event listener to #gamecontainer
-        $("#gamecontainer").on("touchstart", screenClick);
-    } else {
-        // Add mousedown event listener to #gamecontainer
-        $("#gamecontainer").on("mousedown", screenClick);
-    }
+	// Check if touch events are supported
+	if ("ontouchstart" in window) {
+		// Add touchstart event listener to #gamecontainer
+		$("#gamecontainer").on("touchstart", screenClick);
+	} else {
+		// Add mousedown event listener to #gamecontainer
+		$("#gamecontainer").on("mousedown", screenClick);
+	}
 });
 
 function screenClick() {
-    if (currentstate == states.GameScreen) {
-        playerJump();
-    } else if (currentstate == states.SplashScreen) {
-        startGame();
-    }
+	if (currentstate == states.GameScreen) {
+		playerJump();
+	} else if (currentstate == states.SplashScreen) {
+		startGame();
+	}
 }
 
 function playerJump() {
-    velocity = jump;
-    //play jump sound
-    soundJump.stop();
-    soundJump.play();
+	velocity = jump;
+	//play jump sound
+	soundJump.stop();
+	soundJump.play();
 }
 
 function setBigScore(erase) {
-    var elemscore = $("#bigscore");
-    elemscore.empty();
+	var elemscore = $("#bigscore");
+	elemscore.empty();
 
-    if (erase) return;
+	if (erase) return;
 
-    var digits = score.toString().split("");
-    for (var i = 0; i < digits.length; i++)
-        elemscore.append(
-            "<img src='assets/font_big_" +
-                digits[i] +
-                ".png' alt='" +
-                digits[i] +
-                "'>"
-        );
+	var digits = score.toString().split("");
+	for (var i = 0; i < digits.length; i++)
+		elemscore.append("<img src='assets/font_big_" + digits[i] + ".png' alt='" + digits[i] + "'>");
 }
 
 function setSmallScore() {
-    var elemscore = $("#currentscore");
-    elemscore.empty();
+	var elemscore = $("#currentscore");
+	elemscore.empty();
 
-    var digits = score.toString().split("");
-    for (var i = 0; i < digits.length; i++)
-        elemscore.append(
-            "<img src='assets/font_small_" +
-                digits[i] +
-                ".png' alt='" +
-                digits[i] +
-                "'>"
-        );
+	var digits = score.toString().split("");
+	for (var i = 0; i < digits.length; i++)
+		elemscore.append("<img src='assets/font_small_" + digits[i] + ".png' alt='" + digits[i] + "'>");
 }
 
 function setHighScore() {
-    var elemscore = $("#highscore");
-    elemscore.empty();
+	var elemscore = $("#highscore");
+	elemscore.empty();
 
-    var digits = highscore.toString().split("");
-    for (var i = 0; i < digits.length; i++)
-        elemscore.append(
-            "<img src='assets/font_small_" +
-                digits[i] +
-                ".png' alt='" +
-                digits[i] +
-                "'>"
-        );
+	var digits = highscore.toString().split("");
+	for (var i = 0; i < digits.length; i++)
+		elemscore.append("<img src='assets/font_small_" + digits[i] + ".png' alt='" + digits[i] + "'>");
 }
 
 function setMedal() {
-    var elemmedal = $("#medal");
-    elemmedal.empty();
+	var elemmedal = $("#medal");
+	elemmedal.empty();
 
-    if (score < 10)
-        //signal that no medal has been won
-        return false;
+	if (score < 10)
+		//signal that no medal has been won
+		return false;
 
-    if (score >= 10) medal = "bronze";
-    if (score >= 20) medal = "silver";
-    if (score >= 30) medal = "gold";
-    if (score >= 40) medal = "platinum";
+	if (score >= 10) medal = "bronze";
+	if (score >= 20) medal = "silver";
+	if (score >= 30) medal = "gold";
+	if (score >= 40) medal = "platinum";
 
-    elemmedal.append(
-        '<img src="assets/medal_' + medal + '.png" alt="' + medal + '">'
-    );
+	elemmedal.append('<img src="assets/medal_' + medal + '.png" alt="' + medal + '">');
 
-    //signal that a medal has been won
-    return true;
+	//signal that a medal has been won
+	return true;
 }
 
 function playerDead() {
-    var twitter_id = getCookie("twitter_id");
-    var strapi_twitter_id = getCookie("strapi_twitter_id");
-    const result = {
-        data: {
-            score: score,
-            twitter_account: strapi_twitter_id,
-        },
-    };
-    fetch(`${publicAxiosApi}/api/flappy-games?populate=*`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: publicToken,
-        },
-        body: JSON.stringify(result),
-    })
-        .then(async (response) => {
-            const result = await response.json();
-            if (score >= 100) {
-                fetch(`${publicAxiosApi}/api/one-hundred-points`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: publicToken,
-                    },
-                    body: JSON.stringify({
-                        data: {
-                            score,
-                            flappy_game: result?.data?.id,
-                            twitter_account: strapi_twitter_id,
-                        },
-                    }),
-                });
-            }
-        })
-        .catch((err) => {
-            console.log(err);
-        });
-    fetch(
-        `${publicAxiosApi}/api/twitter-accounts?filters[twitter_id][$eq]=${twitter_id}`,
-        {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: publicToken,
-            },
-        }
-    )
-        .then(async (response) => {
-            const result = await response.json();
-            const theData = result?.data?.[0];
-            if (theData) {
-                if (
-                    !theData.attributes.high_score ||
-                    parseInt(theData.attributes.high_score) < score
-                ) {
-                    fetch(
-                        `${publicAxiosApi}/api/twitter-accounts/${theData.id}`,
-                        {
-                            method: "PUT",
-                            headers: {
-                                "Content-Type": "application/json",
-                                Authorization: publicToken,
-                            },
-                            body: JSON.stringify({
-                                data: { high_score: score },
-                            }),
-                        }
-                    );
-                }
-            }
-        })
-        .catch((err) => {
-            console.log(err);
-        });
-    //stop animating everything!
-    $(".animated").css("animation-play-state", "paused");
-    $(".animated").css("-webkit-animation-play-state", "paused");
+	var twitter_id = getCookie("twitter_id");
+	var strapi_twitter_id = getCookie("strapi_twitter_id");
+	const result = {
+		data: {
+			score: score,
+			twitter_account: strapi_twitter_id,
+		},
+	};
+	fetch(`${publicAxiosApi}/api/flappy-games?populate=*`, {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: publicToken,
+		},
+		body: JSON.stringify(result),
+	})
+		.then(async (response) => {
+			const result = await response.json();
+			if (score >= 100) {
+				fetch(`${publicAxiosApi}/api/one-hundred-points`, {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: publicToken,
+					},
+					body: JSON.stringify({
+						data: {
+							score,
+							flappy_game: result?.data?.id,
+							twitter_account: strapi_twitter_id,
+						},
+					}),
+				});
+			}
+		})
+		.catch((err) => {
+			console.log(err);
+		});
+	fetch(`${publicAxiosApi}/api/twitter-accounts?filters[twitter_id][$eq]=${twitter_id}`, {
+		method: "GET",
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: publicToken,
+		},
+	})
+		.then(async (response) => {
+			const result = await response.json();
+			const theData = result?.data?.[0];
+			if (theData) {
+				if (!theData.attributes.high_score || parseInt(theData.attributes.high_score) < score) {
+					fetch(`${publicAxiosApi}/api/twitter-accounts/${theData.id}`, {
+						method: "PUT",
+						headers: {
+							"Content-Type": "application/json",
+							Authorization: publicToken,
+						},
+						body: JSON.stringify({
+							data: { high_score: score },
+						}),
+					});
+				}
+			}
+		})
+		.catch((err) => {
+			console.log(err);
+		});
+	//stop animating everything!
+	$(".animated").css("animation-play-state", "paused");
+	$(".animated").css("-webkit-animation-play-state", "paused");
 
-    //drop the bird to the floor
-    var playerbottom = $("#player").position().top + $("#player").width(); //we use width because he'll be rotated 90 deg
-    var floor = flyArea;
-    var movey = Math.max(0, floor - playerbottom);
-    $("#player").transition(
-        { y: movey + "px", rotate: 90 },
-        1000,
-        "easeInOutCubic"
-    );
+	//drop the bird to the floor
+	var playerbottom = $("#player").position().top + $("#player").width(); //we use width because he'll be rotated 90 deg
+	var floor = flyArea;
+	var movey = Math.max(0, floor - playerbottom);
+	$("#player").transition({ y: movey + "px", rotate: 90 }, 1000, "easeInOutCubic");
 
-    //it's time to change states. as of now we're considered ScoreScreen to disable left click/flying
-    currentstate = states.ScoreScreen;
+	//it's time to change states. as of now we're considered ScoreScreen to disable left click/flying
+	currentstate = states.ScoreScreen;
 
-    //destroy our gameloops
-    clearInterval(loopGameloop);
-    clearInterval(loopPipeloop);
-    loopGameloop = null;
-    loopPipeloop = null;
+	//destroy our gameloops
+	clearInterval(loopGameloop);
+	clearInterval(loopPipeloop);
+	loopGameloop = null;
+	loopPipeloop = null;
 
-    //mobile browsers don't support buzz bindOnce event
-    if (isIncompatible.any()) {
-        //skip right to showing score
-        showScore();
-    } else {
-        //play the hit sound (then the dead sound) and then show score
-        soundHit.play().bindOnce("ended", function () {
-            soundDie.play().bindOnce("ended", function () {
-                showScore();
-            });
-        });
-    }
+	//mobile browsers don't support buzz bindOnce event
+	if (isIncompatible.any()) {
+		//skip right to showing score
+		showScore();
+	} else {
+		//play the hit sound (then the dead sound) and then show score
+		soundHit.play().bindOnce("ended", function () {
+			soundDie.play().bindOnce("ended", function () {
+				showScore();
+			});
+		});
+	}
 }
 
 function showScore() {
-    //unhide us
-    $("#scoreboard").css("display", "block");
+	//unhide us
+	$("#scoreboard").css("display", "block");
 
-    //remove the big score
-    setBigScore(true);
+	//remove the big score
+	setBigScore(true);
 
-    //have they beaten their high score?
-    if (score > highscore) {
-        //yeah!
-        highscore = score;
-        //save it!
-        setCookie("highscore", highscore, 999);
-    }
+	//have they beaten their high score?
+	if (score > highscore) {
+		//yeah!
+		highscore = score;
+		//save it!
+		setCookie("highscore", highscore, 999);
+	}
 
-    //update the scoreboard
-    setSmallScore();
-    setHighScore();
-    var wonmedal = setMedal();
+	//update the scoreboard
+	setSmallScore();
+	setHighScore();
+	var wonmedal = setMedal();
 
-    //SWOOSH!
-    soundSwoosh.stop();
-    soundSwoosh.play();
+	//SWOOSH!
+	soundSwoosh.stop();
+	soundSwoosh.play();
 
-    //show the scoreboard
-    $("#scoreboard").css({ y: "40px", opacity: 0 }); //move it down so we can slide it up
-    $("#replay").css({ y: "40px", opacity: 0 });
-    $("#share").css({ y: "40px", opacity: 0 });
-    $("#scoreboard").transition(
-        { y: "0px", opacity: 1 },
-        600,
-        "ease",
-        function () {
-            //When the animation is done, animate in the replay button and SWOOSH!
-            soundSwoosh.stop();
-            soundSwoosh.play();
-            $("#replay").transition({ y: "0px", opacity: 1 }, 600, "ease");
-            $("#share").transition({ y: "0px", opacity: 1 }, 600, "ease");
+	//show the scoreboard
+	$("#scoreboard").css({ y: "40px", opacity: 0 }); //move it down so we can slide it up
+	$("#replay").css({ y: "40px", opacity: 0 });
+	$("#share").css({ y: "40px", opacity: 0 });
+	$("#scoreboard").transition({ y: "0px", opacity: 1 }, 600, "ease", function () {
+		//When the animation is done, animate in the replay button and SWOOSH!
+		soundSwoosh.stop();
+		soundSwoosh.play();
+		$("#replay").transition({ y: "0px", opacity: 1 }, 600, "ease");
+		$("#share").transition({ y: "0px", opacity: 1 }, 600, "ease");
 
-            //also animate in the MEDAL! WOO!
-            if (wonmedal) {
-                $("#medal").css({ scale: 2, opacity: 0 });
-                $("#medal").transition({ opacity: 1, scale: 1 }, 1200, "ease");
-            }
-        }
-    );
+		//also animate in the MEDAL! WOO!
+		if (wonmedal) {
+			$("#medal").css({ scale: 2, opacity: 0 });
+			$("#medal").transition({ opacity: 1, scale: 1 }, 1200, "ease");
+		}
+	});
 
-    //make the replay n share button clickable
-    replayclickable = true;
-    shareclickable = true;
+	//make the replay n share button clickable
+	replayclickable = true;
+	shareclickable = true;
 }
 
 $("#replay").click(function () {
-    //make sure we can only click once
-    if (!replayclickable) return;
-    else replayclickable = false;
-    //SWOOSH!
-    soundSwoosh.stop();
-    soundSwoosh.play();
+	//make sure we can only click once
+	if (!replayclickable) return;
+	else replayclickable = false;
+	//SWOOSH!
+	soundSwoosh.stop();
+	soundSwoosh.play();
 
-    //fade out the scoreboard
-    $("#scoreboard").transition(
-        { y: "-40px", opacity: 0 },
-        1000,
-        "ease",
-        function () {
-            //when that's done, display us back to nothing
-            $("#scoreboard").css("display", "none");
+	//fade out the scoreboard
+	$("#scoreboard").transition({ y: "-40px", opacity: 0 }, 1000, "ease", function () {
+		//when that's done, display us back to nothing
+		$("#scoreboard").css("display", "none");
 
-            //start the game over!
-            showSplash();
-        }
-    );
+		//start the game over!
+		showSplash();
+	});
 });
 
 $("#share").click(function () {
-    //SWOOSH!
-    soundSwoosh.stop();
-    soundSwoosh.play();
+	//SWOOSH!
+	soundSwoosh.stop();
+	soundSwoosh.play();
 
-    const event = new CustomEvent("openModalEvent");
-    window.dispatchEvent(event);
+	const event = new CustomEvent("openModalEvent");
+	window.dispatchEvent(event);
 
-    var interval = setInterval(function () {
-        if ($("#share-highscore").length) {
-            clearInterval(interval);
-            $("#share-score").text(score);
-            $("#share-highscore").text(highscore);
-        }
-        console.log("huhu");
-    }, 10);
+	var interval = setInterval(function () {
+		if ($("#share-highscore").length) {
+			clearInterval(interval);
+			$("#share-score").text(score);
+			$("#share-highscore").text(highscore);
+		}
+		console.log("huhu");
+	}, 10);
 });
 
 function playerScore() {
-    score += 1;
-    //play score sound
-    soundScore.stop();
-    soundScore.play();
-    setBigScore();
+	score += 1;
+	//play score sound
+	soundScore.stop();
+	soundScore.play();
+	setBigScore();
 }
 
 function createPipe() {
-    var padding = 80;
-    var constraint = flyArea - pipeHeight - padding * 2; // double padding (for top and bottom)
-    var topHeight = Math.floor(Math.random() * constraint + padding); // add lower padding
-    var bottomHeight = flyArea - pipeHeight - topHeight;
+	var padding = 80;
+	var constraint = flyArea - pipeHeight - padding * 2; // double padding (for top and bottom)
+	var topHeight = Math.floor(Math.random() * constraint + padding); // add lower padding
+	var bottomHeight = flyArea - pipeHeight - topHeight;
 
-    var newPipe = $(
-        '<div class="pipe"><div class="pipe_upper" style="height: ' +
-            topHeight +
-            'px;"></div><div class="pipe_lower" style="height: ' +
-            bottomHeight +
-            'px;"></div></div>'
-    );
-    newPipe.css("left", $("#flyarea").width() + "px");
+	var newPipe = $(
+		'<div class="pipe"><div class="pipe_upper" style="height: ' +
+			topHeight +
+			'px;"></div><div class="pipe_lower" style="height: ' +
+			bottomHeight +
+			'px;"></div></div>'
+	);
+	newPipe.css("left", $("#flyarea").width() + "px");
 
-    $("#flyarea").append(newPipe);
-    pipes.push(newPipe);
+	$("#flyarea").append(newPipe);
+	pipes.push(newPipe);
 }
 
 function movePipes() {
-    $(".pipe").each(function (index, pipe) {
-        var pipePosition = parseInt($(pipe).css("left")); // Get the current position
+	$(".pipe").each(function (index, pipe) {
+		var pipePosition = parseInt($(pipe).css("left")); // Get the current position
 
-        // Move the pipe
-        pipePosition -= pipeSpeed;
-        $(pipe).css("left", pipePosition + "px");
+		// Move the pipe
+		pipePosition -= pipeSpeed;
+		$(pipe).css("left", pipePosition + "px");
 
-        // Remove pipe if it goes off screen
-        if (pipePosition < -pipeWidth) {
-            $(pipe).remove(); // Remove the pipe element from the DOM
-        }
-    });
+		// Remove pipe if it goes off screen
+		if (pipePosition < -pipeWidth) {
+			$(pipe).remove(); // Remove the pipe element from the DOM
+		}
+	});
 }
 
 var isIncompatible = {
-    Android: function () {
-        return navigator.userAgent.match(/Android/i);
-    },
-    BlackBerry: function () {
-        return navigator.userAgent.match(/BlackBerry/i);
-    },
-    iOS: function () {
-        return navigator.userAgent.match(/iPhone|iPad|iPod/i);
-    },
-    Opera: function () {
-        return navigator.userAgent.match(/Opera Mini/i);
-    },
-    Safari: function () {
-        return (
-            navigator.userAgent.match(/OS X.*Safari/) &&
-            !navigator.userAgent.match(/Chrome/)
-        );
-    },
-    Windows: function () {
-        return navigator.userAgent.match(/IEMobile/i);
-    },
-    any: function () {
-        return (
-            isIncompatible.Android() ||
-            isIncompatible.BlackBerry() ||
-            isIncompatible.iOS() ||
-            isIncompatible.Opera() ||
-            isIncompatible.Safari() ||
-            isIncompatible.Windows()
-        );
-    },
+	Android: function () {
+		return navigator.userAgent.match(/Android/i);
+	},
+	BlackBerry: function () {
+		return navigator.userAgent.match(/BlackBerry/i);
+	},
+	iOS: function () {
+		return navigator.userAgent.match(/iPhone|iPad|iPod/i);
+	},
+	Opera: function () {
+		return navigator.userAgent.match(/Opera Mini/i);
+	},
+	Safari: function () {
+		return navigator.userAgent.match(/OS X.*Safari/) && !navigator.userAgent.match(/Chrome/);
+	},
+	Windows: function () {
+		return navigator.userAgent.match(/IEMobile/i);
+	},
+	any: function () {
+		return (
+			isIncompatible.Android() ||
+			isIncompatible.BlackBerry() ||
+			isIncompatible.iOS() ||
+			isIncompatible.Opera() ||
+			isIncompatible.Safari() ||
+			isIncompatible.Windows()
+		);
+	},
 };
