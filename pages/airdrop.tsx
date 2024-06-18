@@ -1418,8 +1418,8 @@ export default function AirdropPage() {
                                                             )
                                                         }
                                                     >
-                                                        <p className="">
-                                                            5.{" "}
+                                                        <div className="flex items-center gap-x-2">
+                                                            <span>5. </span>
                                                             <span className="underline">
                                                                 Join Flappy
                                                                 Blast&apos;s
@@ -1428,7 +1428,7 @@ export default function AirdropPage() {
                                                             <span className="text-red-500">
                                                                 *not required
                                                             </span>
-                                                        </p>
+                                                        </div>
                                                     </a>
                                                     {verificationStatus.discord ===
                                                     "unopened" ? (
@@ -1510,17 +1510,17 @@ export default function AirdropPage() {
                                                             )
                                                         }
                                                     >
-                                                        <p className="">
-                                                            6.{" "}
+                                                        <div className="flex items-center gap-x-2">
+                                                            <span>6. </span>
                                                             <span className="underline">
                                                                 Join Flappy
                                                                 Blast&apos;s
                                                                 Telegram Channel
-                                                            </span>
+                                                            </span>{" "}
                                                             <span className="text-red-500">
                                                                 *not required
                                                             </span>
-                                                        </p>
+                                                        </div>
                                                     </a>
                                                     {verificationStatus.telegram ===
                                                     "unopened" ? (
@@ -1697,6 +1697,7 @@ export default function AirdropPage() {
                             </div>
                         </div>
                     )}
+
                     {currentState === "leaderboard" && (
                         <>
                             <div className="flex flex-col gap-4 md:gap-0 md:flex-row items-center justify-between w-full">
