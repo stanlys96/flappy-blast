@@ -1607,6 +1607,7 @@ export default function AirdropPage() {
                                                 </div>
                                             }
                                             open={modalStep == 2}
+                                            onOk={handleSuccessButton}
                                             onCancel={handleSuccessButton}
                                             footer={null}
                                             closable={false}
@@ -1629,9 +1630,9 @@ export default function AirdropPage() {
 
                                                 <div className="flex justify-center w-full">
                                                     <div
-                                                        onClick={() =>
-                                                            setModalStep(3)
-                                                        }
+                                                        onClick={() => {
+                                                            handleSuccessButton();
+                                                        }}
                                                         className="md:block hidden relative mt-[25px] cursor-pointer"
                                                     >
                                                         <Image
@@ -1642,9 +1643,9 @@ export default function AirdropPage() {
                                                         />
                                                     </div>
                                                     <div
-                                                        onClick={() =>
-                                                            setModalStep(3)
-                                                        }
+                                                        onClick={() => {
+                                                            handleSuccessButton();
+                                                        }}
                                                         className="block md:hidden relative mt-[25px] cursor-pointer"
                                                     >
                                                         <Image
