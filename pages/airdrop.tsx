@@ -311,10 +311,13 @@ export default function AirdropPage() {
               // @ts-ignore
               currentSelectedContract2?.data?.toString()
           ) >= currentSelectedProject?.attributes?.min_value2
-        : parseFloat(tokenData1) >=
+        : currentSelectedProject?.attributes?.is_multiple
+        ? parseFloat(tokenData1) >=
               (currentSelectedProject?.attributes?.min_value ?? 0) ||
           parseFloat(tokenData2) >=
-              (currentSelectedProject?.attributes?.min_value2 ?? 0);
+              (currentSelectedProject?.attributes?.min_value2 ?? 0)
+        : parseFloat(tokenData1) >=
+          (currentSelectedProject?.attributes?.min_value ?? 0);
 
     const menu = (
         <Menu className="scrollable-menu" onClick={handleMenuClick}>
