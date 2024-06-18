@@ -44,21 +44,6 @@ var loopPipeloop;
 var publicToken;
 var publicAxiosApi;
 
-$(document).ready(function () {
-    if (window.location.search == "?debug") debugmode = true;
-    if (window.location.search == "?easy") pipeheight = 200;
-
-    publicToken = window.NEXT_PUBLIC_TOKEN;
-    publicAxiosApi = window.NEXT_PUBLIC_AXIOS_API;
-
-    //get the highscore
-    var savedscore = getCookie("highscore");
-    if (savedscore != "") highscore = parseInt(savedscore);
-
-    //start with the splash screen
-    showSplash();
-});
-
 function getCookie(cname) {
     var name = cname + "=";
     var ca = document.cookie.split(";");
@@ -68,6 +53,37 @@ function getCookie(cname) {
     }
     return "";
 }
+
+$(document).ready(function () {
+    if (window.location.search == "?debug") debugmode = true;
+    if (window.location.search == "?easy") pipeheight = 200;
+
+    publicToken = window.NEXT_PUBLIC_TOKEN;
+    publicAxiosApi = window.NEXT_PUBLIC_AXIOS_API;
+    var twitter_id = getCookie("twitter_id");
+    //get the highscore
+    fetch(
+        `${publicAxiosApi}/api/twitter-accounts?filters[twitter_id][$eq]=${twitter_id}`,
+        {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: publicToken,
+            },
+        }
+    )
+        .then(async (response) => {
+            const result = await response.json();
+            const theData = result?.data?.[0];
+            highscore = theData?.attributes?.high_score ?? 0;
+        })
+        .catch((err) => {
+            console.log(err, "<<< err");
+        });
+
+    //start with the splash screen
+    showSplash();
+});
 
 function setCookie(cname, cvalue, exdays) {
     var d = new Date();
