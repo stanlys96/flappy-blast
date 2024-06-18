@@ -38,6 +38,8 @@ import { axiosApi, fetcherStrapi } from "@/utils/axios";
 import { DataObject } from "@/utils/helper";
 import { ethers } from "ethers";
 import { blast } from "viem/chains";
+import { useRouter } from "next/router";
+
 // AirdropPage
 export default function AirdropPage() {
     const tableRef = useRef(null);
@@ -95,6 +97,8 @@ export default function AirdropPage() {
     const leaderboardsResult = leaderboardsData?.data;
     const partnershipResult = partnershipData?.data?.data?.[0];
     const allocationsResult = allocationsData?.data;
+
+    const router = useRouter();
 
     useEffect(() => {
         setDomLoaded(true);
@@ -514,6 +518,18 @@ export default function AirdropPage() {
             });
         }
     }, [address, currentTwitterData]);
+
+    useEffect(() => {
+        const handleRouteChange = () => {
+            window.scrollTo(0, 0); // Scroll to top on route change
+        };
+
+        router.events.on("routeChangeComplete", handleRouteChange);
+
+        return () => {
+            router.events.off("routeChangeComplete", handleRouteChange);
+        };
+    }, []);
 
     if (!domLoaded) return <div></div>;
 
@@ -1394,7 +1410,7 @@ export default function AirdropPage() {
                                         {leaderboardsResult &&
                                             leaderboardsResult?.data?.map(
                                                 (
-                                                    sortedLeaderboardData: any,
+                                                    sortedLeaderboardData: DataObject,
                                                     index: number
                                                 ) => (
                                                     <tr
