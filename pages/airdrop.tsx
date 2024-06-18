@@ -44,7 +44,7 @@ import { useRouter } from "next/router";
 export default function AirdropPage() {
     const tableRef = useRef(null);
     const tweetText =
-        "🚀 I'm joining the @flappyblast airdrop campaign! To be eligible, just play the game once! The campaign ends on June 21st, 1pm UTC. Their presale is coming soon and it's 100% unruggable! Don't miss out!";
+        "🚀 I'm joining the @flappyblast airdrop campaign! The campaign ends on June 21st, 1pm UTC. Their presale is coming soon and it's 100% unruggable! Don't miss out!";
     const encodedTweet = encodeURIComponent(tweetText);
     const { data: session, status } = useSession();
     const [userData, setUserData] = useState(null);
