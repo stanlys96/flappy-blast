@@ -333,7 +333,7 @@ Screen - Game
 	opacity: 0;
 	top: 205px;
 	left: 52px;
-	height: 115px;
+	/* height: fit-content; */
 	width: 70px;
 	cursor: pointer;
 }
@@ -343,7 +343,7 @@ Screen - Game
 	opacity: 0;
 	top: 205px;
 	left: 130px;
-	height: 115px;
+	/* height: fit-content; */
 	width: 70px;
 	cursor: pointer;
 }
