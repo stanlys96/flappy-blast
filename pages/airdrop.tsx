@@ -439,7 +439,10 @@ export default function AirdropPage() {
                         });
                 }
 
-                if (!currentTwitterData?.attributes?.wallet_address) {
+                if (
+                    !currentTwitterData?.attributes?.wallet_address &&
+                    !address
+                ) {
                     setModalStep(0);
                 } else if (
                     currentTwitterData?.attributes?.wallet_address &&
