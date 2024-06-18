@@ -101,7 +101,7 @@ export default function AirdropPage() {
     const leaderboardsResult = leaderboardsData?.data;
     const partnershipResult = partnershipData?.data?.data?.[0];
     const allocationsResult = allocationsData?.data;
-    console.log(allocationsResult, "<<< !!");
+
     const router = useRouter();
 
     useEffect(() => {
@@ -542,6 +542,12 @@ export default function AirdropPage() {
             router.events.off("routeChangeComplete", handleRouteChange);
         };
     }, []);
+
+    useEffect(() => {
+        if (currentTwitterData?.attributes?.cheater) {
+            router.push("/");
+        }
+    }, [currentTwitterData]);
 
     if (!domLoaded) return <div></div>;
 
