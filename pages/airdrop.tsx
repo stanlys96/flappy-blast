@@ -357,8 +357,6 @@ export default function AirdropPage() {
                 setPartnershipLoading(false);
             })
             .catch((err) => {
-                setPartnershipModal(false);
-                setAllocationModal(true);
                 setPartnershipLoading(false);
             });
     };
@@ -1702,7 +1700,10 @@ export default function AirdropPage() {
                                     LEADERBOARDS
                                 </div>
                                 <Button
-                                    onClick={() => setCurrentState("flap")}
+                                    onClick={() => {
+                                        setCurrentPage(1);
+                                        setCurrentState("flap");
+                                    }}
                                     style={{
                                         border: "2px solid",
                                     }}
