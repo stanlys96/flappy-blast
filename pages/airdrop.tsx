@@ -484,9 +484,7 @@ export default function AirdropPage() {
             verificationStatus.follow === "verified" &&
             verificationStatus.retweet === "verified" &&
             verificationStatus.like === "verified" &&
-            verificationStatus.tweet === "verified" &&
-            verificationStatus.discord === "verified" &&
-            verificationStatus.telegram === "verified"
+            verificationStatus.tweet === "verified"
         ) {
             setModalStep(2);
             if (currentTwitterData?.attributes?.["is_socialaction"] !== true) {
@@ -1427,6 +1425,9 @@ export default function AirdropPage() {
                                                                 Blast&apos;s
                                                                 Discord Server
                                                             </span>
+                                                            <span className="text-red-500">
+                                                                *not required
+                                                            </span>
                                                         </p>
                                                     </a>
                                                     {verificationStatus.discord ===
@@ -1515,6 +1516,9 @@ export default function AirdropPage() {
                                                                 Join Flappy
                                                                 Blast&apos;s
                                                                 Telegram Channel
+                                                            </span>
+                                                            <span className="text-red-500">
+                                                                *not required
                                                             </span>
                                                         </p>
                                                     </a>
