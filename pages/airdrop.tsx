@@ -386,7 +386,7 @@ export default function AirdropPage() {
         axiosApi
             .put(`/api/twitter-accounts/${currentTwitterData?.id}`, {
                 data: {
-                    show_success_modal: true,
+                    show_success_modal: false,
                 },
             })
             .then((response) => twitterMutate())
@@ -455,7 +455,9 @@ export default function AirdropPage() {
                     !currentTwitterData?.attributes?.["is_socialaction"]
                 ) {
                     setModalStep(1);
-                } else if (currentTwitterData?.attributes?.show_success_modal) {
+                } else if (
+                    !currentTwitterData?.attributes?.show_success_modal
+                ) {
                     setModalStep(3);
                 } else if (
                     currentTwitterData?.attributes?.wallet_address &&
