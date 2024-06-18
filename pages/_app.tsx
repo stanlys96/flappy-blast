@@ -17,7 +17,9 @@ const metadata = {
     name: "Flappy Blast",
     description: "Flappy Blast",
     url: "https://www.flappyblast.com", // origin must match your domain & subdomain
-    icons: ["/favicon.ico"],
+    icons: [
+        "https://firebasestorage.googleapis.com/v0/b/good-food-app-1498c.appspot.com/o/flappy.png?alt=media&token=a0cbc06d-bb88-48f5-b3d3-53d5d851e96e",
+    ],
 };
 
 const config = defaultWagmiConfig({
