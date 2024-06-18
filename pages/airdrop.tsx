@@ -311,8 +311,6 @@ export default function AirdropPage() {
               // @ts-ignore
               currentSelectedContract2?.data?.toString()
           ) >= currentSelectedProject?.attributes?.min_value2
-        : currentSelectedContract?.data?.toString() === "0"
-        ? false
         : parseFloat(tokenData1) >=
               (currentSelectedProject?.attributes?.min_value ?? 0) ||
           parseFloat(tokenData2) >=
