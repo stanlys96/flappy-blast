@@ -43,6 +43,9 @@ import { useRouter } from "next/router";
 // AirdropPage
 export default function AirdropPage() {
     const tableRef = useRef(null);
+    const tweetText =
+        "🚀 I'm joining the @flappyblast airdrop campaign! To be eligible, just play the game once! The campaign ends on June 21st, 1pm UTC. Their presale is coming soon and it's 100% unruggable! Don't miss out!";
+    const encodedTweet = encodeURIComponent(tweetText);
     const { data: session, status } = useSession();
     const [userData, setUserData] = useState(null);
     const { address, chain, isConnected } = useAccount();
@@ -248,6 +251,8 @@ export default function AirdropPage() {
         retweet: "unopened",
         like: "unopened",
         tweet: "unopened",
+        discord: "unopened",
+        telegram: "unopened",
     });
 
     const handleConnectWallet = () => {
@@ -472,7 +477,9 @@ export default function AirdropPage() {
             verificationStatus.follow === "verified" &&
             verificationStatus.retweet === "verified" &&
             verificationStatus.like === "verified" &&
-            verificationStatus.tweet === "verified"
+            verificationStatus.tweet === "verified" &&
+            verificationStatus.discord === "verified" &&
+            verificationStatus.telegram === "verified"
         ) {
             setModalStep(2);
             if (currentTwitterData?.attributes?.["is_socialaction"] !== true) {
@@ -875,7 +882,6 @@ export default function AirdropPage() {
                                                 </div>
                                             </div>
                                         </Modal>
-
                                         <Modal
                                             centered
                                             title={
@@ -1003,7 +1009,7 @@ export default function AirdropPage() {
                                                 </div>
                                                 <div className="flex justify-between">
                                                     <a
-                                                        href="https://twitter.com/intent/retweet?tweet_id=463440424141459456"
+                                                        href="https://twitter.com/intent/retweet?tweet_id=1802996855074370020"
                                                         onClick={() =>
                                                             handleOpenLink(
                                                                 "retweet"
@@ -1021,7 +1027,7 @@ export default function AirdropPage() {
                                                     </a>
                                                     {verificationStatus.retweet ===
                                                     "unopened" ? (
-                                                        <a href="https://twitter.com/intent/retweet?tweet_id=463440424141459456">
+                                                        <a href="https://twitter.com/intent/retweet?tweet_id=1802996855074370020">
                                                             <Button
                                                                 type="primary"
                                                                 onClick={() =>
@@ -1088,7 +1094,7 @@ export default function AirdropPage() {
                                                 </div>
                                                 <div className="flex justify-between">
                                                     <a
-                                                        href="https://twitter.com/intent/like?tweet_id=463440424141459456"
+                                                        href="https://twitter.com/intent/like?tweet_id=1802996855074370020"
                                                         onClick={() =>
                                                             handleOpenLink(
                                                                 "like"
@@ -1106,7 +1112,7 @@ export default function AirdropPage() {
                                                     </a>
                                                     {verificationStatus.like ===
                                                     "unopened" ? (
-                                                        <a href="https://twitter.com/intent/like?tweet_id=463440424141459456">
+                                                        <a href="https://twitter.com/intent/like?tweet_id=1802996855074370020">
                                                             <Button
                                                                 type="primary"
                                                                 onClick={() =>
@@ -1173,7 +1179,7 @@ export default function AirdropPage() {
                                                 </div>
                                                 <div className="flex justify-between">
                                                     <a
-                                                        href="https://twitter.com/intent/tweet?text=Hello%20world&hashtags=yrdy"
+                                                        href={`https://twitter.com/intent/tweet?text=${encodedTweet}`}
                                                         onClick={() =>
                                                             handleOpenLink(
                                                                 "tweet"
@@ -1191,7 +1197,9 @@ export default function AirdropPage() {
                                                     </a>
                                                     {verificationStatus.tweet ===
                                                     "unopened" ? (
-                                                        <a href="https://twitter.com/intent/tweet?text=Hello%20world&hashtags=yrdy">
+                                                        <a
+                                                            href={`https://twitter.com/intent/tweet?text=${encodedTweet}`}
+                                                        >
                                                             <Button
                                                                 type="primary"
                                                                 onClick={() =>
@@ -1256,9 +1264,186 @@ export default function AirdropPage() {
                                                         </Button>
                                                     )}
                                                 </div>
+                                                <div className="flex justify-between">
+                                                    <a
+                                                        target="_blank"
+                                                        href="https://discord.gg/qNcNxfVmVA"
+                                                        onClick={() =>
+                                                            handleOpenLink(
+                                                                "discord"
+                                                            )
+                                                        }
+                                                    >
+                                                        <p className="">
+                                                            5.{" "}
+                                                            <span className="underline">
+                                                                Join Flappy
+                                                                Blast's Discord
+                                                                Server
+                                                            </span>
+                                                        </p>
+                                                    </a>
+                                                    {verificationStatus.discord ===
+                                                    "unopened" ? (
+                                                        <a
+                                                            target="_blank"
+                                                            href="https://discord.gg/qNcNxfVmVA"
+                                                        >
+                                                            <Button
+                                                                type="primary"
+                                                                onClick={() =>
+                                                                    handleOpenLink(
+                                                                        "discord"
+                                                                    )
+                                                                }
+                                                                style={{
+                                                                    border: "2px solid #000",
+                                                                    borderRadius:
+                                                                        "0px",
+                                                                    backgroundColor:
+                                                                        "#fff",
+                                                                    color: "#000",
+                                                                }}
+                                                                icon={
+                                                                    <ExportOutlined
+                                                                        style={{
+                                                                            color: "#000",
+                                                                        }}
+                                                                    />
+                                                                }
+                                                                iconPosition={
+                                                                    "end"
+                                                                }
+                                                            >
+                                                                Join
+                                                            </Button>
+                                                        </a>
+                                                    ) : (
+                                                        <Button
+                                                            type="primary"
+                                                            onClick={() =>
+                                                                handleVerification(
+                                                                    "discord"
+                                                                )
+                                                            }
+                                                            style={getSocialActionButtonStyles(
+                                                                "discord"
+                                                            )}
+                                                            icon={
+                                                                verificationStatus.discord ===
+                                                                "unverified" ? (
+                                                                    <CaretRightOutlined
+                                                                        style={{
+                                                                            color: "#000",
+                                                                        }}
+                                                                    />
+                                                                ) : (
+                                                                    false
+                                                                )
+                                                            }
+                                                            iconPosition={"end"}
+                                                        >
+                                                            {verificationStatus.discord ===
+                                                            "verifying"
+                                                                ? "Verifying..."
+                                                                : verificationStatus.discord ===
+                                                                  "verified"
+                                                                ? "Done"
+                                                                : "Verify"}
+                                                        </Button>
+                                                    )}
+                                                </div>
+                                                <div className="flex justify-between">
+                                                    <a
+                                                        target="_blank"
+                                                        href="https://t.me/+esBMo_0AwCcwZWZl"
+                                                        onClick={() =>
+                                                            handleOpenLink(
+                                                                "discord"
+                                                            )
+                                                        }
+                                                    >
+                                                        <p className="">
+                                                            6.{" "}
+                                                            <span className="underline">
+                                                                Join Flappy
+                                                                Blast's Telegram
+                                                                Channel
+                                                            </span>
+                                                        </p>
+                                                    </a>
+                                                    {verificationStatus.telegram ===
+                                                    "unopened" ? (
+                                                        <a
+                                                            target="_blank"
+                                                            href="https://t.me/+esBMo_0AwCcwZWZl"
+                                                        >
+                                                            <Button
+                                                                type="primary"
+                                                                onClick={() =>
+                                                                    handleOpenLink(
+                                                                        "telegram"
+                                                                    )
+                                                                }
+                                                                style={{
+                                                                    border: "2px solid #000",
+                                                                    borderRadius:
+                                                                        "0px",
+                                                                    backgroundColor:
+                                                                        "#fff",
+                                                                    color: "#000",
+                                                                }}
+                                                                icon={
+                                                                    <ExportOutlined
+                                                                        style={{
+                                                                            color: "#000",
+                                                                        }}
+                                                                    />
+                                                                }
+                                                                iconPosition={
+                                                                    "end"
+                                                                }
+                                                            >
+                                                                Join
+                                                            </Button>
+                                                        </a>
+                                                    ) : (
+                                                        <Button
+                                                            type="primary"
+                                                            onClick={() =>
+                                                                handleVerification(
+                                                                    "telegram"
+                                                                )
+                                                            }
+                                                            style={getSocialActionButtonStyles(
+                                                                "telegram"
+                                                            )}
+                                                            icon={
+                                                                verificationStatus.telegram ===
+                                                                "unverified" ? (
+                                                                    <CaretRightOutlined
+                                                                        style={{
+                                                                            color: "#000",
+                                                                        }}
+                                                                    />
+                                                                ) : (
+                                                                    false
+                                                                )
+                                                            }
+                                                            iconPosition={"end"}
+                                                        >
+                                                            {verificationStatus.telegram ===
+                                                            "verifying"
+                                                                ? "Verifying..."
+                                                                : verificationStatus.telegram ===
+                                                                  "verified"
+                                                                ? "Done"
+                                                                : "Verify"}
+                                                        </Button>
+                                                    )}
+                                                </div>
                                             </div>
                                         </Modal>
-
                                         <Modal
                                             centered
                                             title={
