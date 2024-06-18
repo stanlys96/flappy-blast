@@ -1278,8 +1278,8 @@ export default function AirdropPage() {
                                                             5.{" "}
                                                             <span className="underline">
                                                                 Join Flappy
-                                                                Blast's Discord
-                                                                Server
+                                                                Blast&apos;s
+                                                                Discord Server
                                                             </span>
                                                         </p>
                                                     </a>
@@ -1367,8 +1367,8 @@ export default function AirdropPage() {
                                                             6.{" "}
                                                             <span className="underline">
                                                                 Join Flappy
-                                                                Blast's Telegram
-                                                                Channel
+                                                                Blast&apos;s
+                                                                Telegram Channel
                                                             </span>
                                                         </p>
                                                     </a>
