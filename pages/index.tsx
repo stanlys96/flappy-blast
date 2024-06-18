@@ -10,6 +10,7 @@ import { GroundSvg } from "@/src/components/GroundSvg";
 import { GroundMobileSvg } from "@/src/components/GroundMobileSvg";
 import { GroundCarouselSvg } from "@/src/components/GroundCarouselSvg";
 import { useRouter } from "next/router";
+import { zIndex } from "html2canvas/dist/types/css/property-descriptors/z-index";
 
 export default function HomePage() {
     const router = useRouter();
@@ -86,7 +87,7 @@ export default function HomePage() {
         setIsHovered4(false);
     };
 
-    const endTime = new Date("2024-06-18T13:00:00Z"); // Set your fixed end time here
+    const endTime = new Date("2024-06-21T13:00:00Z"); // Set your fixed end time here
 
     const calculateTimeLeft = () => {
         const now = new Date();
@@ -159,7 +160,7 @@ export default function HomePage() {
                             src="/images/flappy-blast.png"
                         />
                     </div>
-                    {/* <div
+                    <div
                         onClick={() => router.push("/airdrop")}
                         className="md:block hidden relative mt-[25px] cursor-pointer"
                     >
@@ -180,10 +181,10 @@ export default function HomePage() {
                             alt="button"
                             src="/images/button.png"
                         />
-                    </div> */}
+                    </div>
                     <div className="bg-[#FFFFFF] flex justify-center items-center mt-[30px] px-[20px] py-[12px]">
                         <p className="text-black md:text-[16px] text-[12px]">
-                            airdrop campaign starts in:{" "}
+                            airdrop campaign ends in:{" "}
                             {timeLeft?.hours?.toString().padStart(2, "0")}:
                             {timeLeft?.minutes?.toString().padStart(2, "0")}:
                             {timeLeft?.seconds?.toString().padStart(2, "0")}
@@ -397,7 +398,7 @@ export default function HomePage() {
                     )}
                 </div>
             </div>
-            <div className="h-[140vh] md:h-[120vh] desktop:h-[120vh] large-desktop:h-[90vh] flex flex-col justify-center items-center px-[150px] bg-black">
+            <div className="h-[140vh] md:h-[120vh] desktop:h-[120vh] large-desktop:h-[115vh] flex flex-col justify-center items-center px-[150px] bg-black">
                 <div className="flex flex-col justify-center items-center">
                     <p className="pixel-caps md:mt-[50px] desktop:mt-[50px] large-desktop:mt-[70px] text-[#FCFC03] text-[1.5rem] md:text-[48px] desktop:text-[4rem] large-desktop:text-[5rem] text-center mb-[30px]">
                         $FLAP TOKENOMICS

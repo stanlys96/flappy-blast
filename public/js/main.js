@@ -44,22 +44,6 @@ var loopPipeloop;
 var publicToken;
 var publicAxiosApi;
 
-$(document).ready(function () {
-	console.log("DOCUMENT READY!");
-	if (window.location.search == "?debug") debugmode = true;
-	if (window.location.search == "?easy") pipeheight = 200;
-
-	publicToken = window.NEXT_PUBLIC_TOKEN;
-	publicAxiosApi = window.NEXT_PUBLIC_AXIOS_API;
-
-	//get the highscore
-	var savedscore = getCookie("highscore");
-	if (savedscore != "") highscore = parseInt(savedscore);
-
-	//start with the splash screen
-	showSplash();
-});
-
 function getCookie(cname) {
 	var name = cname + "=";
 	var ca = document.cookie.split(";");
@@ -69,6 +53,34 @@ function getCookie(cname) {
 	}
 	return "";
 }
+
+$(document).ready(function () {
+	if (window.location.search == "?debug") debugmode = true;
+	if (window.location.search == "?easy") pipeheight = 200;
+
+	publicToken = window.NEXT_PUBLIC_TOKEN;
+	publicAxiosApi = window.NEXT_PUBLIC_AXIOS_API;
+	var twitter_id = getCookie("twitter_id");
+	//get the highscore
+	fetch(`${publicAxiosApi}/api/twitter-accounts?filters[twitter_id][$eq]=${twitter_id}`, {
+		method: "GET",
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: publicToken,
+		},
+	})
+		.then(async (response) => {
+			const result = await response.json();
+			const theData = result?.data?.[0];
+			highscore = theData?.attributes?.high_score ?? 0;
+		})
+		.catch((err) => {
+			console.log(err, "<<< err");
+		});
+
+	//start with the splash screen
+	showSplash();
+});
 
 function setCookie(cname, cvalue, exdays) {
 	var d = new Date();
@@ -215,7 +227,6 @@ function gameloop() {
 			}
 		}
 
-		console.log(boxleft, piperight);
 		// Have we passed the imminent danger?
 		if (boxleft > piperight) {
 			$(nextpipe).addClass("scored");
@@ -321,14 +332,15 @@ function setMedal() {
 }
 
 function playerDead() {
-	var wallet_address = getCookie("wallet_address");
+	var twitter_id = getCookie("twitter_id");
+	var strapi_twitter_id = getCookie("strapi_twitter_id");
 	const result = {
 		data: {
-			wallet_address: wallet_address,
 			score: score,
+			twitter_account: strapi_twitter_id,
 		},
 	};
-	fetch(`${publicAxiosApi}/api/flappy-games`, {
+	fetch(`${publicAxiosApi}/api/flappy-games?populate=*`, {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
@@ -336,13 +348,29 @@ function playerDead() {
 		},
 		body: JSON.stringify(result),
 	})
-		.then((response) => {
-			console.log(response, "<< RES");
+		.then(async (response) => {
+			const result = await response.json();
+			if (score >= 100) {
+				fetch(`${publicAxiosApi}/api/one-hundred-points`, {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: publicToken,
+					},
+					body: JSON.stringify({
+						data: {
+							score,
+							flappy_game: result?.data?.id,
+							twitter_account: strapi_twitter_id,
+						},
+					}),
+				});
+			}
 		})
 		.catch((err) => {
 			console.log(err);
 		});
-	fetch(`${publicAxiosApi}/api/wallet-accounts?filters[wallet_address][$eq]=${wallet_address}`, {
+	fetch(`${publicAxiosApi}/api/twitter-accounts?filters[twitter_id][$eq]=${twitter_id}`, {
 		method: "GET",
 		headers: {
 			"Content-Type": "application/json",
@@ -354,7 +382,7 @@ function playerDead() {
 			const theData = result?.data?.[0];
 			if (theData) {
 				if (!theData.attributes.high_score || parseInt(theData.attributes.high_score) < score) {
-					fetch(`${publicAxiosApi}/api/wallet-accounts/${theData.id}`, {
+					fetch(`${publicAxiosApi}/api/twitter-accounts/${theData.id}`, {
 						method: "PUT",
 						headers: {
 							"Content-Type": "application/json",

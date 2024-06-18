@@ -1,7 +1,7 @@
 import NextAuth from "next-auth";
 import TwitterProvider, { TwitterProfile } from "next-auth/providers/twitter";
 import { axiosApi } from "@/utils/axios";
-
+// nextauth
 interface SignInProps {
     user: any;
     account: any;
@@ -61,6 +61,7 @@ export const authOptions = {
                                     twitter_pic: user.image,
                                     is_wallet: false,
                                     is_socialaction: false,
+                                    show_success_modal: true,
                                 },
                             });
                         }
@@ -93,24 +94,20 @@ export const authOptions = {
             return token;
         },
         async session({ session, token }: SessionProps) {
-            try {
-                if (token.id) {
-                    session.user.id = token.id;
-                }
-                if (token?.username) {
-                    session.username = token.username;
-                }
-                // Add access token to the session object
-                // if (token.accessToken) {
-                // 	session.accessToken = token.accessToken;
-                // }
-                // if (token.refresh_token) {
-                // 	session.refresh_token = token.refresh_token;
-                // }
-                return session;
-            } catch (e) {
-                console.log(e, "<<< ERROR");
+            if (token.id) {
+                session.user.id = token.id;
             }
+            if (token?.username) {
+                session.username = token.username;
+            }
+            // Add access token to the session object
+            // if (token.accessToken) {
+            // 	session.accessToken = token.accessToken;
+            // }
+            // if (token.refresh_token) {
+            // 	session.refresh_token = token.refresh_token;
+            // }
+            return session;
         },
     },
 };

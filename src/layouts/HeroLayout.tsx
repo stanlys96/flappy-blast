@@ -3,20 +3,20 @@ import React, { ReactNode, useEffect } from "react";
 import { useRouter } from "next/router";
 
 interface Props {
-    children: ReactNode;
+	children: ReactNode;
 }
 
 export const HeroLayout = ({ children }: Props) => {
-    const router = useRouter();
-    useEffect(() => {
-        if (router.pathname === "/airdrop") {
-            router.push("/");
-        }
-    }, []);
-    return (
-        <div className="h-[120vh] md:h-[110vh] hero-section overflow-hidden w-[100vw] relative">
-            <AbsoluteImagesComponent />
-            {children}
-        </div>
-    );
+	const router = useRouter();
+	// useEffect(() => {
+	//     if (router.pathname === "/airdrop") {
+	//         router.push("/");
+	//     }
+	// }, []);
+	return (
+		<div className="h-[110vh] hero-section overflow-hidden w-[100vw] relative">
+			<AbsoluteImagesComponent />
+			{children}
+		</div>
+	);
 };

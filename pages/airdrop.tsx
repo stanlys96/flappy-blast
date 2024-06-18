@@ -1,6 +1,7 @@
+// @ts-nocheck
 import { HeroLayout } from "@/src/layouts/HeroLayout";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
     useAccount,
     useDisconnect,
@@ -24,22 +25,30 @@ import {
     Dropdown,
     Space,
     Progress,
+    Spin,
+    Pagination,
 } from "antd";
 import {
     ExportOutlined,
     CaretRightOutlined,
-    CheckOutlined,
     LeftOutlined,
     CaretDownOutlined,
 } from "@ant-design/icons";
 import { axiosApi, fetcherStrapi } from "@/utils/axios";
-import { partnershipData } from "@/utils/helper";
+import { DataObject } from "@/utils/helper";
 import { ethers } from "ethers";
 import { blast } from "viem/chains";
+import { useRouter } from "next/router";
+
 // AirdropPage
 export default function AirdropPage() {
+    const tableRef = useRef(null);
+    const tweetText =
+        "🚀 I'm joining the @flappyblast airdrop campaign! The campaign ends on June 21st, 1pm UTC. Their presale is coming soon and it's 100% unruggable! Don't miss out!";
+    const encodedTweet = encodeURIComponent(tweetText);
     const { data: session, status } = useSession();
     const [userData, setUserData] = useState(null);
+    const [confirmLoading, setConfirmLoading] = useState(false);
     const { address, chain, isConnected } = useAccount();
     const [isClientMobile, setIsClientMobile] = useState(false);
     const [currentState, setCurrentState] = useState<
@@ -53,10 +62,12 @@ export default function AirdropPage() {
     const { open } = useWeb3Modal();
     const { open: web3ModalOpen, selectedNetworkId } = useWeb3ModalState();
     const [data, setData] = useState(null);
-    const { data: walletData, mutate: walletMutate } = useSWR(
-        `/api/wallet-accounts?filters[wallet_address][$eq]=${address}`,
-        fetcherStrapi
-    );
+    const [allocationModal, setAllocationModal] = useState(false);
+    const [allocationDoneModal, setAllocationDoneModal] = useState(false);
+    const [allocationFinishedModal, setAllocationFinishedModal] =
+        useState(false);
+    const [partnershipLoading, setPartnershipLoading] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
 
     const { data: twitterData, mutate: twitterMutate } = useSWR(
         // @ts-ignore
@@ -64,7 +75,34 @@ export default function AirdropPage() {
         fetcherStrapi
     );
 
+    const { data: leaderboardsData } = useSWR(
+        `/api/twitter-accounts?filters[high_score][$notNull]=true&filters[high_score][$gt]=0&sort=high_score:desc&pagination[page]=${currentPage}&pagination[pageSize]=25`,
+        fetcherStrapi
+    );
+
+    const { data: partnersData } = useSWR(
+        `/api/partner-lists?sort=order:asc`,
+        fetcherStrapi
+    );
+
+    const { data: partnershipData, mutate: partnershipMutate } = useSWR(
+        // @ts-ignore
+        `/api/partnerships?filters[twitter_account][twitter_id][$eq]=${session?.user.id}&populate=*`,
+        fetcherStrapi
+    );
+
+    const { data: allocationsData } = useSWR(
+        `/api/sumAllAllocations`,
+        fetcherStrapi
+    );
+
+    const partnersResult = partnersData?.data?.data;
     const currentTwitterData = twitterData?.data?.data?.[0];
+    const leaderboardsResult = leaderboardsData?.data;
+    const partnershipResult = partnershipData?.data?.data?.[0];
+    const allocationsResult = allocationsData?.data;
+
+    const router = useRouter();
 
     useEffect(() => {
         setDomLoaded(true);
@@ -117,37 +155,106 @@ export default function AirdropPage() {
     const [dropdownValue, setDropdownValue] = useState("Choose Project");
     const [partnershipModal, setPartnershipModal] = useState(false);
     const [playGameReady, setPlayGameReady] = useState(false);
-    const currentSelectedProject = partnershipData.find(
-        (data) => data.name.toLowerCase() === dropdownValue.toLowerCase()
+    const [confirmAddress, setConfirmAddress] = useState(false);
+    const currentSelectedProject = partnersResult?.find(
+        (data: any) =>
+            data?.attributes?.project_name?.toLowerCase() ===
+            dropdownValue.toLowerCase()
     );
 
     const currentSelectedContract = useReadContract({
-        abi: currentSelectedProject?.abi ?? [],
+        abi: currentSelectedProject?.attributes?.abi ?? [],
         // @ts-ignore
-        address: "0x" + currentSelectedProject?.contractAddress ?? "0x000",
+        address:
+            currentSelectedProject?.attributes?.contract_address ?? "0x000",
         functionName: "balanceOf",
-        args: [address],
+        args: [address ?? ""],
     });
 
     const currentSelectedDecimals = useReadContract({
-        abi: currentSelectedProject?.abi ?? [],
+        abi: currentSelectedProject?.attributes?.abi ?? [],
         // @ts-ignore
-        address: "0x" + currentSelectedProject?.contractAddress ?? "0x000",
+        address:
+            currentSelectedProject?.attributes?.contract_address ?? "0x000",
         functionName: "decimals",
     });
 
     const currentSelectedSymbol = useReadContract({
-        abi: currentSelectedProject?.abi ?? [],
+        abi: currentSelectedProject?.attributes?.abi ?? [],
         // @ts-ignore
-        address: "0x" + currentSelectedProject?.contractAddress ?? "0x000",
+        address:
+            currentSelectedProject?.attributes?.contract_address ?? "0x000",
         functionName: "symbol",
     });
+
+    const currentSelectedName = useReadContract({
+        abi: currentSelectedProject?.attributes?.abi ?? [],
+        // @ts-ignore
+        address:
+            currentSelectedProject?.attributes?.contract_address ?? "0x000",
+        functionName: "name",
+    });
+
+    const currentSelectedContract2 = useReadContract({
+        abi: currentSelectedProject?.attributes?.abi2 ?? [],
+        // @ts-ignore
+        address:
+            currentSelectedProject?.attributes?.contract_address2 ?? "0x000",
+        functionName: "balanceOf",
+        args: [address ?? ""],
+    });
+
+    const currentSelectedDecimals2 = useReadContract({
+        abi: currentSelectedProject?.attributes?.abi2 ?? [],
+        // @ts-ignore
+        address:
+            currentSelectedProject?.attributes?.contract_address2 ?? "0x000",
+        functionName: "decimals",
+    });
+
+    const currentSelectedSymbol2 = useReadContract({
+        abi: currentSelectedProject?.attributes?.abi2 ?? [],
+        // @ts-ignore
+        address:
+            currentSelectedProject?.attributes?.contract_address2 ?? "0x000",
+        functionName: "symbol",
+    });
+
+    const currentSelectedName2 = useReadContract({
+        abi: currentSelectedProject?.attributes?.abi2 ?? [],
+        // @ts-ignore
+        address:
+            currentSelectedProject?.attributes?.contract_address2 ?? "0x000",
+        functionName: "name",
+    });
+
+    const tokenData1 = currentSelectedContract?.data
+        ? ethers
+              .formatUnits(
+                  // @ts-ignore
+                  currentSelectedContract?.data,
+                  currentSelectedDecimals?.data
+              )
+              .toString()
+        : "0";
+
+    const tokenData2 = currentSelectedContract2?.data
+        ? ethers
+              .formatUnits(
+                  // @ts-ignore
+                  currentSelectedContract2?.data,
+                  currentSelectedDecimals2?.data
+              )
+              .toString()
+        : "0";
 
     const [verificationStatus, setVerificationStatus] = useState<any>({
         follow: "unopened",
         retweet: "unopened",
         like: "unopened",
         tweet: "unopened",
+        discord: "unopened",
+        telegram: "unopened",
     });
 
     const handleConnectWallet = () => {
@@ -187,32 +294,106 @@ export default function AirdropPage() {
     const enableCheckBtn =
         address &&
         chain?.name === "Blast" &&
-        address === currentTwitterData?.attributes?.wallet_address;
+        address === currentTwitterData?.attributes?.wallet_address &&
+        dropdownValue !== "Choose Project";
+
     const addressNotMatch =
         address !== currentTwitterData?.attributes?.wallet_address;
 
+    const isEligible = !address
+        ? false
+        : currentSelectedProject?.attributes?.isNft
+        ? parseInt(
+              // @ts-ignore
+              currentSelectedContract?.data?.toString()
+          ) >= currentSelectedProject?.attributes?.min_value ||
+          parseInt(
+              // @ts-ignore
+              currentSelectedContract2?.data?.toString()
+          ) >= currentSelectedProject?.attributes?.min_value2
+        : currentSelectedContract?.data?.toString() === "0"
+        ? false
+        : parseFloat(tokenData1) >=
+              (currentSelectedProject?.attributes?.min_value ?? 0) ||
+          parseFloat(tokenData2) >=
+              (currentSelectedProject?.attributes?.min_value2 ?? 0);
+
     const menu = (
-        <Menu onClick={handleMenuClick}>
-            <Menu.Item key="Goldmilio">
-                <span>Goldmilio</span>
-            </Menu.Item>
-            <Menu.Item key="Blast Birbs">
-                <span>Blast Birbs</span>
-            </Menu.Item>
-            <Menu.Item key="Blastr">
-                <span>Blastr</span>
-            </Menu.Item>
-            <Menu.Item key="Blast Hoges">
-                <span>Blast Hoges</span>
-            </Menu.Item>
-            <Menu.Item key="Blast Wolves">
-                <span>Blast Wolves</span>
-            </Menu.Item>
-            <Menu.Item key="Blade">
-                <span>Blade</span>
-            </Menu.Item>
+        <Menu className="scrollable-menu" onClick={handleMenuClick}>
+            {partnersResult?.map((partnership: any) => (
+                <Menu.Item key={partnership?.attributes?.project_name}>
+                    <span>{partnership?.attributes?.project_name}</span>
+                </Menu.Item>
+            ))}
         </Menu>
     );
+
+    const handleCheckPartnership = () => {
+        if (!enableCheckBtn || !isEligible) return;
+        setPartnershipLoading(true);
+        axiosApi
+            .post("/api/partnerships", {
+                data: {
+                    twitter_account: currentTwitterData?.id,
+                    partner_list: currentSelectedProject?.id,
+                    allocation:
+                        currentSelectedProject?.attributes?.allocation ?? 0,
+                    value1: currentSelectedProject?.attributes?.isNft
+                        ? parseInt(
+                              currentSelectedContract?.data?.toString() ?? "0"
+                          )
+                        : parseFloat(tokenData1 ?? "0"),
+                    value2: currentSelectedProject?.attributes?.isNft
+                        ? parseInt(
+                              currentSelectedContract2?.data?.toString() ?? "0"
+                          )
+                        : parseFloat(tokenData2 ?? "0"),
+                },
+            })
+            .then((response) => {
+                partnershipMutate();
+                setPartnershipModal(false);
+                setAllocationModal(true);
+                setPartnershipLoading(false);
+            })
+            .catch((err) => {
+                setPartnershipModal(false);
+                setAllocationModal(true);
+                setPartnershipLoading(false);
+            });
+    };
+
+    const handlePartnershipButton = () => {
+        if (!session || !currentTwitterData?.attributes?.["is_socialaction"])
+            return;
+        if (partnershipResult) {
+            setAllocationDoneModal(true);
+        } else {
+            if (
+                allocationsResult &&
+                allocationsResult?.totalAllocations >=
+                    allocationsResult?.maxAllocations
+            ) {
+                setAllocationFinishedModal(true);
+            } else {
+                setPartnershipModal(true);
+            }
+        }
+    };
+
+    const handleSuccessButton = async () => {
+        setModalStep(3);
+        axiosApi
+            .put(`/api/twitter-accounts/${currentTwitterData?.id}`, {
+                data: {
+                    show_success_modal: false,
+                },
+            })
+            .then((response) => twitterMutate())
+            .catch((err) => {
+                console.log(err);
+            });
+    };
 
     useEffect(() => {
         if (walletPopup === true && web3ModalOpen === false) {
@@ -228,19 +409,24 @@ export default function AirdropPage() {
 
     useEffect(() => {
         if (!walletPopup) {
-            if (address) {
-                Cookie.set("wallet_address", address as string, {
+            if (currentTwitterData) {
+                Cookie.set(
+                    "twitter_id",
+                    currentTwitterData?.attributes?.twitter_id,
+                    {
+                        expires: 1,
+                    }
+                );
+                Cookie.set("strapi_twitter_id", currentTwitterData?.id, {
                     expires: 1,
                 });
-            } else if (
-                !address &&
-                !currentTwitterData?.attributes?.wallet_address
-            ) {
-                setModalStep(0);
-            }
-            if (currentTwitterData && address) {
-                // Get Wallet data
-                if (!currentTwitterData?.attributes?.wallet_address) {
+
+                if (
+                    !currentTwitterData?.attributes?.wallet_address &&
+                    address &&
+                    confirmAddress
+                ) {
+                    // Get Wallet data
                     axiosApi
                         .put(
                             `/api/twitter-accounts/${currentTwitterData?.id}`,
@@ -251,7 +437,11 @@ export default function AirdropPage() {
                                 },
                             }
                         )
-                        .then((response) => twitterMutate())
+                        .then((response) => {
+                            setConfirmLoading(false);
+                            setConfirmAddress(false);
+                            twitterMutate();
+                        })
                         .catch((err) => {
                             console.log(err);
                         });
@@ -265,6 +455,10 @@ export default function AirdropPage() {
                     !currentTwitterData?.attributes?.["is_socialaction"]
                 ) {
                     setModalStep(1);
+                } else if (
+                    !currentTwitterData?.attributes?.show_success_modal
+                ) {
+                    setModalStep(3);
                 } else if (
                     currentTwitterData?.attributes?.wallet_address &&
                     currentTwitterData?.attributes?.["is_socialaction"] &&
@@ -284,6 +478,7 @@ export default function AirdropPage() {
         address,
         currentTwitterData,
         playGameReady,
+        confirmAddress,
     ]);
 
     useEffect(() => {
@@ -291,7 +486,9 @@ export default function AirdropPage() {
             verificationStatus.follow === "verified" &&
             verificationStatus.retweet === "verified" &&
             verificationStatus.like === "verified" &&
-            verificationStatus.tweet === "verified"
+            verificationStatus.tweet === "verified" &&
+            verificationStatus.discord === "verified" &&
+            verificationStatus.telegram === "verified"
         ) {
             setModalStep(2);
             if (currentTwitterData?.attributes?.["is_socialaction"] !== true) {
@@ -322,6 +519,34 @@ export default function AirdropPage() {
         }
     }, [verificationStatus]);
 
+    useEffect(() => {
+        if (currentTwitterData?.attributes?.wallet_address) {
+            Cookie.set(
+                "wallet_address",
+                currentTwitterData?.attributes?.wallet_address as string,
+                {
+                    expires: 1,
+                }
+            );
+        } else if (address) {
+            Cookie.set("wallet_address", address as string, {
+                expires: 1,
+            });
+        }
+    }, [address, currentTwitterData]);
+
+    useEffect(() => {
+        const handleRouteChange = () => {
+            window.scrollTo(0, 0); // Scroll to top on route change
+        };
+
+        router.events.on("routeChangeComplete", handleRouteChange);
+
+        return () => {
+            router.events.off("routeChangeComplete", handleRouteChange);
+        };
+    }, []);
+
     if (!domLoaded) return <div></div>;
 
     return (
@@ -329,7 +554,7 @@ export default function AirdropPage() {
             <TwitterIntentHandler />
             <div
                 style={{ zIndex: 119 }}
-                className="flex justify-center items-center w-[80%] md:w-[60%] z-150 mx-auto relative h-[100vh]"
+                className="flex justify-center items-center w-[90%] md:w-[60%] z-150 mx-auto relative h-[100vh]"
             >
                 <div className="bg-white px-6 justify-center items-center md:px-12 py-6 md:py-12 rounded-[22px] mt-[30px] w-full flex flex-col gap-y-[15px] w-[1000px]">
                     {currentState === "index" && (
@@ -415,10 +640,24 @@ export default function AirdropPage() {
                                         only for partnered projects
                                     </p>
                                 </div>
-                                <p className="md:text-left text-center font-bold md:text-[16px] text-[12px]">
-                                    3. top 100 players on flappyblast will get
-                                    extra allocation
-                                </p>
+                                <div className="md:text-left text-center font-bold md:text-[16px] text-[12px]">
+                                    <p>
+                                        3. top 100 players on flappyblast will
+                                        get extra allocation
+                                    </p>
+                                    <p className="md:ml-8 ml-4 text-left">
+                                        -Tier 1 alloc: Top 1 Player
+                                    </p>
+                                    <p className="md:ml-8 ml-4 text-left">
+                                        -Tier 2 alloc: Top 10 Player
+                                    </p>
+                                    <p className="md:ml-8 ml-4 text-left">
+                                        -Tier 3 alloc: Top 100 Player
+                                    </p>
+                                    <p className="md:ml-8 ml-4 text-left">
+                                        -Tier 4 alloc: Top 1000 Player
+                                    </p>
+                                </div>
                                 <p className="md:text-left text-center font-bold md:text-[16px] text-[12px]">
                                     4. goodluck and $FLAP up ;)
                                 </p>
@@ -469,16 +708,7 @@ export default function AirdropPage() {
                                     />
                                 </div>
                                 <div
-                                    onClick={() => {
-                                        if (
-                                            !session &&
-                                            !currentTwitterData?.attributes?.[
-                                                "is_socialaction"
-                                            ]
-                                        )
-                                            return;
-                                        setPartnershipModal(true);
-                                    }}
+                                    onClick={handlePartnershipButton}
                                     className={`md:block hidden relative mt-[25px] ${
                                         session &&
                                         currentTwitterData?.attributes?.[
@@ -503,16 +733,7 @@ export default function AirdropPage() {
                                     />
                                 </div>
                                 <div
-                                    onClick={() => {
-                                        if (
-                                            !session &&
-                                            !currentTwitterData?.attributes?.[
-                                                "is_socialaction"
-                                            ]
-                                        )
-                                            return;
-                                        setPartnershipModal(true);
-                                    }}
+                                    onClick={handlePartnershipButton}
                                     className={`block md:hidden relative mt-[25px] ${
                                         session &&
                                         currentTwitterData?.attributes?.[
@@ -555,7 +776,7 @@ export default function AirdropPage() {
                                                     className="w-4 h-4"
                                                     src="/assets/x-logo-black.png"
                                                 />
-                                                {/* @ts-ignore */}
+
                                                 <p>@{session.username}</p>
                                             </Button>
                                             <div className="flex gap-2">
@@ -625,42 +846,129 @@ export default function AirdropPage() {
                                                         </p>
                                                     </div>
                                                 </div>
-                                                <div className="flex flex-col justify-center items-center w-full gap-2">
-                                                    <div className="w-fit">
-                                                        <Button
-                                                            type="primary"
-                                                            onClick={() =>
-                                                                handleConnectWallet()
-                                                            }
-                                                            style={{
-                                                                border: "2px solid #000",
-                                                                borderRadius:
-                                                                    "0px",
-                                                                backgroundColor:
-                                                                    "#fff",
-                                                                color: "#000",
-                                                            }}
-                                                            icon={
-                                                                <ExportOutlined
-                                                                    style={{
-                                                                        color: "#000",
-                                                                    }}
-                                                                />
-                                                            }
-                                                            iconPosition={"end"}
-                                                            className="font-bold"
-                                                        >
-                                                            Connect Wallet
-                                                        </Button>
+                                                {!address ? (
+                                                    <div className="flex flex-col justify-center items-center w-full gap-2">
+                                                        <div className="w-fit">
+                                                            <Button
+                                                                type="primary"
+                                                                onClick={() =>
+                                                                    handleConnectWallet()
+                                                                }
+                                                                style={{
+                                                                    border: "2px solid #000",
+                                                                    borderRadius:
+                                                                        "0px",
+                                                                    backgroundColor:
+                                                                        "#fff",
+                                                                    color: "#000",
+                                                                }}
+                                                                icon={
+                                                                    <ExportOutlined
+                                                                        style={{
+                                                                            color: "#000",
+                                                                        }}
+                                                                    />
+                                                                }
+                                                                iconPosition={
+                                                                    "end"
+                                                                }
+                                                                className="font-bold"
+                                                            >
+                                                                Connect Wallet
+                                                            </Button>
+                                                        </div>
+                                                        {!isBlast && (
+                                                            <p className="text-red-500">
+                                                                *Please switch
+                                                                your network to
+                                                                Blast and try
+                                                                again.
+                                                            </p>
+                                                        )}
                                                     </div>
-                                                    {!isBlast && (
-                                                        <p className="text-red-500">
-                                                            *Please switch your
-                                                            network to Blast and
-                                                            try again.
-                                                        </p>
-                                                    )}
-                                                </div>
+                                                ) : (
+                                                    <div>
+                                                        <div
+                                                            onClick={() =>
+                                                                disconnect()
+                                                            }
+                                                            className="p-[12px] border-[3px] border-[#000] flex gap-x-[10px] cursor-pointer items-center w-fit mx-auto"
+                                                        >
+                                                            {ensAvatar?.data && (
+                                                                <img
+                                                                    className="w-[30px] h-[30px] hidden md:block rounded-full"
+                                                                    src={
+                                                                        ensAvatar?.data ??
+                                                                        ""
+                                                                    }
+                                                                />
+                                                            )}
+                                                            <p className="font-bold md:text-[16px] text-[12px]">
+                                                                {address.slice(
+                                                                    0,
+                                                                    10
+                                                                ) +
+                                                                    "..." +
+                                                                    address.slice(
+                                                                        address.length -
+                                                                            10
+                                                                    )}
+                                                            </p>
+                                                            {ensName && (
+                                                                <p className="font-bold md:text-[16px] text-[12px]">
+                                                                    {ensName}
+                                                                </p>
+                                                            )}
+                                                        </div>
+                                                        {chain?.name !==
+                                                            "Blast" && (
+                                                            <div className="mt-2 mx-auto">
+                                                                <p className="text-red-500 text-center">
+                                                                    *Please
+                                                                    switch your
+                                                                    network to
+                                                                    Blast and
+                                                                    try again.
+                                                                </p>
+                                                                <div className="w-full flex justify-center my-3">
+                                                                    <Button
+                                                                        type="primary"
+                                                                        onClick={() => {
+                                                                            switchChain(
+                                                                                {
+                                                                                    chainId:
+                                                                                        blast.id,
+                                                                                }
+                                                                            );
+                                                                        }}
+                                                                        style={{
+                                                                            border: "2px solid #000",
+                                                                            borderRadius:
+                                                                                "0px",
+                                                                            backgroundColor:
+                                                                                "#fff",
+                                                                            color: "#000",
+                                                                        }}
+                                                                        icon={
+                                                                            <ExportOutlined
+                                                                                style={{
+                                                                                    color: "#000",
+                                                                                }}
+                                                                            />
+                                                                        }
+                                                                        iconPosition={
+                                                                            "end"
+                                                                        }
+                                                                        className="font-bold mx-auto"
+                                                                    >
+                                                                        Switch
+                                                                        to Blast
+                                                                    </Button>
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                )}
                                                 <div className="text-center bg-[#F0F0F0] p-4 font-bold mx-6 mt-4">
                                                     NOTICE: This action can only
                                                     be done once, you will not
@@ -668,9 +976,60 @@ export default function AirdropPage() {
                                                     address connected with you X
                                                     account with us
                                                 </div>
+                                                <div className="flex justify-center w-full">
+                                                    {confirmLoading ? (
+                                                        <Spin
+                                                            className="md:block hidden"
+                                                            size="large"
+                                                        />
+                                                    ) : (
+                                                        <div
+                                                            onClick={() => {
+                                                                setConfirmLoading(
+                                                                    true
+                                                                );
+                                                                setConfirmAddress(
+                                                                    true
+                                                                );
+                                                            }}
+                                                            className="md:block hidden relative mt-[25px] cursor-pointer"
+                                                        >
+                                                            <Image
+                                                                width={250}
+                                                                height={100}
+                                                                alt="button"
+                                                                src="/images/Confirm_Btn.svg"
+                                                            />
+                                                        </div>
+                                                    )}
+                                                    {confirmLoading ? (
+                                                        <Spin
+                                                            className="block md:hidden"
+                                                            size="large"
+                                                        />
+                                                    ) : (
+                                                        <div
+                                                            onClick={() => {
+                                                                setConfirmLoading(
+                                                                    true
+                                                                );
+                                                                setConfirmAddress(
+                                                                    true
+                                                                );
+                                                            }}
+                                                            className="block md:hidden relative mt-[25px] cursor-pointer"
+                                                        >
+                                                            <Image
+                                                                width={150}
+                                                                height={100}
+                                                                alt="button"
+                                                                src="/images/Confirm_Btn.svg"
+                                                            />
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </div>
                                         </Modal>
-
                                         <Modal
                                             centered
                                             title={
@@ -798,7 +1157,7 @@ export default function AirdropPage() {
                                                 </div>
                                                 <div className="flex justify-between">
                                                     <a
-                                                        href="https://twitter.com/intent/retweet?tweet_id=463440424141459456"
+                                                        href="https://twitter.com/intent/retweet?tweet_id=1802996855074370020"
                                                         onClick={() =>
                                                             handleOpenLink(
                                                                 "retweet"
@@ -816,7 +1175,7 @@ export default function AirdropPage() {
                                                     </a>
                                                     {verificationStatus.retweet ===
                                                     "unopened" ? (
-                                                        <a href="https://twitter.com/intent/retweet?tweet_id=463440424141459456">
+                                                        <a href="https://twitter.com/intent/retweet?tweet_id=1802996855074370020">
                                                             <Button
                                                                 type="primary"
                                                                 onClick={() =>
@@ -883,7 +1242,7 @@ export default function AirdropPage() {
                                                 </div>
                                                 <div className="flex justify-between">
                                                     <a
-                                                        href="https://twitter.com/intent/like?tweet_id=463440424141459456"
+                                                        href="https://twitter.com/intent/like?tweet_id=1802996855074370020"
                                                         onClick={() =>
                                                             handleOpenLink(
                                                                 "like"
@@ -901,7 +1260,7 @@ export default function AirdropPage() {
                                                     </a>
                                                     {verificationStatus.like ===
                                                     "unopened" ? (
-                                                        <a href="https://twitter.com/intent/like?tweet_id=463440424141459456">
+                                                        <a href="https://twitter.com/intent/like?tweet_id=1802996855074370020">
                                                             <Button
                                                                 type="primary"
                                                                 onClick={() =>
@@ -968,7 +1327,7 @@ export default function AirdropPage() {
                                                 </div>
                                                 <div className="flex justify-between">
                                                     <a
-                                                        href="https://twitter.com/intent/tweet?text=Hello%20world&hashtags=yrdy"
+                                                        href={`https://twitter.com/intent/tweet?text=${encodedTweet}`}
                                                         onClick={() =>
                                                             handleOpenLink(
                                                                 "tweet"
@@ -986,7 +1345,9 @@ export default function AirdropPage() {
                                                     </a>
                                                     {verificationStatus.tweet ===
                                                     "unopened" ? (
-                                                        <a href="https://twitter.com/intent/tweet?text=Hello%20world&hashtags=yrdy">
+                                                        <a
+                                                            href={`https://twitter.com/intent/tweet?text=${encodedTweet}`}
+                                                        >
                                                             <Button
                                                                 type="primary"
                                                                 onClick={() =>
@@ -1051,9 +1412,186 @@ export default function AirdropPage() {
                                                         </Button>
                                                     )}
                                                 </div>
+                                                <div className="flex justify-between">
+                                                    <a
+                                                        target="_blank"
+                                                        href="https://discord.gg/qNcNxfVmVA"
+                                                        onClick={() =>
+                                                            handleOpenLink(
+                                                                "discord"
+                                                            )
+                                                        }
+                                                    >
+                                                        <p className="">
+                                                            5.{" "}
+                                                            <span className="underline">
+                                                                Join Flappy
+                                                                Blast&apos;s
+                                                                Discord Server
+                                                            </span>
+                                                        </p>
+                                                    </a>
+                                                    {verificationStatus.discord ===
+                                                    "unopened" ? (
+                                                        <a
+                                                            target="_blank"
+                                                            href="https://discord.gg/qNcNxfVmVA"
+                                                        >
+                                                            <Button
+                                                                type="primary"
+                                                                onClick={() =>
+                                                                    handleOpenLink(
+                                                                        "discord"
+                                                                    )
+                                                                }
+                                                                style={{
+                                                                    border: "2px solid #000",
+                                                                    borderRadius:
+                                                                        "0px",
+                                                                    backgroundColor:
+                                                                        "#fff",
+                                                                    color: "#000",
+                                                                }}
+                                                                icon={
+                                                                    <ExportOutlined
+                                                                        style={{
+                                                                            color: "#000",
+                                                                        }}
+                                                                    />
+                                                                }
+                                                                iconPosition={
+                                                                    "end"
+                                                                }
+                                                            >
+                                                                Join
+                                                            </Button>
+                                                        </a>
+                                                    ) : (
+                                                        <Button
+                                                            type="primary"
+                                                            onClick={() =>
+                                                                handleVerification(
+                                                                    "discord"
+                                                                )
+                                                            }
+                                                            style={getSocialActionButtonStyles(
+                                                                "discord"
+                                                            )}
+                                                            icon={
+                                                                verificationStatus.discord ===
+                                                                "unverified" ? (
+                                                                    <CaretRightOutlined
+                                                                        style={{
+                                                                            color: "#000",
+                                                                        }}
+                                                                    />
+                                                                ) : (
+                                                                    false
+                                                                )
+                                                            }
+                                                            iconPosition={"end"}
+                                                        >
+                                                            {verificationStatus.discord ===
+                                                            "verifying"
+                                                                ? "Verifying..."
+                                                                : verificationStatus.discord ===
+                                                                  "verified"
+                                                                ? "Done"
+                                                                : "Verify"}
+                                                        </Button>
+                                                    )}
+                                                </div>
+                                                <div className="flex justify-between">
+                                                    <a
+                                                        target="_blank"
+                                                        href="https://t.me/+esBMo_0AwCcwZWZl"
+                                                        onClick={() =>
+                                                            handleOpenLink(
+                                                                "discord"
+                                                            )
+                                                        }
+                                                    >
+                                                        <p className="">
+                                                            6.{" "}
+                                                            <span className="underline">
+                                                                Join Flappy
+                                                                Blast&apos;s
+                                                                Telegram Channel
+                                                            </span>
+                                                        </p>
+                                                    </a>
+                                                    {verificationStatus.telegram ===
+                                                    "unopened" ? (
+                                                        <a
+                                                            target="_blank"
+                                                            href="https://t.me/+esBMo_0AwCcwZWZl"
+                                                        >
+                                                            <Button
+                                                                type="primary"
+                                                                onClick={() =>
+                                                                    handleOpenLink(
+                                                                        "telegram"
+                                                                    )
+                                                                }
+                                                                style={{
+                                                                    border: "2px solid #000",
+                                                                    borderRadius:
+                                                                        "0px",
+                                                                    backgroundColor:
+                                                                        "#fff",
+                                                                    color: "#000",
+                                                                }}
+                                                                icon={
+                                                                    <ExportOutlined
+                                                                        style={{
+                                                                            color: "#000",
+                                                                        }}
+                                                                    />
+                                                                }
+                                                                iconPosition={
+                                                                    "end"
+                                                                }
+                                                            >
+                                                                Join
+                                                            </Button>
+                                                        </a>
+                                                    ) : (
+                                                        <Button
+                                                            type="primary"
+                                                            onClick={() =>
+                                                                handleVerification(
+                                                                    "telegram"
+                                                                )
+                                                            }
+                                                            style={getSocialActionButtonStyles(
+                                                                "telegram"
+                                                            )}
+                                                            icon={
+                                                                verificationStatus.telegram ===
+                                                                "unverified" ? (
+                                                                    <CaretRightOutlined
+                                                                        style={{
+                                                                            color: "#000",
+                                                                        }}
+                                                                    />
+                                                                ) : (
+                                                                    false
+                                                                )
+                                                            }
+                                                            iconPosition={"end"}
+                                                        >
+                                                            {verificationStatus.telegram ===
+                                                            "verifying"
+                                                                ? "Verifying..."
+                                                                : verificationStatus.telegram ===
+                                                                  "verified"
+                                                                ? "Done"
+                                                                : "Verify"}
+                                                        </Button>
+                                                    )}
+                                                </div>
                                             </div>
                                         </Modal>
-
                                         <Modal
                                             centered
                                             title={
@@ -1069,7 +1607,8 @@ export default function AirdropPage() {
                                                 </div>
                                             }
                                             open={modalStep == 2}
-                                            onCancel={() => setModalStep(3)}
+                                            onOk={handleSuccessButton}
+                                            onCancel={handleSuccessButton}
                                             footer={null}
                                             closable={false}
                                         >
@@ -1080,16 +1619,20 @@ export default function AirdropPage() {
                                                     scores with us! Join our fun
                                                     Discord community to share
                                                     and compare. &nbsp;
-                                                    <span className="underline font-bold">
+                                                    <a
+                                                        href="https://discord.gg/qNcNxfVmVA"
+                                                        target="_blank"
+                                                        className="underline cursor-pointer font-bold"
+                                                    >
                                                         Join here!
-                                                    </span>
+                                                    </a>
                                                 </p>
 
                                                 <div className="flex justify-center w-full">
                                                     <div
-                                                        onClick={() =>
-                                                            setModalStep(3)
-                                                        }
+                                                        onClick={() => {
+                                                            handleSuccessButton();
+                                                        }}
                                                         className="md:block hidden relative mt-[25px] cursor-pointer"
                                                     >
                                                         <Image
@@ -1100,9 +1643,9 @@ export default function AirdropPage() {
                                                         />
                                                     </div>
                                                     <div
-                                                        onClick={() =>
-                                                            setModalStep(3)
-                                                        }
+                                                        onClick={() => {
+                                                            handleSuccessButton();
+                                                        }}
                                                         className="block md:hidden relative mt-[25px] cursor-pointer"
                                                     >
                                                         <Image
@@ -1165,7 +1708,9 @@ export default function AirdropPage() {
                                     }}
                                     icon={
                                         <LeftOutlined
-                                            style={{ color: "#000" }}
+                                            style={{
+                                                color: "#000",
+                                            }}
                                         />
                                     }
                                     iconPosition={"start"}
@@ -1174,7 +1719,10 @@ export default function AirdropPage() {
                                 </Button>
                             </div>
 
-                            <div className="overflow-y-auto max-h-96 w-full mt-6">
+                            <div
+                                ref={tableRef}
+                                className="scrollable-menu-2 max-h-96 w-full mt-6"
+                            >
                                 <table className="w-full">
                                     <thead className="pixel-caps bg-white sticky top-0 z-20">
                                         <tr className="table-header">
@@ -1193,38 +1741,79 @@ export default function AirdropPage() {
                                         </tr>
                                     </thead>
                                     <tbody className="overflow-x-auto">
-                                        {Array.from(
-                                            { length: 50 },
-                                            (_, index) => (
-                                                <tr
-                                                    key={index}
-                                                    className="table-row text-center border-black border-b-2 border-dashed"
-                                                >
-                                                    <td className="py-4 px-2 whitespace-nowrap text-sm md:text-base">
-                                                        {index + 1}
-                                                    </td>
-                                                    <td className="py-4 px-2 whitespace-nowrap hidden md:table-cell">
-                                                        <div className="flex justify-center">
-                                                            <img
-                                                                className="w-8 h-8 md:w-12 md:h-12 rounded-full"
-                                                                src="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg"
-                                                                alt="avatar"
-                                                            />
-                                                        </div>
-                                                    </td>
-                                                    <td className="py-4 px-2 whitespace-nowrap text-sm md:text-base">
-                                                        {/* @ts-ignore */}@
-                                                        {session?.username}
-                                                    </td>
-                                                    <td className="py-4 px-2 whitespace-nowrap text-sm md:text-base">
-                                                        Data 4
-                                                    </td>
-                                                </tr>
-                                            )
-                                        )}
+                                        {leaderboardsResult &&
+                                            leaderboardsResult?.data?.map(
+                                                (
+                                                    sortedLeaderboardData: DataObject,
+                                                    index: number
+                                                ) => (
+                                                    <tr
+                                                        key={index}
+                                                        className="table-row text-center border-black border-b-2 border-dashed"
+                                                    >
+                                                        <td className="py-4 px-2 whitespace-nowrap text-sm md:text-base">
+                                                            {(currentPage - 1) *
+                                                                25 +
+                                                                index +
+                                                                1}
+                                                        </td>
+                                                        <td className="py-4 px-2 whitespace-nowrap hidden md:table-cell">
+                                                            <div className="flex justify-center">
+                                                                <img
+                                                                    className="w-8 h-8 md:w-12 md:h-12 rounded-full"
+                                                                    src={
+                                                                        sortedLeaderboardData
+                                                                            ?.attributes
+                                                                            ?.twitter_pic ??
+                                                                        ""
+                                                                    }
+                                                                    alt="avatar"
+                                                                />
+                                                            </div>
+                                                        </td>
+                                                        <td className="py-4 px-2 whitespace-nowrap text-sm md:text-base">
+                                                            {/* @ts-ignore */}@
+                                                            {
+                                                                sortedLeaderboardData
+                                                                    ?.attributes
+                                                                    ?.twitter_username
+                                                            }
+                                                        </td>
+                                                        <td className="py-4 px-2 whitespace-nowrap text-sm md:text-base">
+                                                            {
+                                                                sortedLeaderboardData
+                                                                    ?.attributes
+                                                                    ?.high_score
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                )
+                                            )}
                                     </tbody>
                                 </table>
                             </div>
+                            <Pagination
+                                className="bg-[#149309] rounded-[16px]"
+                                showSizeChanger={false}
+                                defaultCurrent={1}
+                                total={
+                                    leaderboardsResult?.meta?.pagination
+                                        ?.total ?? 0
+                                }
+                                pageSize={
+                                    leaderboardsResult?.meta?.pagination
+                                        ?.pageSize ?? 0
+                                }
+                                onChange={(page) => {
+                                    setCurrentPage(page);
+                                    if (tableRef) {
+                                        tableRef.current?.scrollTo({
+                                            top: 0,
+                                            behavior: "smooth",
+                                        });
+                                    }
+                                }}
+                            />
                         </>
                     )}
                 </div>
@@ -1394,67 +1983,56 @@ export default function AirdropPage() {
                         )}
                         {dropdownValue !== "Choose Project" && (
                             <div className="flex gap-x-[10px] items-center justify-center roboto">
-                                <p className="text-center">
-                                    You have:{" "}
-                                    {currentSelectedProject?.isNft
-                                        ? `${currentSelectedContract?.data?.toString()} ${dropdownValue} NFT`
-                                        : `${
-                                              currentSelectedContract?.data
-                                                  ? ethers
-                                                        .formatUnits(
-                                                            // @ts-ignore
-                                                            currentSelectedContract?.data,
-                                                            currentSelectedDecimals?.data
-                                                        )
-                                                        .toString()
-                                                  : "0"
-                                          } ${currentSelectedSymbol?.data}`}
-                                </p>
+                                <div className="text-center flex flex-row gap-x-2 items-center">
+                                    <p>You have: </p>
+                                    <div className="flex flex-col gap-y-2 items-end">
+                                        <span>
+                                            {currentSelectedProject?.attributes
+                                                ?.isNft
+                                                ? `${
+                                                      currentSelectedContract?.data?.toString() ??
+                                                      "0"
+                                                  } ${
+                                                      currentSelectedName?.data
+                                                  } NFT`
+                                                : `${tokenData1} ${
+                                                      currentSelectedSymbol?.data?.toString()?.[0] ===
+                                                      "$"
+                                                          ? currentSelectedSymbol?.data
+                                                          : "$" +
+                                                            currentSelectedSymbol?.data
+                                                  }`}
+                                        </span>
+                                        {currentSelectedProject?.attributes
+                                            ?.is_multiple && (
+                                            <span>
+                                                {currentSelectedProject
+                                                    ?.attributes?.isNft
+                                                    ? `${currentSelectedContract2?.data?.toString()} ${
+                                                          currentSelectedName2?.data
+                                                      } NFT`
+                                                    : `${tokenData2} ${
+                                                          currentSelectedSymbol2?.data?.toString()?.[0] ===
+                                                          "$"
+                                                              ? currentSelectedSymbol2?.data
+                                                              : "$" +
+                                                                currentSelectedSymbol2?.data
+                                                      }`}
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
                                 <div
                                     className={`${
-                                        currentSelectedProject?.isNft
-                                            ? parseInt(
-                                                  // @ts-ignore
-                                                  currentSelectedContract?.data?.toString()
-                                              ) > 0
-                                                ? "bg-[#4FB768]"
-                                                : "bg-[#B74F4F]"
-                                            : parseFloat(
-                                                  currentSelectedContract?.data
-                                                      ? ethers
-                                                            .formatUnits(
-                                                                // @ts-ignore
-                                                                currentSelectedContract?.data,
-                                                                currentSelectedDecimals?.data
-                                                            )
-                                                            .toString()
-                                                      : "0"
-                                              ) > 100
+                                        isEligible
                                             ? "bg-[#4FB768]"
                                             : "bg-[#B74F4F]"
                                     } rounded-[3px] p-[8px]`}
                                 >
                                     <p className="text-white">
-                                        {currentSelectedProject?.isNft
-                                            ? parseInt(
-                                                  // @ts-ignore
-                                                  currentSelectedContract?.data?.toString()
-                                              ) > 0
-                                                ? "Eligible"
-                                                : "Ineligible"
-                                            : parseFloat(
-                                                  currentSelectedContract?.data
-                                                      ? ethers
-                                                            .formatUnits(
-                                                                // @ts-ignore
-                                                                currentSelectedContract?.data,
-                                                                currentSelectedDecimals?.data
-                                                            )
-                                                            .toString()
-                                                      : "0"
-                                              ) > 100.0
+                                        {isEligible
                                             ? "Eligible"
-                                            : "Ineligible"}
+                                            : "Not eligible"}
                                     </p>
                                 </div>
                             </div>
@@ -1472,7 +2050,11 @@ export default function AirdropPage() {
                                 } flex justify-between`}
                             >
                                 <Space>{dropdownValue}</Space>
-                                <CaretDownOutlined style={{ color: "black" }} />
+                                <CaretDownOutlined
+                                    style={{
+                                        color: "black",
+                                    }}
+                                />
                             </a>
                         </Dropdown>
 
@@ -1482,54 +2064,190 @@ export default function AirdropPage() {
                             }}
                             strokeColor="#4FB768"
                             status="success"
-                            percent={(500000 / 1500000) * 100}
+                            percent={
+                                (allocationsResult?.totalAllocations /
+                                    allocationsResult?.maxAllocations) *
+                                100
+                            }
                             showInfo={false}
                         />
                         <p className="font-bold text-center">
-                            500,000 / 1,500,000 Claimed
+                            {allocationsResult?.totalAllocations?.toLocaleString(
+                                "en-US"
+                            )}{" "}
+                            /{" "}
+                            {allocationsResult?.maxAllocations?.toLocaleString(
+                                "en-US"
+                            )}{" "}
+                            Claimed
                         </p>
                         <div className="flex justify-center w-full mt-[10px]">
-                            <div
-                                onClick={() => {}}
-                                className={`md:block hidden relative ${
-                                    enableCheckBtn
-                                        ? "cursor-pointer"
-                                        : "cursor-not-allowed"
-                                }`}
-                            >
-                                <Image
-                                    width={300}
-                                    height={100}
-                                    alt="button"
-                                    src={`/images/${
-                                        enableCheckBtn
-                                            ? "Check_Btn.png"
-                                            : "Check_Now_Disabled.png"
-                                    }`}
+                            {partnershipLoading ? (
+                                <Spin
+                                    className="md:block hidden"
+                                    size="large"
                                 />
-                            </div>
-                            <div
-                                onClick={() => {}}
-                                className={`block md:hidden relative ${
-                                    enableCheckBtn
-                                        ? "cursor-pointer"
-                                        : "cursor-not-allowed"
-                                }`}
-                            >
-                                <Image
-                                    width={150}
-                                    height={100}
-                                    alt="button"
-                                    src={`/images/${
-                                        enableCheckBtn
-                                            ? "Check_Btn.png"
-                                            : "Check_Now_Disabled.png"
+                            ) : (
+                                <div
+                                    onClick={handleCheckPartnership}
+                                    className={`md:block hidden relative ${
+                                        enableCheckBtn && isEligible
+                                            ? "cursor-pointer"
+                                            : "cursor-not-allowed"
                                     }`}
+                                >
+                                    <Image
+                                        width={300}
+                                        height={100}
+                                        alt="button"
+                                        src={`/images/${
+                                            enableCheckBtn && isEligible
+                                                ? "Check_Btn.png"
+                                                : "Check_Now_Disabled.png"
+                                        }`}
+                                    />
+                                </div>
+                            )}
+
+                            {partnershipLoading ? (
+                                <Spin
+                                    className="block md:hidden"
+                                    size="large"
                                 />
-                            </div>
+                            ) : (
+                                <div
+                                    onClick={handleCheckPartnership}
+                                    className={`block md:hidden relative ${
+                                        enableCheckBtn && isEligible
+                                            ? "cursor-pointer"
+                                            : "cursor-not-allowed"
+                                    }`}
+                                >
+                                    <Image
+                                        width={150}
+                                        height={100}
+                                        alt="button"
+                                        src={`/images/${
+                                            enableCheckBtn && isEligible
+                                                ? "Check_Btn.png"
+                                                : "Check_Now_Disabled.png"
+                                        }`}
+                                    />
+                                </div>
+                            )}
                         </div>
                         <a
-                            onClick={() => setPartnershipModal(false)}
+                            onClick={() => {
+                                if (partnershipLoading) return;
+                                setPartnershipModal(false);
+                            }}
+                            className="underline text-center cursor-pointer hover:underline text-[#1A202C] mt-2"
+                        >
+                            Return to previous page
+                        </a>
+                    </div>
+                </Modal>
+                <Modal
+                    centered
+                    title={
+                        <div
+                            style={{
+                                textAlign: "center",
+                                fontSize: "24px",
+                                fontWeight: "bold",
+                            }}
+                        >
+                            Extra allocation claimed 🎉
+                        </div>
+                    }
+                    open={allocationModal}
+                    footer={null}
+                    closable={false} // Remove the "X" button
+                    // maskClosable={false} // Prevent closing by clicking outside
+                >
+                    <div className="flex flex-col gap-2">
+                        <div className="text-center flex flex-col gap-6">
+                            <p>
+                                Congratulations! Your wallet is now successfully
+                                connected to the{" "}
+                                {partnershipResult?.attributes?.partner_list
+                                    ?.data?.attributes?.project_name ??
+                                    currentSelectedProject?.attributes
+                                        ?.project_name}{" "}
+                                project. Just a heads up, you can only claim the
+                                extra allocation once !
+                            </p>
+                        </div>
+                        <a
+                            onClick={() => setAllocationModal(false)}
+                            className="underline text-center cursor-pointer hover:underline text-[#1A202C] mt-2"
+                        >
+                            Return to previous page
+                        </a>
+                    </div>
+                </Modal>
+                <Modal
+                    centered
+                    title={
+                        <div
+                            style={{
+                                textAlign: "center",
+                                fontSize: "24px",
+                                fontWeight: "bold",
+                            }}
+                        >
+                            You have claimed this already
+                        </div>
+                    }
+                    open={allocationDoneModal}
+                    footer={null}
+                    closable={false} // Remove the "X" button
+                    // maskClosable={false} // Prevent closing by clicking outside
+                >
+                    <div className="flex flex-col gap-2">
+                        <div className="text-center flex flex-col gap-6">
+                            <p>
+                                Your wallet has been linked to the{" "}
+                                {partnershipResult?.attributes?.partner_list
+                                    ?.data?.attributes?.project_name ??
+                                    currentSelectedProject?.attributes
+                                        ?.project_name}{" "}
+                                project. Remember, you can only connect with one
+                                project at a time.
+                            </p>
+                        </div>
+                        <a
+                            onClick={() => setAllocationDoneModal(false)}
+                            className="underline text-center cursor-pointer hover:underline text-[#1A202C] mt-2"
+                        >
+                            Return to previous page
+                        </a>
+                    </div>
+                </Modal>
+                <Modal
+                    centered
+                    title={
+                        <div
+                            style={{
+                                textAlign: "center",
+                                fontSize: "24px",
+                                fontWeight: "bold",
+                            }}
+                        >
+                            Allocation has already finished
+                        </div>
+                    }
+                    open={allocationFinishedModal}
+                    footer={null}
+                    closable={false} // Remove the "X" button
+                    // maskClosable={false} // Prevent closing by clicking outside
+                >
+                    <div className="flex flex-col gap-2">
+                        <div className="text-center flex flex-col gap-6">
+                            <p>Max allocation has been reached.</p>
+                        </div>
+                        <a
+                            onClick={() => setAllocationFinishedModal(false)}
                             className="underline text-center cursor-pointer hover:underline text-[#1A202C] mt-2"
                         >
                             Return to previous page

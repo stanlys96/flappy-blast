@@ -1,13 +1,19 @@
+// @ts-nocheck
 import { useEffect, useState } from "react";
 import Head from "next/head";
 import html2canvas from "html2canvas";
 import { Modal, Button } from "antd";
 import { DownloadOutlined, CloseOutlined } from "@ant-design/icons";
 import TwitterIntentHandler from "@/src/components/TwitterIntentHandler";
+import { signIn, signOut, useSession } from "next-auth/react";
 
 export default function FlappyBird(this: any) {
+    const { data: session, status } = useSession();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [domLoaded, setDomLoaded] = useState(false);
+    const tweetText =
+        "I just hit a new high score on @flappyblast! Think you can beat it? Let's see what you got!";
+    const encodedTweet = encodeURIComponent(tweetText);
 
     useEffect(() => {
         setDomLoaded(true);
@@ -175,13 +181,13 @@ export default function FlappyBird(this: any) {
                                         id="highscore"
                                         className="justify-end flex flex-row gap-1"
                                     ></div>
-                                    <div id="replay">
+                                    <div id="replay" className="h-fit">
                                         <img
                                             src="/assets/replay.png"
                                             alt="replay"
                                         />
                                     </div>
-                                    <div id="share">
+                                    <div id="share" className="h-fit" s>
                                         <img
                                             src="assets/share.png"
                                             alt="share"
@@ -226,11 +232,25 @@ export default function FlappyBird(this: any) {
                                 src="/assets/share-score-template.png"
                                 alt="my score"
                             />
+
+                            <div
+                                id="share-username"
+                                style={{
+                                    position: "absolute",
+                                    top: "57.5%",
+                                    left: "50%",
+                                    transform: "translate(-50%, -50%)",
+                                    zIndex: 10,
+                                }}
+                                className="text-xs font-bold py-1 px-2 border-solid border-2 border-black bg-white"
+                            >
+                                @{session?.username ?? ""}
+                            </div>
                             <span
                                 id="share-score"
                                 style={{
                                     position: "absolute",
-                                    top: "70%",
+                                    top: "75%",
                                     left: "37%",
                                     transform: "translate(-50%, -50%)",
                                     zIndex: 10,
@@ -247,7 +267,7 @@ export default function FlappyBird(this: any) {
                                 id="share-highscore"
                                 style={{
                                     position: "absolute",
-                                    top: "70%",
+                                    top: "75%",
                                     left: "63.5%",
                                     transform: "translate(-50%, -50%)",
                                     zIndex: 10,
@@ -275,7 +295,9 @@ export default function FlappyBird(this: any) {
                                 Save Image
                             </Button>
 
-                            <a href="https://twitter.com/intent/tweet?text=Hello%20world&hashtags=yrdy">
+                            <a
+                                href={`https://twitter.com/intent/tweet?text=${encodedTweet}`}
+                            >
                                 <Button
                                     style={{
                                         border: "2px solid",
