@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { HeroLayout } from "@/src/layouts/HeroLayout";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
     useAccount,
     useDisconnect,
@@ -26,6 +26,7 @@ import {
     Space,
     Progress,
     Spin,
+    Pagination,
 } from "antd";
 import {
     ExportOutlined,
@@ -39,6 +40,7 @@ import { ethers } from "ethers";
 import { blast } from "viem/chains";
 // AirdropPage
 export default function AirdropPage() {
+    const tableRef = useRef(null);
     const { data: session, status } = useSession();
     const [userData, setUserData] = useState(null);
     const { address, chain, isConnected } = useAccount();
@@ -59,6 +61,7 @@ export default function AirdropPage() {
     const [allocationFinishedModal, setAllocationFinishedModal] =
         useState(false);
     const [partnershipLoading, setPartnershipLoading] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
 
     const { data: twitterData, mutate: twitterMutate } = useSWR(
         // @ts-ignore
@@ -67,7 +70,7 @@ export default function AirdropPage() {
     );
 
     const { data: leaderboardsData } = useSWR(
-        `/api/twitter-accounts?filters[high_score][$notNull]=true&filters[high_score][$gt]=0&sort=high_score:desc`,
+        `/api/twitter-accounts?filters[high_score][$notNull]=true&filters[high_score][$gt]=0&sort=high_score:desc&pagination[page]=${currentPage}&pagination[pageSize]=25`,
         fetcherStrapi
     );
 
@@ -82,9 +85,6 @@ export default function AirdropPage() {
         fetcherStrapi
     );
 
-    const { data: totalPartnershipData, mutate: totalPartnershipMutate } =
-        useSWR(`/api/partnerships`, fetcherStrapi);
-
     const { data: allocationsData } = useSWR(
         `/api/sumAllAllocations`,
         fetcherStrapi
@@ -92,9 +92,8 @@ export default function AirdropPage() {
 
     const partnersResult = partnersData?.data?.data;
     const currentTwitterData = twitterData?.data?.data?.[0];
-    const leaderboardsResult = leaderboardsData?.data?.data;
+    const leaderboardsResult = leaderboardsData?.data;
     const partnershipResult = partnershipData?.data?.data?.[0];
-    const totalPartnershipResult = totalPartnershipData?.data?.data;
     const allocationsResult = allocationsData?.data;
 
     useEffect(() => {
@@ -345,7 +344,6 @@ export default function AirdropPage() {
                 setPartnershipModal(false);
                 setAllocationModal(true);
                 setPartnershipLoading(false);
-                totalPartnershipMutate();
             })
             .catch((err) => {
                 setPartnershipModal(false);
@@ -1371,7 +1369,10 @@ export default function AirdropPage() {
                                 </Button>
                             </div>
 
-                            <div className="overflow-y-auto max-h-96 w-full mt-6">
+                            <div
+                                ref={tableRef}
+                                className="scrollable-menu-2 max-h-96 w-full mt-6"
+                            >
                                 <table className="w-full">
                                     <thead className="pixel-caps bg-white sticky top-0 z-20">
                                         <tr className="table-header">
@@ -1391,9 +1392,9 @@ export default function AirdropPage() {
                                     </thead>
                                     <tbody className="overflow-x-auto">
                                         {leaderboardsResult &&
-                                            leaderboardsResult?.map(
+                                            leaderboardsResult?.data?.map(
                                                 (
-                                                    sortedLeaderboardData: DataObject,
+                                                    sortedLeaderboardData: any,
                                                     index: number
                                                 ) => (
                                                     <tr
@@ -1401,7 +1402,10 @@ export default function AirdropPage() {
                                                         className="table-row text-center border-black border-b-2 border-dashed"
                                                     >
                                                         <td className="py-4 px-2 whitespace-nowrap text-sm md:text-base">
-                                                            {index + 1}
+                                                            {(currentPage - 1) *
+                                                                25 +
+                                                                index +
+                                                                1}
                                                         </td>
                                                         <td className="py-4 px-2 whitespace-nowrap hidden md:table-cell">
                                                             <div className="flex justify-center">
@@ -1438,6 +1442,28 @@ export default function AirdropPage() {
                                     </tbody>
                                 </table>
                             </div>
+                            <Pagination
+                                className="bg-[#149309] rounded-[16px]"
+                                showSizeChanger={false}
+                                defaultCurrent={1}
+                                total={
+                                    leaderboardsResult?.meta?.pagination
+                                        ?.total ?? 0
+                                }
+                                pageSize={
+                                    leaderboardsResult?.meta?.pagination
+                                        ?.pageSize ?? 0
+                                }
+                                onChange={(page) => {
+                                    setCurrentPage(page);
+                                    if (tableRef) {
+                                        tableRef.current?.scrollTo({
+                                            top: 0,
+                                            behavior: "smooth",
+                                        });
+                                    }
+                                }}
+                            />
                         </>
                     )}
                 </div>
