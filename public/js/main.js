@@ -383,6 +383,7 @@ function playerDead() {
     const result = {
         data: {
             score: score,
+            twitter_account: strapi_twitter_id,
         },
     };
     fetch(`${publicAxiosApi}/api/flappy-games/${game_id}?populate=*`, {
