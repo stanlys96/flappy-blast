@@ -217,14 +217,18 @@ function gameloop() {
 
 		//have we gotten inside the pipe yet?
 		if (boxright > pipeleft) {
-			//we're within the pipe, have we passed between upper and lower pipes?
-			if (boxtop > pipetop && boxbottom < pipebottom) {
-				//yeah! we're within bounds
-			} else {
-				//no! we touched the pipe
+			if (boxtop > pipetop || boxbottom < pipebottom) {
 				playerDead();
 				return;
 			}
+			// //we're within the pipe, have we passed between upper and lower pipes?
+			// if (boxtop > pipetop && boxbottom < pipebottom) {
+			// 	//yeah! we're within bounds
+			// } else {
+			// 	//no! we touched the pipe
+			// 	playerDead();
+			// 	return;
+			// }
 		}
 
 		// Have we passed the imminent danger?
