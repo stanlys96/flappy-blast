@@ -14,6 +14,7 @@ import { zIndex } from "html2canvas/dist/types/css/property-descriptors/z-index"
 
 export default function HomePage() {
     const router = useRouter();
+    console.log(router.query, "<< QUERY");
     const [text, setText] = useState("Guaranteed Floor Price");
     const [text2, setText2] = useState(
         <div className="flex flex-col gap-1">
