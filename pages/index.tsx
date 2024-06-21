@@ -309,15 +309,13 @@ export default function HomePage() {
         }
     }, [receiptResult?.data, transactionHash]);
 
-    const disableBtn = true;
-
-    // const disableBtn =
-    //     parseFloat(flapAmount ?? "0") === 0 ||
-    //     !flapAmount ||
-    //     parseFloat(flapAmount) > parseFloat(data?.formatted ?? "0") ||
-    //     parseFloat(flapAmount) < 0.003 ||
-    //     parseFloat(flapAmount) > 3;
-    // chain?.name !== "Blast";
+    const disableBtn =
+        parseFloat(flapAmount ?? "0") === 0 ||
+        !flapAmount ||
+        parseFloat(flapAmount) > parseFloat(data?.formatted ?? "0") ||
+        parseFloat(flapAmount) < 0.003 ||
+        parseFloat(flapAmount) > 3 ||
+        chain?.name !== "Blast";
 
     useEffect(() => {
         if (!currentTwitterData?.attributes?.wallet_address && address) {
