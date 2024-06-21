@@ -562,11 +562,9 @@ export default function AirdropPage() {
                 <div className="bg-white px-6 justify-center items-center md:px-12 py-6 md:py-12 rounded-[22px] mt-[30px] w-full flex flex-col gap-y-[15px] w-[1000px]">
                     {currentState === "airdropends" && (
                         <div className="flex gap-x-[10px] h-[20vh] items-center">
-                            <p className="font-bold text-black md:text-[16px] text-[12px]">
-                                <span>
-                                    Airdrop has ended. Snapshot will be released
-                                    soon.
-                                </span>
+                            <p className="font-bold text-black md:text-[16px] text-[12px] text-center">
+                                Airdrop has ended. Snapshot will be released
+                                soon.
                                 <br></br>
                             </p>
                             {/* <div className="p-[5px] rounded-[6px] bg-[#FF6666]">
