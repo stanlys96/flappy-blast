@@ -50,7 +50,7 @@ export default function ReferralPage() {
     const [currentPage, setCurrentPage] = useState(1);
 
     const { data: leaderboardsData } = useSWR(
-        `/api/twitter-accounts?filters[high_score][$notNull]=true&filters[high_score][$gt]=0&sort=high_score:desc&pagination[page]=${currentPage}&pagination[pageSize]=25`,
+        `/api/twitter-accounts?filters[presale_points][$notNull]=true&filters[presale_points][$gt]=0&sort=presale_points:desc&pagination[page]=${currentPage}&pagination[pageSize]=25`,
         fetcherStrapi
     );
 
@@ -92,10 +92,11 @@ export default function ReferralPage() {
 
     const { data: twitterData, mutate: twitterMutate } = useSWR(
         // @ts-ignore
-        `/api/twitter-accounts?filters[twitter_id][$eq]=${session?.user.id}`,
+        `/api/twitter-accounts?filters[twitter_id][$eq]=${session?.user.id}&populate=*`,
         fetcherStrapi
     );
     const currentTwitterData = twitterData?.data?.data?.[0];
+    console.log(currentTwitterData, "<<< WALAO");
     const { open } = useWeb3Modal();
 
     useEffect(() => {
@@ -180,7 +181,7 @@ export default function ReferralPage() {
                                         </Button>
                                     </Popover>
                                 )}
-                                {/* <div
+                                <div
                                     onClick={() =>
                                         setCurrentState("leaderboard")
                                     }
@@ -189,7 +190,7 @@ export default function ReferralPage() {
                                     <p className="font-bold md:text-[16px] text-[12px]">
                                         Leaderboards
                                     </p>
-                                </div> */}
+                                </div>
                             </div>
                             <div className="md:flex-row flex-col bg-[#B7CC5B] rounded-[8px] p-[24px] w-full flex gap-x-[20px] items-center">
                                 <MarioHole className="md:w-[151px] md:h-[164px] w-[100px] h-[100px]" />
@@ -278,7 +279,9 @@ export default function ReferralPage() {
                                         </div>
                                     </div>
                                     <p className="md:text-[16px] text-[12px] md:text-left text-center font-bold">
-                                        Your score: 0
+                                        Your score:{" "}
+                                        {currentTwitterData?.attributes
+                                            ?.presale_points ?? "0"}
                                     </p>
                                     <p className="md:text-[16px] text-[12px] md:text-left text-center">
                                         You referred: 0 friends
@@ -390,7 +393,7 @@ export default function ReferralPage() {
                                                             {
                                                                 sortedLeaderboardData
                                                                     ?.attributes
-                                                                    ?.high_score
+                                                                    ?.presale_points
                                                             }
                                                         </td>
                                                     </tr>

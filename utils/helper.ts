@@ -155,3 +155,30 @@ export const filterAndSortByHighScore = (data: DataObject[]): DataObject[] => {
 
     return sortedData;
 };
+
+export function stringToBytes32(str: string) {
+    if (!str) {
+        return "0x7878787878787878787878780000000000000000000000000000000000000000";
+    }
+    // Convert the string to a byte array
+    let utf8 = new TextEncoder().encode(str);
+
+    // Ensure the byte array is exactly 32 bytes long
+    if (utf8.length > 32) {
+        throw new Error("String is too long to convert to bytes32");
+    }
+
+    // Create a 32-byte array filled with zeros
+    let bytes32 = new Uint8Array(32);
+
+    // Copy the utf8 byte array into the 32-byte array
+    bytes32.set(utf8);
+
+    // Convert the byte array to a hexadecimal string
+    return (
+        "0x" +
+        Array.from(bytes32)
+            .map((byte) => byte.toString(16).padStart(2, "0"))
+            .join("")
+    );
+}
