@@ -313,7 +313,7 @@ export default function HomePage() {
         parseFloat(flapAmount ?? "0") === 0 ||
         !flapAmount ||
         parseFloat(flapAmount) > parseFloat(data?.formatted ?? "0") ||
-        parseFloat(flapAmount) < 0.003 ||
+        parseFloat(flapAmount) < 0.03 ||
         parseFloat(flapAmount) > 3 ||
         chain?.name !== "Blast";
 
@@ -583,7 +583,7 @@ export default function HomePage() {
                                                 ETH
                                             </p>
                                             <p className="text-md mt-2">
-                                                Min: 0.003 ETH, Max: 3 ETH
+                                                Min: 0.03 ETH, Max: 3 ETH
                                             </p>
                                         </div>
                                         {/* button enabled */}
