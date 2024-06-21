@@ -117,10 +117,10 @@ export default function HomePage() {
     const [transactionHash, setTransactionHash] = useState("");
     const { data, error, isLoading, refetch } = useBalance({
         address,
+        blockTag: "latest",
         chainId: blast.id,
-        blockTag: "finalized",
         query: {
-            refetchInterval: 1,
+            refetchInterval: 100,
         },
     });
 
