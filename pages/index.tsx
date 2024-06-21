@@ -923,7 +923,15 @@ export default function HomePage() {
                                                 : "text-[28px] text-[#FCFC03] border-[#FCFC03]"
                                         } cursor-pointer h-full m-auto p-[14px] border border-[9px] flex items-center justify-center`}
                                     >
-                                        <p className={`text-center font-bold`}>
+                                        <p
+                                            className={`text-center font-bold ${
+                                                data?.textHovered
+                                                    ?.toLowerCase()
+                                                    ?.includes(
+                                                        "all eth raised goes to"
+                                                    ) && "text-[18px]"
+                                            }`}
+                                        >
                                             {data.isHovered
                                                 ? data.textHovered
                                                 : data.currentText}
