@@ -245,7 +245,7 @@ export default function HomePage() {
         setIsHovered4(false);
     };
 
-    const endTime = new Date("2024-06-21T13:00:00Z"); // Set your fixed end time here
+    const endTime = new Date("2024-06-23T13:00:00Z"); // Set your fixed end time here
 
     const calculateTimeLeft = () => {
         const now = new Date();
@@ -367,7 +367,7 @@ export default function HomePage() {
                         </div>
                         <div className="flex gap-4 w-fit flex-col md:flex-row text-lg">
                             <div className="px-6 py-2 w-fit mx-auto bg-white border-4 border-black font-bold text-center">
-                                Presale starts in:{" "}
+                                Presale ends in:{" "}
                                 {timeLeft?.hours?.toString().padStart(2, "0")}:
                                 {timeLeft?.minutes?.toString().padStart(2, "0")}
                                 :
