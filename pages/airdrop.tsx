@@ -52,8 +52,8 @@ export default function AirdropPage() {
     const { address, chain, isConnected } = useAccount();
     const [isClientMobile, setIsClientMobile] = useState(false);
     const [currentState, setCurrentState] = useState<
-        "index" | "flap" | "leaderboard" | "partnership"
-    >("index");
+        "index" | "flap" | "leaderboard" | "partnership" | "airdropends"
+    >("airdropends");
     const { chains, switchChain } = useSwitchChain();
     const { disconnect } = useDisconnect();
     const { data: ensName } = useEnsName({ address });
@@ -560,6 +560,20 @@ export default function AirdropPage() {
                 className="flex justify-center items-center w-[90%] md:w-[60%] z-150 mx-auto relative h-[100vh]"
             >
                 <div className="bg-white px-6 justify-center items-center md:px-12 py-6 md:py-12 rounded-[22px] mt-[30px] w-full flex flex-col gap-y-[15px] w-[1000px]">
+                    {currentState === "airdropends" && (
+                        <div className="flex gap-x-[10px] h-[20vh] items-center">
+                            <p className="font-bold text-black md:text-[16px] text-[12px]">
+                                <span>
+                                    Airdrop has ended. Snapshot will be released
+                                    soon.
+                                </span>
+                                <br></br>
+                            </p>
+                            {/* <div className="p-[5px] rounded-[6px] bg-[#FF6666]">
+										<p className="text-[#560000] md:text-[12px] text-[10px]">REQUIRED</p>
+									</div> */}
+                        </div>
+                    )}
                     {currentState === "index" && (
                         <div>
                             <div className="flex flex-col items-center md:items-start gap-y-[20px]">

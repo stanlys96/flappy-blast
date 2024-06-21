@@ -63,24 +63,6 @@ $(document).ready(function () {
     publicAxiosApi = window.NEXT_PUBLIC_AXIOS_API;
     var twitter_id = getCookie("twitter_id");
     //get the highscore
-    fetch(
-        `${publicAxiosApi}/api/twitter-accounts?filters[twitter_id][$eq]=${twitter_id}`,
-        {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: publicToken,
-            },
-        }
-    )
-        .then(async (response) => {
-            const result = await response.json();
-            const theData = result?.data?.[0];
-            highscore = theData?.attributes?.high_score ?? 0;
-        })
-        .catch((err) => {
-            console.log(err, "<<< err");
-        });
 
     //start with the splash screen
     showSplash();
@@ -129,21 +111,6 @@ function startGame() {
             twitter_account: strapi_twitter_id,
         },
     };
-    fetch(`${publicAxiosApi}/api/flappy-games`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: publicToken,
-        },
-        body: JSON.stringify(result),
-    })
-        .then(async (res) => {
-            const result = await res.json();
-            game_id = result.data.id;
-        })
-        .catch((err) => {
-            console.log(err);
-        });
     currentstate = states.GameScreen;
 
     //fade out the splash
@@ -386,73 +353,6 @@ function playerDead() {
             twitter_account: strapi_twitter_id,
         },
     };
-    fetch(`${publicAxiosApi}/api/flappy-games/${game_id}?populate=*`, {
-        method: "PUT",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: publicToken,
-        },
-        body: JSON.stringify(result),
-    })
-        .then(async (response) => {
-            const result = await response.json();
-            if (score >= 100) {
-                fetch(`${publicAxiosApi}/api/one-hundred-points`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: publicToken,
-                    },
-                    body: JSON.stringify({
-                        data: {
-                            score,
-                            flappy_game: result?.data?.id,
-                            twitter_account: strapi_twitter_id,
-                        },
-                    }),
-                });
-            }
-        })
-        .catch((err) => {
-            console.log(err);
-        });
-    fetch(
-        `${publicAxiosApi}/api/twitter-accounts?filters[twitter_id][$eq]=${twitter_id}`,
-        {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: publicToken,
-            },
-        }
-    )
-        .then(async (response) => {
-            const result = await response.json();
-            const theData = result?.data?.[0];
-            if (theData) {
-                if (
-                    !theData.attributes.high_score ||
-                    parseInt(theData.attributes.high_score) < score
-                ) {
-                    fetch(
-                        `${publicAxiosApi}/api/twitter-accounts/${theData.id}`,
-                        {
-                            method: "PUT",
-                            headers: {
-                                "Content-Type": "application/json",
-                                Authorization: publicToken,
-                            },
-                            body: JSON.stringify({
-                                data: { high_score: score },
-                            }),
-                        }
-                    );
-                }
-            }
-        })
-        .catch((err) => {
-            console.log(err);
-        });
     //stop animating everything!
     $(".animated").css("animation-play-state", "paused");
     $(".animated").css("-webkit-animation-play-state", "paused");
