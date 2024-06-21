@@ -1,7 +1,7 @@
 import "../styles/globals.css";
 import { AppProps } from "next/app";
 import { WagmiProvider } from "wagmi";
-import { blast } from "wagmi/chains";
+import { arbitrum, blast, sepolia } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createWeb3Modal } from "@web3modal/wagmi/react";
 import { defaultWagmiConfig } from "@web3modal/wagmi";

@@ -24,6 +24,11 @@
     src: url("../public/fonts/kongtext.ttf");
 }
 
+@font-face {
+    font-family: "Botsmatic";
+    src: url("../public/fonts/BotsmaticRegularDemo.ttf");
+}
+
 :root {
     --foreground-rgb: 0, 0, 0;
     --background-start-rgb: 214, 219, 220;
@@ -79,6 +84,12 @@ body {
     place-items: center;
     /* -webkit-text-stroke-width: 0.75px;
 	-webkit-text-stroke-color: black; */
+}
+
+.botsmatic {
+    font-family: "Botsmatic";
+    text-shadow: 6px 0 #fff, -6px 0 #fff, 0 6px #fff, 0 -6px #fff, 3px 3px #fff,
+        -3px -3px #fff, 3px -3px #fff, -3px 3px #fff;
 }
 
 .flappy-birdy {
