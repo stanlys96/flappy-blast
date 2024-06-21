@@ -36,6 +36,19 @@ import useSWR from "swr";
 import { fetcherStrapi } from "@/utils/axios";
 import copy from "clipboard-copy";
 import React from "react";
+import Swal from "sweetalert2";
+
+const Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+        toast.onmouseenter = Swal.stopTimer;
+        toast.onmouseleave = Swal.resumeTimer;
+    },
+});
 
 type NotificationPlacement = NotificationArgsProps["placement"];
 
@@ -63,22 +76,21 @@ export default function PresalePage() {
         isSuccess,
     } = useWriteContract();
 
-    const openNotification = (placement: NotificationPlacement) => {
-        api.info({
-            message: `Notification ${placement}`,
-            description: (
-                <Context.Consumer>
-                    {({ name }) => `Hello, ${name}!`}
-                </Context.Consumer>
-            ),
-            placement,
-        });
-    };
-
     const { chains, switchChain } = useSwitchChain();
     const { open } = useWeb3Modal();
     const [refferalRadioValue, setRefferalRadioValue] = useState("flappyblast");
+    const [currentReferralUrl, setCurrentReferralUrl] = useState<
+        | "https://www.flappyblast.com/?ref="
+        | "https://app.bladeswap.xyz/meme-world/flap?mref="
+    >("https://www.flappyblast.com/?ref=");
     const onRefferalChange = (e: RadioChangeEvent) => {
+        if (e.target.value === "flappyblast") {
+            setCurrentReferralUrl("https://www.flappyblast.com/?ref=");
+        } else {
+            setCurrentReferralUrl(
+                "https://app.bladeswap.xyz/meme-world/flap?mref="
+            );
+        }
         setRefferalRadioValue(e.target.value);
     };
     const [transactionHash, setTransactionHash] = useState("");
@@ -95,16 +107,40 @@ export default function PresalePage() {
         // @ts-ignore
         hash: hash,
     });
-    console.log(transactionHash, "<< HASH");
-    console.log(receiptResult, "<< WALO");
+    const endTime = new Date("2024-06-21T13:00:00Z"); // Set your fixed end time here
+
+    const calculateTimeLeft = () => {
+        const now = new Date();
+        const difference = (endTime as any) - (now as any);
+
+        let timeLeft = {};
+
+        if (difference > 0) {
+            timeLeft = {
+                hours: Math.floor(difference / (1000 * 60 * 60)), // Total hours
+                minutes: Math.floor((difference / 1000 / 60) % 60),
+                seconds: Math.floor((difference / 1000) % 60),
+            };
+        }
+
+        return timeLeft;
+    };
+
+    const [timeLeft, setTimeLeft] = useState<any>(calculateTimeLeft());
 
     const handleCopy = async (text: string) => {
         try {
             copy(text);
-            openNotification("topRight");
+            Toast.fire({
+                icon: "success",
+                title: "Copied successfully!",
+            });
         } catch (error) {
             console.error("Failed to copy:", error);
-            openNotification("topRight");
+            Toast.fire({
+                icon: "error",
+                title: "Signed in successfully",
+            });
         }
     };
 
@@ -124,7 +160,16 @@ export default function PresalePage() {
     const disableBtn =
         parseFloat(flapAmount ?? "0") === 0 ||
         !flapAmount ||
-        parseFloat(flapAmount) > parseFloat(data?.formatted ?? "0");
+        parseFloat(flapAmount) > parseFloat(data?.formatted ?? "0") ||
+        chain?.name !== "Blast";
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setTimeLeft(calculateTimeLeft());
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, []);
 
     useEffect(() => {
         if (!receiptResult?.data && transactionHash) {
@@ -159,16 +204,24 @@ export default function PresalePage() {
                                 alt="blade"
                                 src="/images/blade.png"
                             />
-                            <div className="text-lg flex justify-center items-center border-2 border-[#FCFC03] text-[#FCFC03] px-4">
+                            <a
+                                href="https://app.bladeswap.xyz/meme-world/flap"
+                                target="_blank"
+                                className="cursor-pointer bg-black text-lg flex justify-center items-center border-2 border-[#FCFC03] text-[#FCFC03] px-4"
+                            >
                                 Buy on Bladeswap
-                            </div>
+                            </a>
                         </div>
                         <div className="flex gap-4 w-fit flex-col md:flex-row text-lg">
                             <div className="px-6 py-2 w-fit mx-auto bg-white border-4 border-black font-bold text-center">
-                                Presale ends in: 00:00:00
+                                Presale starts in:{" "}
+                                {timeLeft?.hours?.toString().padStart(2, "0")}:
+                                {timeLeft?.minutes?.toString().padStart(2, "0")}
+                                :
+                                {timeLeft?.seconds?.toString().padStart(2, "0")}
                             </div>
                             <div className="p-2 bg-white w-fit mx-auto border-4 border-black font-bold text-center">
-                                Total Raised: 100 ETH / 150 ETH
+                                Total Raised: 0 ETH / 150 ETH
                             </div>
                         </div>
                         <div className="flex gap-4 flex-col md:flex-row w-[80vw] md:w-fit">
@@ -486,10 +539,10 @@ export default function PresalePage() {
                                             </Radio>
                                         </Radio.Group>
                                     </div>
-                                    <div className="bg-white border-4 border-black flex flex-wrap md:flex-nowrap justify-between py-2 pl-4 pr-2 items-center">
+                                    <div className="bg-white border-4 border-black flex flex-wrap md:flex-nowrap justify-between py-2 pl-4 pr-2 items-center gap-x-2">
                                         <div className="flex mb-2 md:mb-0">
                                             <p className="text-ellipsis text-[9px] md:text-[10px] md:text-left text-center">
-                                                https://www.flappyblast.com/?ref=
+                                                {currentReferralUrl}
                                                 {
                                                     currentTwitterData
                                                         ?.attributes
@@ -506,7 +559,7 @@ export default function PresalePage() {
                                                 className="w-fit font-bold"
                                                 onClick={() => {
                                                     handleCopy(
-                                                        `https://www.flappyblast.com/?ref=${currentTwitterData?.attributes?.referral_code}`
+                                                        `${currentReferralUrl}${currentTwitterData?.attributes?.referral_code}`
                                                     );
                                                 }}
                                             >

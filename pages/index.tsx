@@ -3,18 +3,55 @@ import Image from "next/image";
 import { FlappyCoinSvg } from "@/src/components/FlappyCoinSvg";
 import { BladeSvg } from "@/src/components/BladeSvg";
 import { HeroLayout } from "@/src/layouts/HeroLayout";
-import { Carousel } from "antd";
+import {
+    Button,
+    Carousel,
+    Divider,
+    Popover,
+    Radio,
+    RadioChangeEvent,
+    Spin,
+} from "antd";
 import { CarouselData } from "@/src/helper/helper";
 import { GroundLargeSvg } from "@/src/components/GroundLargeSvg";
 import { GroundSvg } from "@/src/components/GroundSvg";
 import { GroundMobileSvg } from "@/src/components/GroundMobileSvg";
 import { GroundCarouselSvg } from "@/src/components/GroundCarouselSvg";
 import { useRouter } from "next/router";
-import { zIndex } from "html2canvas/dist/types/css/property-descriptors/z-index";
+import {
+    useAccount,
+    useBalance,
+    useDisconnect,
+    useEnsAvatar,
+    useEnsName,
+    useWaitForTransactionReceipt,
+    useWriteContract,
+} from "wagmi";
+import { ExportOutlined } from "@ant-design/icons";
+import { useSwitchChain } from "wagmi";
+import { useWeb3Modal } from "@web3modal/wagmi/react";
+import useSWR from "swr";
+import { fetcherStrapi } from "@/utils/axios";
+import Swal from "sweetalert2";
+import { blast, sepolia } from "viem/chains";
+import copy from "clipboard-copy";
+import CurrencyInput from "react-currency-input-field";
+import contractAbi from "../src/helper/contractAbi.json";
+import { parseEther } from "ethers";
+import { signIn, signOut, useSession } from "next-auth/react";
+
+const Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+});
 
 export default function HomePage() {
     const router = useRouter();
-    console.log(router.query, "<< QUERY");
+
+    const { data: session, status } = useSession();
     const [text, setText] = useState("Guaranteed Floor Price");
     const [text2, setText2] = useState(
         <div className="flex flex-col gap-1">
@@ -23,6 +60,39 @@ export default function HomePage() {
             <div className="text-sm">IC: 0,03-3 ETH</div>
         </div>
     );
+    const { address, chain, isConnecting } = useAccount();
+    const { disconnect } = useDisconnect();
+    const { data: ensName } = useEnsName({
+        address,
+    });
+    const { data: twitterData, mutate: twitterMutate } = useSWR(
+        // @ts-ignore
+        `/api/twitter-accounts?filters[twitter_id][$eq]=${session?.user.id}`,
+        fetcherStrapi
+    );
+
+    const currentTwitterData = twitterData?.data?.data?.[0];
+    const ensAvatar = useEnsAvatar({
+        name: ensName ?? "",
+    });
+    const { chains, switchChain } = useSwitchChain();
+    const { open } = useWeb3Modal();
+    const [refferalRadioValue, setRefferalRadioValue] = useState<
+        "flappyblast" | "bladeswap"
+    >("flappyblast");
+    const [currentReferralUrl, setCurrentReferralUrl] = useState<
+        | "https://www.flappyblast.com/?ref="
+        | "https://app.bladeswap.xyz/meme-world/flap?mref="
+    >("https://www.flappyblast.com/?ref=");
+    const {
+        writeContract,
+        data: hash,
+        isPending,
+        writeContractAsync,
+        isSuccess,
+    } = useWriteContract();
+    const [flapAmount, setFlapAmount] = useState("0");
+    const [waitingForReceipt, setWaitingForReceipt] = useState(false);
     const [text3, setText3] = useState("Infinity and beyond");
     const [text4, setText4] = useState("Optimized for jackpot");
     const [isHovered, setIsHovered] = useState(false);
@@ -32,6 +102,48 @@ export default function HomePage() {
     const [totalCarouselData, setTotalCarouselData] = useState(CarouselData);
     const [totalCarousel, setTotalCarousel] = useState([0, 1, 2, 3]);
     const [domLoaded, setDomLoaded] = useState(false);
+
+    const onRefferalChange = (e: RadioChangeEvent) => {
+        if (e.target.value === "flappyblast") {
+            setCurrentReferralUrl("https://www.flappyblast.com/?ref=");
+        } else {
+            setCurrentReferralUrl(
+                "https://app.bladeswap.xyz/meme-world/flap?mref="
+            );
+        }
+        setRefferalRadioValue(e.target.value);
+    };
+
+    const [transactionHash, setTransactionHash] = useState("");
+    const { data, error, isLoading, refetch } = useBalance({
+        address,
+        chainId: sepolia.id,
+        blockTag: "finalized",
+        query: {
+            refetchInterval: 1,
+        },
+    });
+
+    const receiptResult = useWaitForTransactionReceipt({
+        // @ts-ignore
+        hash: hash,
+    });
+
+    const handleCopy = async (text: string) => {
+        try {
+            copy(text);
+            Toast.fire({
+                icon: "success",
+                title: "Copied successfully!",
+            });
+        } catch (error) {
+            console.error("Failed to copy:", error);
+            Toast.fire({
+                icon: "error",
+                title: "Signed in successfully",
+            });
+        }
+    };
 
     const handleMouseEnter = () => {
         setText(
@@ -134,62 +246,467 @@ export default function HomePage() {
     const maxWidth = useScreenWidth();
 
     useEffect(() => {
+        if (!receiptResult?.data && transactionHash) {
+            setWaitingForReceipt(true);
+        }
+        if (receiptResult?.data) {
+            setWaitingForReceipt(false);
+            setTransactionHash("");
+        }
+    }, [receiptResult?.data, transactionHash]);
+
+    const disableBtn = true;
+
+    // const disableBtn =
+    //     parseFloat(flapAmount ?? "0") === 0 ||
+    //     !flapAmount ||
+    //     parseFloat(flapAmount) > parseFloat(data?.formatted ?? "0") ||
+    //     chain?.name !== "Blast";
+
+    useEffect(() => {
         setDomLoaded(true);
     }, []);
     if (!domLoaded) return <div></div>;
     return (
         <div className="w-full overflow-hidden">
             <HeroLayout>
-                <div className="flex flex-col h-[100vh] md:h-[95vh] desktop:h-[100vh] large-desktop:h-[80vh] justify-center items-center">
-                    <p className="text-[24px] md:text-left text-center md:text-[2rem] desktop:text-[4rem] large-desktop:text-[5rem] mb-[20px]  text-white">
-                        unruggable meme & infinite
-                    </p>
-                    <div className="md:block hidden flex items-center justify-center">
-                        <Image
-                            className="w-full desktop:w-[750px] large-desktop:w-[954px] md:w-[600px]"
-                            width={954}
-                            height={180}
-                            alt="flappy-blast"
-                            src="/images/flappy-blast.png"
-                        />
-                    </div>
-                    <div className="block md:hidden flex items-center">
-                        <Image
-                            width={400}
-                            height={70}
-                            alt="flappy-blast"
-                            src="/images/flappy-blast.png"
-                        />
-                    </div>
+                <div className="flex py-[40px] w-full min-h-[100vh] justify-center items-start">
                     <div
-                        onClick={() => router.push("/airdrop")}
-                        className="md:block hidden relative mt-[25px] cursor-pointer"
+                        className="flex flex-col items-center gap-4 md:gap-6"
+                        style={{ zIndex: 110, position: "relative" }}
                     >
-                        <Image
-                            width={300}
-                            height={100}
-                            alt="button"
-                            src="/images/button.png"
-                        />
-                    </div>
-                    <div
-                        onClick={() => router.push("/airdrop")}
-                        className="block md:hidden relative mt-[25px] cursor-pointer"
-                    >
-                        <Image
-                            width={150}
-                            height={100}
-                            alt="button"
-                            src="/images/button.png"
-                        />
-                    </div>
-                    <div className="bg-[#FFFFFF] flex justify-center items-center mt-[30px] px-[20px] py-[12px]">
-                        <p className="text-black md:text-[16px] text-[12px]">
-                            airdrop campaign ends in:{" "}
-                            {timeLeft?.hours?.toString().padStart(2, "0")}:
-                            {timeLeft?.minutes?.toString().padStart(2, "0")}:
-                            {timeLeft?.seconds?.toString().padStart(2, "0")}
+                        <p className="botsmatic text-[#389616] text-[1.5rem] md:text-[3rem] mt-[100px]">
+                            FLAPPYBLAST PRESALE
                         </p>
+                        <div className="flex gap-4 justify-center items-stretch flex-col md:flex-row">
+                            <Image
+                                width={250}
+                                height={35}
+                                alt="blade"
+                                src="/images/blade.png"
+                            />
+                            <a
+                                href="https://app.bladeswap.xyz/meme-world/flap"
+                                target="_blank"
+                                className="cursor-pointer bg-black text-lg flex justify-center items-center border-2 border-[#FCFC03] text-[#FCFC03] px-4"
+                            >
+                                Buy on Bladeswap
+                            </a>
+                        </div>
+                        <div className="flex gap-4 w-fit flex-col md:flex-row text-lg">
+                            <div className="px-6 py-2 w-fit mx-auto bg-white border-4 border-black font-bold text-center">
+                                Presale starts in:{" "}
+                                {timeLeft?.hours?.toString().padStart(2, "0")}:
+                                {timeLeft?.minutes?.toString().padStart(2, "0")}
+                                :
+                                {timeLeft?.seconds?.toString().padStart(2, "0")}
+                            </div>
+                            <div className="p-2 bg-white w-fit mx-auto border-4 border-black font-bold text-center">
+                                Total Raised: 0 ETH / 150 ETH
+                            </div>
+                        </div>
+                        <div className="flex gap-4 flex-col md:flex-row w-[80vw] md:w-fit">
+                            <div className="bg-[#ddd894] p-4 rounded-lg">
+                                <div className="flex items-start md:justify-between md:flex-row flex-col gap-y-2 mb-2 md:mb-0">
+                                    <div className="md:text-[1.5rem] text-[1rem] font-bold kong-text">
+                                        Sale
+                                    </div>
+                                    {!address ? (
+                                        <div>
+                                            {isConnecting ? (
+                                                <div>
+                                                    <Spin size="large" />
+                                                </div>
+                                            ) : (
+                                                <Button
+                                                    style={{
+                                                        border: "2px solid",
+                                                        backgroundColor:
+                                                            "#FFFF95",
+                                                    }}
+                                                    className="w-fit text-md font-bold"
+                                                    onClick={() => open()}
+                                                >
+                                                    Connect your wallet
+                                                </Button>
+                                            )}
+                                        </div>
+                                    ) : (
+                                        <div>
+                                            <div
+                                                onClick={() => disconnect()}
+                                                className="px-[8px] bg-[#FFFF95] border border-[2px] py-[4px] border-[#000] flex gap-x-[10px] cursor-pointer items-center w-fit mx-auto"
+                                            >
+                                                {ensAvatar?.data && (
+                                                    <img
+                                                        className="w-[30px] h-[30px] hidden md:block rounded-full"
+                                                        src={
+                                                            ensAvatar?.data ??
+                                                            ""
+                                                        }
+                                                    />
+                                                )}
+                                                <p className="font-bold md:text-[16px] text-[12px]">
+                                                    {address.slice(0, 5) +
+                                                        "..." +
+                                                        address.slice(
+                                                            address.length - 5
+                                                        )}
+                                                </p>
+                                                {ensName && (
+                                                    <p className="font-bold md:text-[16px] text-[12px]">
+                                                        {ensName}
+                                                    </p>
+                                                )}
+                                            </div>
+                                            {chain?.name !== "Blast" && (
+                                                <div className="mt-2 mx-auto">
+                                                    <p className="text-red-500 text-[12px] text-center">
+                                                        *You are not on blast
+                                                    </p>
+                                                    <div className="w-full flex justify-center my-3">
+                                                        <Button
+                                                            type="primary"
+                                                            onClick={() => {
+                                                                switchChain({
+                                                                    chainId:
+                                                                        blast.id,
+                                                                });
+                                                            }}
+                                                            style={{
+                                                                border: "2px solid #000",
+                                                                borderRadius:
+                                                                    "0px",
+                                                                backgroundColor:
+                                                                    "#fff",
+                                                                color: "#000",
+                                                            }}
+                                                            icon={
+                                                                <ExportOutlined
+                                                                    style={{
+                                                                        color: "#000",
+                                                                    }}
+                                                                />
+                                                            }
+                                                            iconPosition={"end"}
+                                                            className="font-bold mx-auto"
+                                                        >
+                                                            Switch to Blast
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                                {/* Presale ongoing */}
+                                <div className="">
+                                    <p className="text-md mb-2">Amount</p>
+                                    <div className="flex justify-between gap-4 flex-col md:flex-row">
+                                        <div>
+                                            <div className="bg-white  border-4 border-black flex justify-between py-1 pl-4 pr-1 items-center">
+                                                <CurrencyInput
+                                                    className="outline-none max-w-[150px]"
+                                                    id="input-example"
+                                                    name="input-name"
+                                                    placeholder="0"
+                                                    disabled={isPending}
+                                                    value={flapAmount}
+                                                    defaultValue={0}
+                                                    decimalsLimit={6}
+                                                    onFocus={undefined}
+                                                    onKeyUp={undefined}
+                                                    onSubmit={undefined}
+                                                    onSubmitCapture={undefined}
+                                                    onChangeCapture={undefined}
+                                                    transformRawValue={(
+                                                        value: any
+                                                    ) => {
+                                                        if (
+                                                            value[
+                                                                value.length - 1
+                                                            ] === ","
+                                                        ) {
+                                                            return value + ".";
+                                                        }
+                                                        return value;
+                                                    }}
+                                                    onValueChange={(
+                                                        value,
+                                                        name
+                                                    ) => {
+                                                        setFlapAmount(
+                                                            value ?? "0"
+                                                        );
+                                                    }}
+                                                />
+                                                <Button
+                                                    style={{
+                                                        border: "0px solid",
+                                                    }}
+                                                    disabled={isPending}
+                                                    className="font-bold"
+                                                    onClick={async () => {
+                                                        setFlapAmount(
+                                                            data?.formatted
+                                                                ?.toString()
+                                                                ?.slice(0, 7) ??
+                                                                "0"
+                                                        );
+                                                    }}
+                                                >
+                                                    MAX
+                                                </Button>
+                                            </div>
+                                            {/* <p className="text-red-500 text-sm mb-2 mt-1">
+													*transaction failed. please try again
+												</p> */}
+                                            <p className="text-md mt-2">
+                                                Balance:{" "}
+                                                {data?.formatted?.slice(0, 7)}{" "}
+                                                ETH
+                                            </p>
+                                        </div>
+                                        {/* button enabled */}
+                                        {isPending || waitingForReceipt ? (
+                                            <div className="w-[150px] justify-center items-center">
+                                                <Spin
+                                                    className="w-[150px]"
+                                                    size={"large"}
+                                                />
+                                            </div>
+                                        ) : (
+                                            <div
+                                                onClick={async () => {
+                                                    if (
+                                                        isPending ||
+                                                        disableBtn ||
+                                                        waitingForReceipt
+                                                    )
+                                                        return;
+                                                    try {
+                                                        const result =
+                                                            await writeContractAsync(
+                                                                {
+                                                                    abi: contractAbi,
+                                                                    address:
+                                                                        "0x47C704F345bfF26E78cFF015E0998f5A19486359",
+                                                                    functionName:
+                                                                        "commit",
+                                                                    args: [
+                                                                        "0x6567507252626459756100000000000000000000000000000000000000000000",
+                                                                    ],
+                                                                    value: parseEther(
+                                                                        flapAmount
+                                                                    ),
+                                                                }
+                                                            );
+                                                        setTransactionHash(
+                                                            result
+                                                        );
+                                                        setWaitingForReceipt(
+                                                            true
+                                                        );
+                                                    } catch (e: any) {
+                                                        console.log(
+                                                            e.message,
+                                                            "<<< E"
+                                                        );
+                                                    }
+                                                }}
+                                                className={`${
+                                                    disableBtn ||
+                                                    waitingForReceipt
+                                                        ? "cursor-not-allowed"
+                                                        : "cursor-pointer"
+                                                }`}
+                                            >
+                                                <Image
+                                                    width={150}
+                                                    height={0}
+                                                    style={{ height: "auto" }}
+                                                    alt="buy-flap"
+                                                    src={`/images/${
+                                                        disableBtn ||
+                                                        waitingForReceipt
+                                                            ? "BuyFlap_Btn_Disabled"
+                                                            : "BuyFlap_Btn"
+                                                    }.png`}
+                                                />
+                                            </div>
+                                        )}
+                                        {/* button disabled */}
+                                        {/* <div>
+                                            <Image
+                                                width={150}
+                                                height={0}
+                                                style={{ height: "auto" }}
+                                                alt="buy-flap"
+                                                src="/images/BuyFlap_Btn_Disabled.png"
+                                            />
+                                        </div> */}
+                                    </div>
+                                </div>
+                                {/* Presale ended */}
+                                {/* <div className="gap-2 py-2 px-4 bg-[#FEF9C0] flex flex-col justify-center items-center">
+										<p className="text-sm whitespace-nowrap">Thank you for your participation</p>
+										<p className="text-xl font-semibold whitespace-nowrap">Presale Ended</p>
+									</div> */}
+                                <Divider rootClassName="mt-2 mb-3" />
+                                <div className="flex justify-between md:flex-row flex-col gap-y-2">
+                                    <div className="text-xl md:text-2xl font-bold kong-text">
+                                        Refferal
+                                    </div>
+                                    <div>
+                                        {!session ? (
+                                            <Button
+                                                style={{
+                                                    border: "2px solid",
+                                                    backgroundColor: "#FFFF95",
+                                                }}
+                                                className="w-fit font-bold"
+                                                onClick={() => {
+                                                    signIn();
+                                                }}
+                                            >
+                                                Login to X
+                                            </Button>
+                                        ) : (
+                                            <Popover
+                                                content={
+                                                    <a
+                                                        className="text-red-500 font-bold"
+                                                        onClick={() =>
+                                                            signOut()
+                                                        }
+                                                    >
+                                                        Logout
+                                                    </a>
+                                                }
+                                                placement="bottomLeft"
+                                                trigger="click"
+                                            >
+                                                <Button
+                                                    style={{
+                                                        border: "2px solid",
+                                                        backgroundColor:
+                                                            "#FFFF95",
+                                                    }}
+                                                    className="w-fit font-bold"
+                                                >
+                                                    <img
+                                                        alt="X"
+                                                        className="w-4 h-4"
+                                                        src="/assets/x-logo-black.png"
+                                                    />
+                                                    {/* @ts-ignore */}
+                                                    <p>@{session.username}</p>
+                                                </Button>
+                                            </Popover>
+                                        )}
+                                    </div>
+                                </div>
+                                <div className="my-4">
+                                    <div className="text-md mb-2">
+                                        <Radio.Group
+                                            onChange={onRefferalChange}
+                                            value={refferalRadioValue}
+                                        >
+                                            <Radio value={"flappyblast"}>
+                                                Flappyblast site
+                                            </Radio>
+                                            <Radio value={"bladeswap"}>
+                                                Bladeswap site
+                                            </Radio>
+                                        </Radio.Group>
+                                    </div>
+                                    <div className="bg-white border-4 border-black flex flex-wrap md:flex-nowrap justify-between py-2 pl-4 pr-2 items-center gap-x-2">
+                                        <div className="flex mb-2 md:mb-0">
+                                            <p className="text-ellipsis text-[9px] md:text-[10px] md:text-left text-center">
+                                                {currentReferralUrl}
+                                                {
+                                                    currentTwitterData
+                                                        ?.attributes
+                                                        ?.referral_code
+                                                }
+                                            </p>
+                                        </div>
+                                        <div className="flex-1 flex justify-center items-center">
+                                            <Button
+                                                type="primary"
+                                                style={{
+                                                    border: "0px solid",
+                                                }}
+                                                className="w-fit font-bold"
+                                                onClick={() => {
+                                                    handleCopy(
+                                                        `${currentReferralUrl}${currentTwitterData?.attributes?.referral_code}`
+                                                    );
+                                                }}
+                                            >
+                                                copy link
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="bg-[#ddd894] p-4 rounded-lg">
+                                <div className="text-xl md:text-2xl font-bold mb-4 kong-text">
+                                    Sale Info
+                                </div>
+                                <div className="px-6 py-2 mb-4 bg-[#FEF9C0] text-md">
+                                    <p>Total Participation</p>
+                                    <p className="text-md font-bold">
+                                        0.000 ETH
+                                    </p>
+                                </div>
+                                <div className="my-2">
+                                    <p className="text-base">Start Sale</p>
+                                    <p className="text-md font-semibold">
+                                        June 21 2024,00:00 UTC
+                                    </p>
+                                </div>
+                                <div className="my-2">
+                                    <p className="text-base">End of Sale</p>
+                                    <p className="text-md font-bold">
+                                        June 23 2024,00:00 UTC
+                                    </p>
+                                </div>
+                                <div className="flex gap-y-2 gap-x-6 md:gap-6 my-2 flex-wrap">
+                                    <div>
+                                        <p className="text-base whitespace-nowrap">
+                                            Sale Type
+                                        </p>
+                                        <p className="text-md font-semibold whitespace-nowrap">
+                                            Fairlaunch
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p className="text-base whitespace-nowrap">
+                                            Method
+                                        </p>
+                                        <p className="text-md font-semibold whitespace-nowrap">
+                                            Overflow
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p className="text-base whitespace-nowrap">
+                                            Claim Token
+                                        </p>
+                                        <p className="text-md font-semibold whitespace-nowrap">
+                                            via Bladeswap
+                                        </p>
+                                    </div>
+                                </div>
+                                <div>
+                                    <p className="text-base">Hard Cap</p>
+                                    <p className="text-md font-semibold">
+                                        150 ETH
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </HeroLayout>
