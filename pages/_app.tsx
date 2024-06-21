@@ -23,7 +23,7 @@ const metadata = {
 };
 
 const config = defaultWagmiConfig({
-    chains: [blast, arbitrum, sepolia],
+    chains: [blast],
     projectId: PROJECT_ID ?? "",
     metadata,
     enableWalletConnect: true, // Optional - true by default
