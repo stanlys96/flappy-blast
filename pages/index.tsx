@@ -347,7 +347,11 @@ export default function HomePage() {
                         className="flex flex-col items-center gap-4 md:gap-6"
                         style={{ zIndex: 110, position: "relative" }}
                     >
-                        <p className="botsmatic text-[#389616] text-[1.5rem] md:text-[3rem] mt-[100px]">
+                        <p
+                            className={`${
+                                maxWidth < 768 ? "botsmatic-sm" : "botsmatic"
+                            } text-[#389616] text-[1.5rem] md:text-[3rem] mt-[100px]`}
+                        >
                             FLAPPYBLAST PRESALE
                         </p>
                         <div className="flex gap-4 justify-center items-stretch flex-col md:flex-row">
@@ -373,7 +377,7 @@ export default function HomePage() {
                                 :
                                 {timeLeft?.seconds?.toString().padStart(2, "0")}
                             </div>
-                            <div className="p-2 bg-white w-fit mx-auto border-4 border-black font-bold text-center">
+                            <div className="p-2 mx-4 bg-white w-fit mx-auto border-4 border-black font-bold text-center">
                                 Total Raised:{" "}
                                 {totalCommitmentsResult
                                     ?.toString()

@@ -92,6 +92,12 @@ body {
         -3px -3px #fff, 3px -3px #fff, -3px 3px #fff;
 }
 
+.botsmatic-sm {
+    font-family: "Botsmatic";
+    text-shadow: 3px 0 #fff, -3px 0 #fff, 0 3px #fff, 0 -3px #fff, 1px 1px #fff,
+        -1px -1px #fff, 1px -1px #fff, -1px 1px #fff;
+}
+
 .flappy-birdy {
     font-family: "FlappyBirdy";
 }
