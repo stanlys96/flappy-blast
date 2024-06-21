@@ -413,9 +413,9 @@ export default function HomePage() {
                                                 content={
                                                     <a
                                                         className="text-red-500 font-bold"
-                                                        onClick={() =>
-                                                            disconnect()
-                                                        }
+                                                        onClick={() => {
+                                                            disconnect();
+                                                        }}
                                                     >
                                                         Logout
                                                     </a>
@@ -447,49 +447,44 @@ export default function HomePage() {
                                                         </p>
                                                     )}
                                                 </div>
-                                                {chain?.name !== "Blast" && (
-                                                    <div className="mt-2 mx-auto">
-                                                        <p className="text-red-500 text-[12px] text-center">
-                                                            *You are not on
-                                                            blast
-                                                        </p>
-                                                        <div className="w-full flex justify-center my-3">
-                                                            <Button
-                                                                type="primary"
-                                                                onClick={() => {
-                                                                    switchChain(
-                                                                        {
-                                                                            chainId:
-                                                                                blast.id,
-                                                                        }
-                                                                    );
-                                                                }}
-                                                                style={{
-                                                                    border: "2px solid #000",
-                                                                    borderRadius:
-                                                                        "0px",
-                                                                    backgroundColor:
-                                                                        "#fff",
-                                                                    color: "#000",
-                                                                }}
-                                                                icon={
-                                                                    <ExportOutlined
-                                                                        style={{
-                                                                            color: "#000",
-                                                                        }}
-                                                                    />
-                                                                }
-                                                                iconPosition={
-                                                                    "end"
-                                                                }
-                                                                className="font-bold mx-auto"
-                                                            >
-                                                                Switch to Blast
-                                                            </Button>
-                                                        </div>
-                                                    </div>
-                                                )}
                                             </Popover>
+                                            {chain?.name !== "Blast" && (
+                                                <div className="mt-2 mx-auto">
+                                                    <p className="text-red-500 text-[12px] text-center">
+                                                        *You are not on blast
+                                                    </p>
+                                                    <div className="w-full flex justify-center my-3">
+                                                        <Button
+                                                            type="primary"
+                                                            onClick={() => {
+                                                                switchChain({
+                                                                    chainId:
+                                                                        blast.id,
+                                                                });
+                                                            }}
+                                                            style={{
+                                                                border: "2px solid #000",
+                                                                borderRadius:
+                                                                    "0px",
+                                                                backgroundColor:
+                                                                    "#fff",
+                                                                color: "#000",
+                                                            }}
+                                                            icon={
+                                                                <ExportOutlined
+                                                                    style={{
+                                                                        color: "#000",
+                                                                    }}
+                                                                />
+                                                            }
+                                                            iconPosition={"end"}
+                                                            className="font-bold mx-auto"
+                                                        >
+                                                            Switch to Blast
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                            )}
                                         </div>
                                     )}
                                 </div>

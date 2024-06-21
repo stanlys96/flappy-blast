@@ -95,7 +95,14 @@ export default function ReferralPage() {
         `/api/twitter-accounts?filters[twitter_id][$eq]=${session?.user.id}&populate=*`,
         fetcherStrapi
     );
+
     const currentTwitterData = twitterData?.data?.data?.[0];
+    const { data: referredPeopleData } = useSWR(
+        `/api/getUniquePresales?id=${currentTwitterData?.id}`,
+        fetcherStrapi
+    );
+
+    const referredPeopleResult = referredPeopleData?.data;
     const { open } = useWeb3Modal();
 
     useEffect(() => {
@@ -125,12 +132,12 @@ export default function ReferralPage() {
         <HeroLayout>
             <div
                 style={{ zIndex: 119 }}
-                className="flex justify-center items-center w-[80%] md:w-[60%] z-150 mx-auto relative h-[125vh] md:h-[100vh]"
+                className="flex justify-center items-center w-[80%] md:w-[60%] z-150 mx-auto relative h-[130vh] md:h-[100vh]"
             >
                 <div className="bg-white px-[15px] justify-center items-center md:px-[60px] py-[20px] rounded-[22px] mt-[30px] w-full flex flex-col gap-y-[15px]">
                     {currentState === "index" && (
                         <div className="flex flex-col gap-y-[15px]">
-                            <div className="flex justify-between items-center w-full">
+                            <div className="flex justify-between items-center w-full flex-col md:flex-row gap-y-3">
                                 {!session ? (
                                     <>
                                         <Button
@@ -283,7 +290,9 @@ export default function ReferralPage() {
                                             ?.presale_points ?? "0"}
                                     </p>
                                     <p className="md:text-[16px] text-[12px] md:text-left text-center">
-                                        You referred: 0 friends
+                                        You referred:{" "}
+                                        {referredPeopleResult?.count ?? "0"}{" "}
+                                        friends
                                     </p>
                                 </div>
                             </div>
