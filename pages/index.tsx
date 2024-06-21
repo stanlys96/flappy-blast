@@ -117,7 +117,7 @@ export default function HomePage() {
     const [transactionHash, setTransactionHash] = useState("");
     const { data, error, isLoading, refetch } = useBalance({
         address,
-        chainId: sepolia.id,
+        chainId: blast.id,
         blockTag: "finalized",
         query: {
             refetchInterval: 1,
