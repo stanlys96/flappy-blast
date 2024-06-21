@@ -1160,7 +1160,7 @@ export default function AirdropPage() {
                                                 </div>
                                                 <div className="flex justify-between">
                                                     <a
-                                                        href="https://twitter.com/intent/retweet?tweet_id=1802996855074370020"
+                                                        href="https://twitter.com/intent/retweet?tweet_id=1803892860984660337"
                                                         onClick={() =>
                                                             handleOpenLink(
                                                                 "retweet"
@@ -1245,7 +1245,7 @@ export default function AirdropPage() {
                                                 </div>
                                                 <div className="flex justify-between">
                                                     <a
-                                                        href="https://twitter.com/intent/like?tweet_id=1802996855074370020"
+                                                        href="https://twitter.com/intent/like?tweet_id=1803892860984660337"
                                                         onClick={() =>
                                                             handleOpenLink(
                                                                 "like"
