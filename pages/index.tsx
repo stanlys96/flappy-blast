@@ -119,7 +119,7 @@ export default function HomePage() {
         chainId: blast.id,
     });
 
-    const userCommitment = useReadContract({
+    const userCommitmentsCall = useReadContract({
         abi: realContractAbi,
         // @ts-ignore
         address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS,
@@ -128,15 +128,25 @@ export default function HomePage() {
         args: [address],
     });
 
-    const totalCommitments = totalCommitmentsCall?.data;
-    const totalCommitmentsResult = ethers.parseEther(
-        totalCommitments?.toString() ?? "0"
-    );
+    const totalCommitmentsResult = totalCommitmentsCall?.data
+        ? ethers
+              .formatUnits(
+                  // @ts-ignore
+                  totalCommitmentsCall?.data,
+                  18
+              )
+              .toString()
+        : "0";
 
-    const userCommitments = userCommitment?.data;
-    const userCommitmentsResult = ethers.parseEther(
-        userCommitments?.toString() ?? "0"
-    );
+    const userCommitmentsResult = userCommitmentsCall?.data
+        ? ethers
+              .formatUnits(
+                  // @ts-ignore
+                  userCommitmentsCall?.data,
+                  18
+              )
+              .toString()
+        : "0";
 
     const onRefferalChange = (e: RadioChangeEvent) => {
         if (e.target.value === "flappyblast") {
@@ -579,7 +589,7 @@ export default function HomePage() {
                                             </p>
                                         </div>
                                         {/* button enabled */}
-                                        <div className="flex justify-center items-center">
+                                        <div className="flex justify-center items-center md:items-start">
                                             {isPending || waitingForReceipt ? (
                                                 <div className="w-[150px] justify-center items-center">
                                                     <Spin
