@@ -26,19 +26,23 @@ import {
     useEnsName,
     useWaitForTransactionReceipt,
     useWriteContract,
+    useReadContract,
 } from "wagmi";
 import { ExportOutlined } from "@ant-design/icons";
 import { useSwitchChain } from "wagmi";
 import { useWeb3Modal } from "@web3modal/wagmi/react";
 import useSWR from "swr";
-import { fetcherStrapi } from "@/utils/axios";
+import { axiosApi, fetcherStrapi } from "@/utils/axios";
 import Swal from "sweetalert2";
-import { blast, sepolia } from "viem/chains";
+import { blast } from "viem/chains";
 import copy from "clipboard-copy";
 import CurrencyInput from "react-currency-input-field";
 import contractAbi from "../src/helper/contractAbi.json";
-import { parseEther } from "ethers";
+import realContractAbi from "../src/helper/realContractAbi.json";
+import { ethers, parseEther } from "ethers";
 import { signIn, signOut, useSession } from "next-auth/react";
+import { stringToBytes32 } from "@/utils/helper";
+import Modal from "antd/es/modal/Modal";
 
 const Toast = Swal.mixin({
     toast: true,
@@ -50,7 +54,7 @@ const Toast = Swal.mixin({
 
 export default function HomePage() {
     const router = useRouter();
-
+    const referralCode = stringToBytes32(router.query.ref?.toString() ?? "");
     const { data: session, status } = useSession();
     const [text, setText] = useState("Guaranteed Floor Price");
     const [text2, setText2] = useState(
@@ -60,6 +64,9 @@ export default function HomePage() {
             <div className="text-sm">IC: 0,03-3 ETH</div>
         </div>
     );
+    const [modalOpen, setModalOpen] = useState(false);
+    const [modalMessage, setModalMessage] = useState("");
+    const [modalTitle, setModalTitle] = useState("");
     const { address, chain, isConnecting } = useAccount();
     const { disconnect } = useDisconnect();
     const { data: ensName } = useEnsName({
@@ -72,6 +79,7 @@ export default function HomePage() {
     );
 
     const currentTwitterData = twitterData?.data?.data?.[0];
+
     const ensAvatar = useEnsAvatar({
         name: ensName ?? "",
     });
@@ -103,6 +111,17 @@ export default function HomePage() {
     const [totalCarousel, setTotalCarousel] = useState([0, 1, 2, 3]);
     const [domLoaded, setDomLoaded] = useState(false);
 
+    const totalCommitmentsCall = useReadContract({
+        abi: realContractAbi,
+        // @ts-ignore
+        address: "0x3c15bbAfD16Bc0688029a0C65c8c38A608B25FFd",
+        functionName: "totalCommitments",
+        chainId: blast.id,
+    });
+    const totalCommitments = totalCommitmentsCall?.data;
+    const totalCommitmentsResult = ethers.parseEther(
+        totalCommitments?.toString() ?? "0"
+    );
     const onRefferalChange = (e: RadioChangeEvent) => {
         if (e.target.value === "flappyblast") {
             setCurrentReferralUrl("https://www.flappyblast.com/?ref=");
@@ -118,7 +137,7 @@ export default function HomePage() {
     const { data, error, isLoading, refetch } = useBalance({
         address,
         blockTag: "latest",
-        chainId: blast.id,
+        // chainId: blast.id,
         query: {
             refetchInterval: 100,
         },
@@ -251,7 +270,16 @@ export default function HomePage() {
         }
         if (receiptResult?.data) {
             setWaitingForReceipt(false);
+            Swal.fire({
+                title: "Success",
+                html: `
+                    <p class="mb-[10px]">Go to the link below to get your transaction confirmation!</p>
+                    <a class="mt-2 underline" target="_blank" href='https://blastscan.io/tx/${receiptResult?.data?.transactionHash}' autofocus>https://blastscan.io/tx/${receiptResult?.data?.transactionHash}</a>
+                `,
+                icon: "success",
+            });
             setTransactionHash("");
+            setFlapAmount("0");
         }
     }, [receiptResult?.data, transactionHash]);
 
@@ -261,7 +289,27 @@ export default function HomePage() {
     //     parseFloat(flapAmount ?? "0") === 0 ||
     //     !flapAmount ||
     //     parseFloat(flapAmount) > parseFloat(data?.formatted ?? "0") ||
-    //     chain?.name !== "Blast";
+    //     parseFloat(flapAmount) < 0.003 ||
+    //     parseFloat(flapAmount) > 3;
+    // chain?.name !== "Blast";
+
+    useEffect(() => {
+        if (!currentTwitterData?.attributes?.wallet_address && address) {
+            axiosApi
+                .put(`/api/twitter-accounts/${currentTwitterData?.id}`, {
+                    data: {
+                        is_wallet: true,
+                        wallet_address: address,
+                    },
+                })
+                .then((response) => {
+                    twitterMutate();
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        }
+    }, [address, currentTwitterData]);
 
     useEffect(() => {
         setDomLoaded(true);
@@ -302,7 +350,11 @@ export default function HomePage() {
                                 {timeLeft?.seconds?.toString().padStart(2, "0")}
                             </div>
                             <div className="p-2 bg-white w-fit mx-auto border-4 border-black font-bold text-center">
-                                Total Raised: 0 ETH / 150 ETH
+                                Total Raised:{" "}
+                                {totalCommitmentsResult
+                                    ?.toString()
+                                    ?.slice(0, 7)}{" "}
+                                ETH / 150 ETH
                             </div>
                         </div>
                         <div className="flex gap-4 flex-col md:flex-row w-[80vw] md:w-fit">
@@ -333,69 +385,87 @@ export default function HomePage() {
                                         </div>
                                     ) : (
                                         <div>
-                                            <div
-                                                onClick={() => disconnect()}
-                                                className="px-[8px] bg-[#FFFF95] border border-[2px] py-[4px] border-[#000] flex gap-x-[10px] cursor-pointer items-center w-fit mx-auto"
-                                            >
-                                                {ensAvatar?.data && (
-                                                    <img
-                                                        className="w-[30px] h-[30px] hidden md:block rounded-full"
-                                                        src={
-                                                            ensAvatar?.data ??
-                                                            ""
+                                            <Popover
+                                                content={
+                                                    <a
+                                                        className="text-red-500 font-bold"
+                                                        onClick={() =>
+                                                            disconnect()
                                                         }
-                                                    />
-                                                )}
-                                                <p className="font-bold md:text-[16px] text-[12px]">
-                                                    {address.slice(0, 5) +
-                                                        "..." +
-                                                        address.slice(
-                                                            address.length - 5
-                                                        )}
-                                                </p>
-                                                {ensName && (
-                                                    <p className="font-bold md:text-[16px] text-[12px]">
-                                                        {ensName}
-                                                    </p>
-                                                )}
-                                            </div>
-                                            {chain?.name !== "Blast" && (
-                                                <div className="mt-2 mx-auto">
-                                                    <p className="text-red-500 text-[12px] text-center">
-                                                        *You are not on blast
-                                                    </p>
-                                                    <div className="w-full flex justify-center my-3">
-                                                        <Button
-                                                            type="primary"
-                                                            onClick={() => {
-                                                                switchChain({
-                                                                    chainId:
-                                                                        blast.id,
-                                                                });
-                                                            }}
-                                                            style={{
-                                                                border: "2px solid #000",
-                                                                borderRadius:
-                                                                    "0px",
-                                                                backgroundColor:
-                                                                    "#fff",
-                                                                color: "#000",
-                                                            }}
-                                                            icon={
-                                                                <ExportOutlined
-                                                                    style={{
-                                                                        color: "#000",
-                                                                    }}
-                                                                />
+                                                    >
+                                                        Logout
+                                                    </a>
+                                                }
+                                                placement="bottomLeft"
+                                                trigger="click"
+                                            >
+                                                <div className="px-[8px] bg-[#FFFF95] border border-[2px] py-[4px] border-[#000] flex gap-x-[10px] cursor-pointer items-center w-fit mx-auto">
+                                                    {ensAvatar?.data && (
+                                                        <img
+                                                            className="w-[30px] h-[30px] hidden md:block rounded-full"
+                                                            src={
+                                                                ensAvatar?.data ??
+                                                                ""
                                                             }
-                                                            iconPosition={"end"}
-                                                            className="font-bold mx-auto"
-                                                        >
-                                                            Switch to Blast
-                                                        </Button>
-                                                    </div>
+                                                        />
+                                                    )}
+                                                    <p className="font-bold md:text-[16px] text-[12px]">
+                                                        {address.slice(0, 5) +
+                                                            "..." +
+                                                            address.slice(
+                                                                address.length -
+                                                                    5
+                                                            )}
+                                                    </p>
+                                                    {ensName && (
+                                                        <p className="font-bold md:text-[16px] text-[12px]">
+                                                            {ensName}
+                                                        </p>
+                                                    )}
                                                 </div>
-                                            )}
+                                                {chain?.name !== "Blast" && (
+                                                    <div className="mt-2 mx-auto">
+                                                        <p className="text-red-500 text-[12px] text-center">
+                                                            *You are not on
+                                                            blast
+                                                        </p>
+                                                        <div className="w-full flex justify-center my-3">
+                                                            <Button
+                                                                type="primary"
+                                                                onClick={() => {
+                                                                    switchChain(
+                                                                        {
+                                                                            chainId:
+                                                                                blast.id,
+                                                                        }
+                                                                    );
+                                                                }}
+                                                                style={{
+                                                                    border: "2px solid #000",
+                                                                    borderRadius:
+                                                                        "0px",
+                                                                    backgroundColor:
+                                                                        "#fff",
+                                                                    color: "#000",
+                                                                }}
+                                                                icon={
+                                                                    <ExportOutlined
+                                                                        style={{
+                                                                            color: "#000",
+                                                                        }}
+                                                                    />
+                                                                }
+                                                                iconPosition={
+                                                                    "end"
+                                                                }
+                                                                className="font-bold mx-auto"
+                                                            >
+                                                                Switch to Blast
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </Popover>
                                         </div>
                                     )}
                                 </div>
@@ -435,9 +505,31 @@ export default function HomePage() {
                                                         value,
                                                         name
                                                     ) => {
-                                                        setFlapAmount(
-                                                            value ?? "0"
-                                                        );
+                                                        try {
+                                                            if (
+                                                                value ===
+                                                                    "0k" ||
+                                                                value === "-" ||
+                                                                value === "-0"
+                                                            ) {
+                                                                return;
+                                                            }
+                                                            if (
+                                                                parseFloat(
+                                                                    value ?? "0"
+                                                                ) < 0
+                                                            ) {
+                                                                setFlapAmount(
+                                                                    "0"
+                                                                );
+                                                            } else {
+                                                                setFlapAmount(
+                                                                    value ?? "0"
+                                                                );
+                                                            }
+                                                        } catch (e) {
+                                                            setFlapAmount("0");
+                                                        }
                                                     }}
                                                 />
                                                 <Button
@@ -466,75 +558,84 @@ export default function HomePage() {
                                                 {data?.formatted?.slice(0, 7)}{" "}
                                                 ETH
                                             </p>
+                                            <p className="text-md mt-2">
+                                                Min: 0.003 ETH, Max: 3 ETH
+                                            </p>
                                         </div>
                                         {/* button enabled */}
-                                        {isPending || waitingForReceipt ? (
-                                            <div className="w-[150px] justify-center items-center">
-                                                <Spin
-                                                    className="w-[150px]"
-                                                    size={"large"}
-                                                />
-                                            </div>
-                                        ) : (
-                                            <div
-                                                onClick={async () => {
-                                                    if (
-                                                        isPending ||
-                                                        disableBtn ||
-                                                        waitingForReceipt
-                                                    )
-                                                        return;
-                                                    try {
-                                                        const result =
-                                                            await writeContractAsync(
-                                                                {
-                                                                    abi: contractAbi,
-                                                                    address:
-                                                                        "0x47C704F345bfF26E78cFF015E0998f5A19486359",
-                                                                    functionName:
-                                                                        "commit",
-                                                                    args: [
-                                                                        "0x6567507252626459756100000000000000000000000000000000000000000000",
-                                                                    ],
-                                                                    value: parseEther(
-                                                                        flapAmount
-                                                                    ),
-                                                                }
+                                        <div className="flex justify-center items-center">
+                                            {isPending || waitingForReceipt ? (
+                                                <div className="w-[150px] justify-center items-center">
+                                                    <Spin
+                                                        className="w-[150px]"
+                                                        size={"large"}
+                                                    />
+                                                </div>
+                                            ) : (
+                                                <div
+                                                    onClick={async () => {
+                                                        if (
+                                                            isPending ||
+                                                            disableBtn ||
+                                                            waitingForReceipt
+                                                        )
+                                                            return;
+                                                        try {
+                                                            const result =
+                                                                await writeContractAsync(
+                                                                    {
+                                                                        abi: realContractAbi,
+                                                                        address:
+                                                                            process
+                                                                                .env
+                                                                                .NEXT_PUBLIC_CONTRACT_ADDRESS as any,
+                                                                        functionName:
+                                                                            "commit",
+                                                                        args: [
+                                                                            referralCode,
+                                                                        ],
+                                                                        value: parseEther(
+                                                                            flapAmount
+                                                                        ),
+                                                                    }
+                                                                );
+                                                            setTransactionHash(
+                                                                result
                                                             );
-                                                        setTransactionHash(
-                                                            result
-                                                        );
-                                                        setWaitingForReceipt(
-                                                            true
-                                                        );
-                                                    } catch (e: any) {
-                                                        console.log(
-                                                            e.message,
-                                                            "<<< E"
-                                                        );
-                                                    }
-                                                }}
-                                                className={`${
-                                                    disableBtn ||
-                                                    waitingForReceipt
-                                                        ? "cursor-not-allowed"
-                                                        : "cursor-pointer"
-                                                }`}
-                                            >
-                                                <Image
-                                                    width={150}
-                                                    height={0}
-                                                    style={{ height: "auto" }}
-                                                    alt="buy-flap"
-                                                    src={`/images/${
+                                                            setWaitingForReceipt(
+                                                                true
+                                                            );
+                                                        } catch (e: any) {
+                                                            console.log(
+                                                                e?.toString(),
+                                                                "<< WALO"
+                                                            );
+                                                        }
+                                                    }}
+                                                    className={`${
                                                         disableBtn ||
                                                         waitingForReceipt
-                                                            ? "BuyFlap_Btn_Disabled"
-                                                            : "BuyFlap_Btn"
-                                                    }.png`}
-                                                />
-                                            </div>
-                                        )}
+                                                            ? "cursor-not-allowed"
+                                                            : "cursor-pointer"
+                                                    }`}
+                                                >
+                                                    <Image
+                                                        width={150}
+                                                        height={0}
+                                                        style={{
+                                                            height: "auto",
+                                                        }}
+                                                        alt="buy-flap"
+                                                        src={`/images/${
+                                                            disableBtn ||
+                                                            waitingForReceipt
+                                                                ? "BuyFlap_Btn_Disabled"
+                                                                : "BuyFlap_Btn"
+                                                        }.png`}
+                                                    />
+                                                </div>
+                                            )}
+                                        </div>
                                         {/* button disabled */}
                                         {/* <div>
                                             <Image
@@ -658,19 +759,22 @@ export default function HomePage() {
                                 <div className="px-6 py-2 mb-4 bg-[#FEF9C0] text-md">
                                     <p>Total Participation</p>
                                     <p className="text-md font-bold">
-                                        0.000 ETH
+                                        {totalCommitmentsResult
+                                            ?.toString()
+                                            ?.slice(0, 7)}{" "}
+                                        ETH
                                     </p>
                                 </div>
                                 <div className="my-2">
                                     <p className="text-base">Start Sale</p>
                                     <p className="text-md font-semibold">
-                                        June 21 2024,00:00 UTC
+                                        June 21 2024,08:00 UTC
                                     </p>
                                 </div>
                                 <div className="my-2">
                                     <p className="text-base">End of Sale</p>
                                     <p className="text-md font-bold">
-                                        June 23 2024,00:00 UTC
+                                        June 23 2024,08:00 UTC
                                     </p>
                                 </div>
                                 <div className="flex gap-y-2 gap-x-6 md:gap-6 my-2 flex-wrap">
@@ -997,6 +1101,28 @@ export default function HomePage() {
                     </div>
                 </div>
             </div>
+            <Modal
+                centered
+                title={
+                    <div
+                        style={{
+                            textAlign: "center",
+                            fontSize: "24px",
+                            fontWeight: "bold",
+                        }}
+                    >
+                        {modalTitle}
+                    </div>
+                }
+                open={modalOpen}
+                onCancel={() => setModalOpen(false)}
+                onClose={() => setModalOpen(false)}
+                onOk={() => setModalOpen(false)}
+                closable // Remove the "X" button
+                // maskClosable={false} // Prevent closing by clicking outside
+            >
+                <p>{modalMessage}</p>
+            </Modal>
         </div>
     );
 }
