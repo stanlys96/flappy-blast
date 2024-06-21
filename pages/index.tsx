@@ -204,7 +204,7 @@ export default function HomePage() {
 
     const handleMouseEnter2 = () => {
         setText2(
-            <div>
+            <div className="text-[16px]">
                 All ETH raised goes to the liquidity pool—no tokens are held by
                 the devs.
             </div>
