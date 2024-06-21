@@ -4,8 +4,15 @@ import { useState, useEffect, useRef } from "react";
 import { useAccount, useDisconnect, useEnsAvatar, useEnsName } from "wagmi";
 import { useWeb3Modal } from "@web3modal/wagmi/react";
 import { signIn, signOut, useSession } from "next-auth/react";
-import { Button, Pagination, Popover, Radio, RadioChangeEvent } from "antd";
-import { fetcherStrapi } from "@/utils/axios";
+import {
+    Button,
+    Pagination,
+    Popover,
+    Radio,
+    RadioChangeEvent,
+    Spin,
+} from "antd";
+import { axiosApi, fetcherStrapi } from "@/utils/axios";
 import useSWR from "swr";
 import copy from "clipboard-copy";
 import Swal from "sweetalert2";
@@ -27,7 +34,7 @@ const Toast = Swal.mixin({
 export default function ReferralPage() {
     const tableRef = useRef(null);
     const { data: session, status } = useSession();
-    const { address } = useAccount();
+    const { address, isConnecting } = useAccount();
     const { disconnect } = useDisconnect();
     const [currentState, setCurrentState] = useState<"index" | "leaderboard">(
         "index"
@@ -90,6 +97,25 @@ export default function ReferralPage() {
     );
     const currentTwitterData = twitterData?.data?.data?.[0];
     const { open } = useWeb3Modal();
+
+    useEffect(() => {
+        if (!currentTwitterData?.attributes?.wallet_address && address) {
+            axiosApi
+                .put(`/api/twitter-accounts/${currentTwitterData?.id}`, {
+                    data: {
+                        is_wallet: true,
+                        wallet_address: address,
+                    },
+                })
+                .then((response) => {
+                    twitterMutate();
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        }
+    }, [address, currentTwitterData]);
+
     useEffect(() => {
         setDomLoaded(true);
     }, []);
@@ -99,7 +125,7 @@ export default function ReferralPage() {
         <HeroLayout>
             <div
                 style={{ zIndex: 119 }}
-                className="flex justify-center items-center w-[80%] md:w-[60%] z-150 mx-auto relative h-[100vh]"
+                className="flex justify-center items-center w-[80%] md:w-[60%] z-150 mx-auto relative h-[125vh] md:h-[100vh]"
             >
                 <div className="bg-white px-[15px] justify-center items-center md:px-[60px] py-[20px] rounded-[22px] mt-[30px] w-full flex flex-col gap-y-[15px]">
                     {currentState === "index" && (
@@ -154,7 +180,7 @@ export default function ReferralPage() {
                                         </Button>
                                     </Popover>
                                 )}
-                                <div
+                                {/* <div
                                     onClick={() =>
                                         setCurrentState("leaderboard")
                                     }
@@ -163,7 +189,7 @@ export default function ReferralPage() {
                                     <p className="font-bold md:text-[16px] text-[12px]">
                                         Leaderboards
                                     </p>
-                                </div>
+                                </div> */}
                             </div>
                             <div className="md:flex-row flex-col bg-[#B7CC5B] rounded-[8px] p-[24px] w-full flex gap-x-[20px] items-center">
                                 <MarioHole className="md:w-[151px] md:h-[164px] w-[100px] h-[100px]" />
@@ -171,18 +197,43 @@ export default function ReferralPage() {
                                     <p className="pixel-caps md:text-[16px] text-[10px] md:text-left text-center md:mt-0 mt-[10px]">
                                         Referral Sale Link
                                     </p>
-                                    <p className="roboto md:text-left text-center">
-                                        Your wallet address:{" "}
-                                        {currentTwitterData?.attributes?.wallet_address?.slice(
-                                            0,
-                                            5
-                                        ) +
-                                            "..." +
-                                            currentTwitterData?.attributes?.wallet_address?.slice(
-                                                currentTwitterData?.attributes
-                                                    ?.wallet_address?.length - 5
+                                    {!currentTwitterData?.attributes
+                                        ?.wallet_address ? (
+                                        <div className="mt-2">
+                                            {isConnecting ? (
+                                                <div>
+                                                    <Spin size="large" />
+                                                </div>
+                                            ) : (
+                                                <Button
+                                                    style={{
+                                                        border: "2px solid",
+                                                        backgroundColor:
+                                                            "#FFFF95",
+                                                    }}
+                                                    className="w-fit text-md font-bold"
+                                                    onClick={() => open()}
+                                                >
+                                                    Connect your wallet
+                                                </Button>
                                             )}
-                                    </p>
+                                        </div>
+                                    ) : (
+                                        <p className="roboto md:text-left text-center">
+                                            Your wallet address:{" "}
+                                            {currentTwitterData?.attributes?.wallet_address?.slice(
+                                                0,
+                                                5
+                                            ) +
+                                                "..." +
+                                                currentTwitterData?.attributes?.wallet_address?.slice(
+                                                    currentTwitterData
+                                                        ?.attributes
+                                                        ?.wallet_address
+                                                        ?.length - 5
+                                                )}
+                                        </p>
+                                    )}
                                     <div className="my-4">
                                         <div className="text-md mb-2">
                                             <Radio.Group

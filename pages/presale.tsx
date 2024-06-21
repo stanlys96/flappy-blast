@@ -37,6 +37,7 @@ import { fetcherStrapi } from "@/utils/axios";
 import copy from "clipboard-copy";
 import React from "react";
 import Swal from "sweetalert2";
+import { useRouter } from "next/router";
 
 const Toast = Swal.mixin({
     toast: true,
@@ -50,11 +51,10 @@ const Toast = Swal.mixin({
     },
 });
 
-type NotificationPlacement = NotificationArgsProps["placement"];
-
 const Context = React.createContext({ name: "Default" });
 
 export default function PresalePage() {
+    const router = useRouter();
     const [api, contextHolder] = notification.useNotification();
     const { address, chain, isConnecting } = useAccount();
     const { disconnect } = useDisconnect();
@@ -162,6 +162,10 @@ export default function PresalePage() {
         !flapAmount ||
         parseFloat(flapAmount) > parseFloat(data?.formatted ?? "0") ||
         chain?.name !== "Blast";
+
+    useEffect(() => {
+        router.push("/");
+    }, []);
 
     useEffect(() => {
         const timer = setInterval(() => {
