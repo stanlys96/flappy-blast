@@ -20,6 +20,7 @@ export type Attributes = {
     wallet_address: string;
     high_score: number;
     referral_code: string;
+    presale_points: number;
 };
 
 export type DataObject = {

@@ -114,14 +114,30 @@ export default function HomePage() {
     const totalCommitmentsCall = useReadContract({
         abi: realContractAbi,
         // @ts-ignore
-        address: "0x3c15bbAfD16Bc0688029a0C65c8c38A608B25FFd",
+        address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS,
         functionName: "totalCommitments",
         chainId: blast.id,
     });
+
+    const userCommitment = useReadContract({
+        abi: realContractAbi,
+        // @ts-ignore
+        address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS,
+        functionName: "commitments",
+        chainId: blast.id,
+        args: [address],
+    });
+
     const totalCommitments = totalCommitmentsCall?.data;
     const totalCommitmentsResult = ethers.parseEther(
         totalCommitments?.toString() ?? "0"
     );
+
+    const userCommitments = userCommitment?.data;
+    const userCommitmentsResult = ethers.parseEther(
+        userCommitments?.toString() ?? "0"
+    );
+
     const onRefferalChange = (e: RadioChangeEvent) => {
         if (e.target.value === "flappyblast") {
             setCurrentReferralUrl("https://www.flappyblast.com/?ref=");
@@ -578,8 +594,26 @@ export default function HomePage() {
                                                             isPending ||
                                                             disableBtn ||
                                                             waitingForReceipt
-                                                        )
+                                                        ) {
                                                             return;
+                                                        }
+                                                        if (
+                                                            parseFloat(
+                                                                flapAmount ??
+                                                                    "0"
+                                                            ) +
+                                                                parseFloat(
+                                                                    userCommitmentsResult?.toString() ??
+                                                                        "0"
+                                                                ) >
+                                                            3
+                                                        ) {
+                                                            return Swal.fire({
+                                                                title: "Maximum commitment exceeded!",
+                                                                text: "You can only buy max 3 ETH",
+                                                                icon: "info",
+                                                            });
+                                                        }
                                                         try {
                                                             const result =
                                                                 await writeContractAsync(
@@ -759,7 +793,7 @@ export default function HomePage() {
                                 <div className="px-6 py-2 mb-4 bg-[#FEF9C0] text-md">
                                     <p>Total Participation</p>
                                     <p className="text-md font-bold">
-                                        {totalCommitmentsResult
+                                        {userCommitmentsResult
                                             ?.toString()
                                             ?.slice(0, 7)}{" "}
                                         ETH

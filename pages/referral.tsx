@@ -96,7 +96,6 @@ export default function ReferralPage() {
         fetcherStrapi
     );
     const currentTwitterData = twitterData?.data?.data?.[0];
-    console.log(currentTwitterData, "<<< WALAO");
     const { open } = useWeb3Modal();
 
     useEffect(() => {
