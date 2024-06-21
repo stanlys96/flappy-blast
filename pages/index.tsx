@@ -810,13 +810,13 @@ export default function HomePage() {
                                 <div className="my-2">
                                     <p className="text-base">Start Sale</p>
                                     <p className="text-md font-semibold">
-                                        June 21 2024,01:00 UTC
+                                        June 21 2024,13:00 UTC
                                     </p>
                                 </div>
                                 <div className="my-2">
                                     <p className="text-base">End of Sale</p>
                                     <p className="text-md font-bold">
-                                        June 23 2024,01:00 UTC
+                                        June 23 2024,13:00 UTC
                                     </p>
                                 </div>
                                 <div className="flex gap-y-2 gap-x-6 md:gap-6 my-2 flex-wrap">
