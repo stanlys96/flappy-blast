@@ -398,11 +398,18 @@ export default function ReferralPage() {
                                                             }
                                                         </td>
                                                         <td className="py-4 px-2 whitespace-nowrap text-sm md:text-base">
-                                                            {
-                                                                sortedLeaderboardData
-                                                                    ?.attributes
-                                                                    ?.presale_points
-                                                            }
+                                                            {sortedLeaderboardData
+                                                                ?.attributes
+                                                                ?.boosted
+                                                                ? sortedLeaderboardData
+                                                                      ?.attributes
+                                                                      ?.boost_multiplier *
+                                                                  sortedLeaderboardData
+                                                                      ?.attributes
+                                                                      ?.presale_points
+                                                                : sortedLeaderboardData
+                                                                      ?.attributes
+                                                                      ?.presale_points}
                                                         </td>
                                                     </tr>
                                                 )

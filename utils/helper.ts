@@ -21,6 +21,8 @@ export type Attributes = {
     high_score: number;
     referral_code: string;
     presale_points: number;
+    boosted: boolean;
+    boost_multiplier: number;
 };
 
 export type DataObject = {
