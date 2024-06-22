@@ -187,7 +187,7 @@ export default function ReferralPage() {
                                         </Button>
                                     </Popover>
                                 )}
-                                <div
+                                {/* <div
                                     onClick={() =>
                                         setCurrentState("leaderboard")
                                     }
@@ -196,7 +196,7 @@ export default function ReferralPage() {
                                     <p className="font-bold md:text-[16px] text-[12px]">
                                         Leaderboards
                                     </p>
-                                </div>
+                                </div> */}
                             </div>
                             <div className="md:flex-row flex-col bg-[#B7CC5B] rounded-[8px] p-[24px] w-full flex gap-x-[20px] items-center">
                                 <MarioHole className="md:w-[151px] md:h-[164px] w-[100px] h-[100px]" />
