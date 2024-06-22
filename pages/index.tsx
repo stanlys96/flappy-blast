@@ -318,7 +318,11 @@ export default function HomePage() {
         chain?.name !== "Blast";
 
     useEffect(() => {
-        if (!currentTwitterData?.attributes?.wallet_address && address) {
+        if (
+            currentTwitterData &&
+            !currentTwitterData?.attributes?.wallet_address &&
+            address
+        ) {
             axiosApi
                 .put(`/api/twitter-accounts/${currentTwitterData?.id}`, {
                     data: {
@@ -377,7 +381,7 @@ export default function HomePage() {
                                 :
                                 {timeLeft?.seconds?.toString().padStart(2, "0")}
                             </div>
-                            <div className="p-2 mx-4 bg-white w-fit mx-auto border-4 border-black font-bold text-center">
+                            <div className="p-2 mx-8 bg-white w-fit mx-auto border-4 border-black font-bold text-center">
                                 Total Raised:{" "}
                                 {totalCommitmentsResult
                                     ?.toString()
@@ -697,7 +701,7 @@ export default function HomePage() {
                                 <Divider rootClassName="mt-2 mb-3" />
                                 <div className="flex justify-between md:flex-row flex-col gap-y-2">
                                     <div className="text-xl md:text-2xl font-bold kong-text">
-                                        Refferal
+                                        Referral
                                     </div>
                                     <div>
                                         {!session ? (
