@@ -1094,7 +1094,7 @@ export default function HomePage() {
                         <div className="md:flex w-[400.25px] desktop:w-[450.25px] large-desktop:w-[550.25px] hidden flex-col items-end gap-y-[40px]">
                             <div className="flex items-center gap-x-[30px]">
                                 <p className="pixel-caps text-[#FCFC03] desktop:text-[1.5rem] large-desktop:text-[2rem]">
-                                    26 % Liquidity
+                                    27.5 % Liquidity
                                 </p>
                                 <div className="w-[50px] h-[50px] bg-[#FCFC03] rounded-full" />
                             </div>
@@ -1110,33 +1110,21 @@ export default function HomePage() {
                             <div className="flex justify-start items-center gap-x-[30px]">
                                 <div className="w-[30px] h-[30px] bg-[#FCFC03] rounded-full" />
                                 <p className="pixel-caps text-[#FCFC03] desktop:text-[1.5rem] large-desktop:text-[2rem]">
-                                    26 % Liquidity
-                                </p>
-                            </div>
-                            <div className="flex justify-start items-center gap-x-[30px]">
-                                <div className="w-[30px] h-[30px] bg-[#FF00C7] rounded-full" />
-                                <p className="pixel-caps text-[#FF00C7] desktop:text-[1.5rem] large-desktop:text-[2rem]">
-                                    1.5 % REFERRAL
+                                    27.5 % Liquidity
                                 </p>
                             </div>
                         </div>
                         <div className="flex md:w-[400.25px] desktop:w-[450.25px] large-desktop:w-[550.25px] mt-[40px] md:mt-0 md:flex-col-reverse flex-col gap-y-[40px]">
-                            <div className="flex justify-start items-center gap-x-[30px]">
-                                <div className="md:w-[50px] md:h-[50px] w-[30px] h-[30px] bg-[#22A2FF] rounded-full" />
-                                <p className="pixel-caps text-[#22A2FF] desktop:text-[1.5rem] large-desktop:text-[2rem]">
-                                    2.5 % AIRDROP
-                                </p>
-                            </div>
                             <div className="md:hidden flex justify-start items-center gap-x-[30px]">
                                 <div className="w-[30px] h-[30px] bg-[#39FF70] rounded-full" />
                                 <p className="text-nowrap pixel-caps text-[#39FF70] desktop:text-[1.5rem] large-desktop:text-[2rem]">
                                     70 % Fair Launch
                                 </p>
                             </div>
-                            <div className="hidden md:flex items-center gap-x-[30px]">
-                                <div className="w-[50px] h-[50px] bg-[#FF00C7] rounded-full" />
-                                <p className="pixel-caps text-[#FF00C7] desktop:text-[1.5rem] large-desktop:text-[2rem]">
-                                    1.5 % REFERRAL
+                            <div className="flex justify-start items-center gap-x-[30px]">
+                                <div className="md:w-[50px] md:h-[50px] w-[30px] h-[30px] bg-[#22A2FF] rounded-full" />
+                                <p className="pixel-caps text-[#22A2FF] desktop:text-[1.5rem] large-desktop:text-[2rem]">
+                                    2.5 % AIRDROP
                                 </p>
                             </div>
                         </div>
