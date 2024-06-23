@@ -28,6 +28,8 @@ var pipes = new Array();
 var replayclickable = false;
 var shareclickable = false;
 
+var game_id;
+
 //sounds
 var volume = 30;
 var soundJump = new buzz.sound("assets/sounds/sfx_wing.ogg");
@@ -122,6 +124,24 @@ function showSplash() {
 
 function startGame() {
   currentstate = states.GameScreen;
+  var strapi_twitter_id = getCookie("strapi_twitter_id");
+  const result = {
+    data: {
+      score: score,
+      twitter_account: strapi_twitter_id,
+    },
+  };
+  fetch(`${publicAxiosApi}/api/flappy-games`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: publicToken,
+    },
+    body: JSON.stringify(result),
+  }).then(async (response) => {
+    const result = await response.json();
+    game_id = result?.data?.id;
+  });
 
   //fade out the splash
   $("#splash").stop();
@@ -363,8 +383,8 @@ function playerDead() {
       twitter_account: strapi_twitter_id,
     },
   };
-  fetch(`${publicAxiosApi}/api/flappy-games?populate=*`, {
-    method: "POST",
+  fetch(`${publicAxiosApi}/api/flappy-games/${game_id}?populate=*`, {
+    method: "PUT",
     headers: {
       "Content-Type": "application/json",
       Authorization: publicToken,
