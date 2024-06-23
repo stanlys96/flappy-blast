@@ -363,6 +363,32 @@ export default function HomePage() {
                 src="/images/flappy-blast.png"
               />
             </div>
+            <div className="flex justify-center w-full">
+              <a
+                href="https://app.bladeswap.xyz/swap?outputCurrency=0x40fF8458f802Cc057edccDC143Cf701C828f7308"
+                target="_blank"
+                className="md:block hidden relative mt-[25px] cursor-pointer"
+              >
+                <Image
+                  width={300}
+                  height={100}
+                  alt="button"
+                  src="/images/BuyFlapBig.png"
+                />
+              </a>
+              <a
+                href="https://app.bladeswap.xyz/swap?outputCurrency=0x40fF8458f802Cc057edccDC143Cf701C828f7308"
+                target="_blank"
+                className="block md:hidden relative mt-[25px] cursor-pointer"
+              >
+                <Image
+                  width={150}
+                  height={100}
+                  alt="button"
+                  src="/images/BuyFlapBig.png"
+                />
+              </a>
+            </div>
           </div>
         )}
         {pageState === "presale" && (

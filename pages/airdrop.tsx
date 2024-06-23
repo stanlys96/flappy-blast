@@ -53,7 +53,7 @@ export default function AirdropPage() {
   const [isClientMobile, setIsClientMobile] = useState(false);
   const [currentState, setCurrentState] = useState<
     "index" | "flap" | "leaderboard" | "partnership"
-  >("index");
+  >("flap");
   const { chains, switchChain } = useSwitchChain();
   const { disconnect } = useDisconnect();
   const { data: ensName } = useEnsName({ address });
@@ -147,7 +147,7 @@ export default function AirdropPage() {
   };
 
   // 0 connect wallet, 1 twitter social action, 2 congrats, 3 finished, 10 hide
-  const [modalStep, setModalStep] = useState(10);
+  const [modalStep, setModalStep] = useState(3);
   const [walletPopup, setIsWalletPopup] = useState(false);
   const [checkingWallet, setCheckingWallet] = useState(false);
   const [isBlast, setIsBlast] = useState(true);
@@ -392,9 +392,7 @@ export default function AirdropPage() {
   }, [web3ModalOpen]);
 
   useEffect(() => {
-    if (session) {
-      setModalStep(3);
-    }
+    setModalStep(3);
     // if (!walletPopup) {
     //   if (currentTwitterData) {
     //     Cookie.set("twitter_id", currentTwitterData?.attributes?.twitter_id, {
@@ -729,9 +727,41 @@ export default function AirdropPage() {
           {currentState === "flap" && (
             <div className="flex flex-col gap-y-[20px] w-full">
               <div className="flex justify-start">
-                {session && (
-                  <>
-                    <div className="flex flex-wrap gap-4 justify-between w-full">
+                <div className="flex flex-wrap gap-4 justify-between w-full">
+                  {!session ? (
+                    <>
+                      <Button
+                        type="primary"
+                        style={{
+                          border: "2px solid #000",
+                          borderRadius: "0px",
+                          backgroundColor: "#fff",
+                          color: "#000",
+                          fontWeight: "bold",
+                        }}
+                        onClick={() => signIn()}
+                      >
+                        <img
+                          alt="X"
+                          className="w-4 h-4"
+                          src="/assets/x-logo-black.png"
+                        />
+                        <p>Login to X</p>
+                      </Button>
+                    </>
+                  ) : (
+                    <Popover
+                      content={
+                        <a
+                          className="text-red-500 font-bold"
+                          onClick={() => signOut()}
+                        >
+                          Logout
+                        </a>
+                      }
+                      placement="bottomLeft"
+                      trigger="click"
+                    >
                       <Button
                         style={{
                           border: "2px solid",
@@ -742,30 +772,33 @@ export default function AirdropPage() {
                           className="w-4 h-4"
                           src="/assets/x-logo-black.png"
                         />
-
+                        {/* @ts-ignore */}
                         <p>@{session.username}</p>
                       </Button>
-                      <div className="flex gap-2">
-                        <Button
-                          style={{
-                            border: "2px solid",
-                          }}
-                          onClick={() => setCurrentState("leaderboard")}
-                        >
-                          Leaderboards
-                        </Button>
-                        <Button
-                          danger
-                          style={{
-                            border: "2px solid ",
-                          }}
-                          onClick={() => setCurrentState("index")}
-                        >
-                          Exit game
-                        </Button>
-                      </div>
-                    </div>
-
+                    </Popover>
+                  )}
+                  <div className="flex gap-2">
+                    <Button
+                      style={{
+                        border: "2px solid",
+                      }}
+                      onClick={() => setCurrentState("leaderboard")}
+                    >
+                      Leaderboards
+                    </Button>
+                    {/* <Button
+                      danger
+                      style={{
+                        border: "2px solid ",
+                      }}
+                      onClick={() => setCurrentState("index")}
+                    >
+                      Exit game
+                    </Button> */}
+                  </div>
+                </div>
+                {session && (
+                  <>
                     <Modal
                       centered
                       title={
@@ -1436,17 +1469,22 @@ export default function AirdropPage() {
                   }`}
                 >
                   {/* {modalStep === 0 || !session ? (
-                    <p className="text-center">
-                      Login to Twitter to play FlappyBlast
-                    </p>
-                  ) : (modalStep > 0 && modalStep < 3) || modalStep == 10 ? (
-                    <p className="text-center">
+                    ) : (modalStep > 0 && modalStep < 3) || modalStep == 10 ? (
+                      <p className="text-center">
                       Complete tasks to play FlappyBlast
-                    </p>
-                  ) : ( */}
-                  <>
-                    <FlappyBird />
-                  </>
+                      </p>
+                    ) : ( */}
+                  {!session ? (
+                    <div className="h-[35vh] flex justify-center items-center">
+                      <p className="text-center">
+                        Login to Twitter to play FlappyBlast
+                      </p>
+                    </div>
+                  ) : (
+                    <>
+                      <FlappyBird />
+                    </>
+                  )}
                   {/* )} */}
                 </div>
               </div>
