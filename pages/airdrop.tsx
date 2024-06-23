@@ -393,7 +393,6 @@ export default function AirdropPage() {
 
   useEffect(() => {
     if (session) {
-      setCurrentState("flap");
       setModalStep(3);
     }
     // if (!walletPopup) {
