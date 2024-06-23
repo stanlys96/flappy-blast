@@ -81,7 +81,7 @@ export const AbsoluteImagesComponent = () => {
                 : "text-white"
             }`}
           >
-            AIRDROP
+            PLAY
           </a>
           {/* <a
             onClick={() => router.push("/referral")}

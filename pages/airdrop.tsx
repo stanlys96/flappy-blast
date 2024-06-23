@@ -392,58 +392,60 @@ export default function AirdropPage() {
   }, [web3ModalOpen]);
 
   useEffect(() => {
-    if (!walletPopup) {
-      if (currentTwitterData) {
-        Cookie.set("twitter_id", currentTwitterData?.attributes?.twitter_id, {
-          expires: 1,
-        });
-        Cookie.set("strapi_twitter_id", currentTwitterData?.id, {
-          expires: 1,
-        });
-
-        if (
-          !currentTwitterData?.attributes?.wallet_address &&
-          address &&
-          confirmAddress
-        ) {
-          // Get Wallet data
-          axiosApi
-            .put(`/api/twitter-accounts/${currentTwitterData?.id}`, {
-              data: {
-                is_wallet: true,
-                wallet_address: address,
-              },
-            })
-            .then((response) => {
-              setConfirmLoading(false);
-              setConfirmAddress(false);
-              twitterMutate();
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-        }
-
-        if (!currentTwitterData?.attributes?.wallet_address) {
-          setModalStep(0);
-        } else if (
-          currentTwitterData?.attributes?.wallet_address &&
-          !playGameReady &&
-          !currentTwitterData?.attributes?.["is_socialaction"]
-        ) {
-          setModalStep(1);
-        } else if (!currentTwitterData?.attributes?.show_success_modal) {
-          setModalStep(3);
-        } else if (
-          currentTwitterData?.attributes?.wallet_address &&
-          currentTwitterData?.attributes?.["is_socialaction"] &&
-          !playGameReady
-        ) {
-          setModalStep(2);
-          setPlayGameReady(true);
-        }
-      }
+    if (session) {
+      setCurrentState("flap");
+      setModalStep(3);
     }
+    // if (!walletPopup) {
+    //   if (currentTwitterData) {
+    //     Cookie.set("twitter_id", currentTwitterData?.attributes?.twitter_id, {
+    //       expires: 1,
+    //     });
+    //     Cookie.set("strapi_twitter_id", currentTwitterData?.id, {
+    //       expires: 1,
+    //     });
+    //     if (
+    //       !currentTwitterData?.attributes?.wallet_address &&
+    //       address &&
+    //       confirmAddress
+    //     ) {
+    //       // Get Wallet data
+    //       axiosApi
+    //         .put(`/api/twitter-accounts/${currentTwitterData?.id}`, {
+    //           data: {
+    //             is_wallet: true,
+    //             wallet_address: address,
+    //           },
+    //         })
+    //         .then((response) => {
+    //           setConfirmLoading(false);
+    //           setConfirmAddress(false);
+    //           twitterMutate();
+    //         })
+    //         .catch((err) => {
+    //           console.log(err);
+    //         });
+    //     }
+    //     if (!currentTwitterData?.attributes?.wallet_address) {
+    //       setModalStep(0);
+    //     } else if (
+    //       currentTwitterData?.attributes?.wallet_address &&
+    //       !playGameReady &&
+    //       !currentTwitterData?.attributes?.["is_socialaction"]
+    //     ) {
+    //       setModalStep(1);
+    //     } else if (!currentTwitterData?.attributes?.show_success_modal) {
+    //       setModalStep(3);
+    //     } else if (
+    //       currentTwitterData?.attributes?.wallet_address &&
+    //       currentTwitterData?.attributes?.["is_socialaction"] &&
+    //       !playGameReady
+    //     ) {
+    //       setModalStep(2);
+    //       setPlayGameReady(true);
+    //     }
+    //   }
+    // }
   }, [
     // @ts-ignore
     session?.user?.id,
@@ -456,38 +458,38 @@ export default function AirdropPage() {
     confirmAddress,
   ]);
 
-  useEffect(() => {
-    if (
-      verificationStatus.follow === "verified" &&
-      verificationStatus.retweet === "verified" &&
-      verificationStatus.like === "verified" &&
-      verificationStatus.tweet === "verified"
-    ) {
-      setModalStep(2);
-      if (currentTwitterData?.attributes?.["is_socialaction"] !== true) {
-        axiosApi
-          .put(`/api/twitter-accounts/${currentTwitterData?.["id"]}`, {
-            data: {
-              is_socialaction: true,
-            },
-          })
-          .then((response) => {
-            if (response.status == 200) {
-              const updatedUserData = {
-                // @ts-ignore
-                ...userData,
-                is_socialaction: true,
-              };
-              setUserData(updatedUserData);
-              twitterMutate();
-            }
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      }
-    }
-  }, [verificationStatus]);
+  // useEffect(() => {
+  //   if (
+  //     verificationStatus.follow === "verified" &&
+  //     verificationStatus.retweet === "verified" &&
+  //     verificationStatus.like === "verified" &&
+  //     verificationStatus.tweet === "verified"
+  //   ) {
+  //     setModalStep(2);
+  //     if (currentTwitterData?.attributes?.["is_socialaction"] !== true) {
+  //       axiosApi
+  //         .put(`/api/twitter-accounts/${currentTwitterData?.["id"]}`, {
+  //           data: {
+  //             is_socialaction: true,
+  //           },
+  //         })
+  //         .then((response) => {
+  //           if (response.status == 200) {
+  //             const updatedUserData = {
+  //               // @ts-ignore
+  //               ...userData,
+  //               is_socialaction: true,
+  //             };
+  //             setUserData(updatedUserData);
+  //             twitterMutate();
+  //           }
+  //         })
+  //         .catch((err) => {
+  //           console.log(err);
+  //         });
+  //     }
+  //   }
+  // }, [verificationStatus]);
 
   useEffect(() => {
     if (currentTwitterData?.attributes?.wallet_address) {
@@ -1434,7 +1436,7 @@ export default function AirdropPage() {
                       : ""
                   }`}
                 >
-                  {modalStep === 0 || !session ? (
+                  {/* {modalStep === 0 || !session ? (
                     <p className="text-center">
                       Login to Twitter to play FlappyBlast
                     </p>
@@ -1442,11 +1444,11 @@ export default function AirdropPage() {
                     <p className="text-center">
                       Complete tasks to play FlappyBlast
                     </p>
-                  ) : (
-                    <>
-                      <FlappyBird />
-                    </>
-                  )}
+                  ) : ( */}
+                  <>
+                    <FlappyBird />
+                  </>
+                  {/* )} */}
                 </div>
               </div>
             </div>
