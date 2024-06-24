@@ -43,6 +43,7 @@ import { ethers, parseEther } from "ethers";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { stringToBytes32 } from "@/utils/helper";
 import Modal from "antd/es/modal/Modal";
+import { BtnFlapSvg } from "@/src/components/BtnFlapSvg";
 
 const Toast = Swal.mixin({
   toast: true,
@@ -369,24 +370,14 @@ export default function HomePage() {
                 target="_blank"
                 className="md:block hidden relative mt-[25px] cursor-pointer"
               >
-                <Image
-                  width={300}
-                  height={100}
-                  alt="button"
-                  src="/images/BuyFlapBig.png"
-                />
+                <BtnFlapSvg className="w-[300px] h-[100px]" />
               </a>
               <a
                 href="https://app.bladeswap.xyz/swap?outputCurrency=0x40fF8458f802Cc057edccDC143Cf701C828f7308"
                 target="_blank"
                 className="block md:hidden relative mt-[25px] cursor-pointer"
               >
-                <Image
-                  width={150}
-                  height={100}
-                  alt="button"
-                  src="/images/BuyFlapBig.png"
-                />
+                <BtnFlapSvg className="w-[150px] h-[100px]" />
               </a>
             </div>
           </div>
